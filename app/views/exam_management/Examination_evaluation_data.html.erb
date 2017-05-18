@@ -1,0 +1,157 @@
+<%= render  partial: 'exam_management_left' %>
+<% navigation_add 'Examination Evaluation List', exam_management_Examination_evaluation_data_path %>
+<h4 class="mg-h4"><%= t('examination_evaluation_list') %></h4>
+
+<%= button_to 'Add Evaluation', {:controller => "exam_management", :action => "examination_evaluation__new"},:class=>"mg-custom-form-btn" %>
+
+
+<div class="mg_pagination">
+<%if @evaluation_data.present?%>
+<table  class="batch-tbl mg-tbl-margin">   <!-- border="2" --> 
+  <tr class="subject-table-header">
+    
+   
+    <th><%= t('exam_name') %></th> 
+    
+    <th><%= t('evaluation_date') %></th>
+   <!-- <label class="mg-label-text-transform-none" for="dateofsales">
+ -->
+    <th><%= t('actions') %></th>
+
+  </tr>
+ 
+  <% @evaluation_data.each do |category| %>
+    <tr>
+      <%
+        examination_detail=MgExaminationDetail.find_by(:id=>category.mg_examination_detail_id)
+        
+      %>
+      <td><%= examination_detail.name %></td>
+      <% @dateFormat = MgSchool.find_by_id(session[:current_user_school_id]).date_format %>
+      <td class="mg-desc-text-justify"><%=category.date_of_evaluation.strftime(@dateFormat) %></td>
+      
+      <td>
+         <button title="Show" id='<%=category.id %>' onclick="window.location = '/exam_management/exam_evaluation_data_show/<%=category.id %>'" class="mg-icon-btn"><i class="fa fa-eye"></i></button> 
+           <button title="Edit" id='<%=category.id %>'onclick="window.location = '/exam_management/exam_evaluation_data_edit/<%=category.id %>'" class='mg-icon-btn'><i class="fa fa-pencil-square-o"></i></button>      
+      
+       <span class="mg-a-link-pagination-align" style="left: -2px; position: relative; float: right; top: -2px;"> 
+
+       <%= link_to "<i class=\"fa fa-trash\"></i>".html_safe, {:controller => "exam_management", :action => "exam_evaluation_data_destroy",:id =>category.id },:title=>"Delete" ,:class=>"mg-icon-btn",data: { confirm: 'Are you sure to delete?' } %>
+</span>
+      </td>
+    </tr>
+  
+  <%end%>
+
+</table>
+<br/>
+ <div class="pagination-align" style="position: relative; bottom: 10px;">
+              <%#= will_paginate @itemCategory, :container => false %>
+           </div>
+<%else%>
+<h5>No records are created </h5>
+<%end%>
+</div>
+<div id="newAddInventoryCategoryDIVID"></div>
+<div id="editInventorySalesDIVID"></div>
+
+
+<div id="showinventorysalesDIVID"></div>
+
+
+<%= render  partial: 'application/common_left_close' %>
+
+<script>
+$( document ).ready(function() {
+            focusCurrentTab("examination_evaluationAID","examination_evaluationLiID");
+          //focusStudentHeaderBox();
+});
+
+
+$(document).on("click", ".show-inventory-sales-btn", function(e){
+        var myID =$(this).attr('id');
+        var Id=myID.split("-");
+        var urlLink = "/inventory/inventory_sales_show/";
+        $.ajax({
+            url: urlLink ,
+            cache: false,
+            data: {"id":Id[0]},
+            success: function(html){
+                  $('#showinventorysalesDIVID').dialog({
+                    modal: true,
+                     minHeight: 'auto',
+                     width: '650px',
+                     title: "Show Sales Information",
+                     open: function () {
+                        
+                        $(this).html(html);
+                    }
+                }); 
+               
+            }
+        });
+});
+
+
+$(document).on("click", ".edit-inventory-category-btn", function(e){
+        var myID =$(this).attr('id');
+        var Id=myID.split("-");
+        var urlLink = "/inventory/edit/"+Id[0];
+        $.ajax({
+            url: urlLink ,
+            cache: false,
+            success: function(html){
+                  $('#editInventorySalesDIVID').dialog({
+                    modal: true,
+                     minHeight: 'auto',
+                    minWidth: 260,
+                    title: "Edit sales information",
+                    open: function () {
+                        
+                        $(this).html(html);
+                    }
+                }); 
+               
+            }
+        });
+});
+
+$(document).on("click", ".new-add-inventory-category", function(e){
+        var urlLink = "/inventory/new";
+        $.ajax({
+            url: urlLink ,
+            cache: false,
+            success: function(html){
+                  $('#newAddInventoryCategoryDIVID').dialog({
+                    modal: true,
+                     minHeight: 'auto',
+                    minWidth: 260,
+                    title: "Add Item Category",
+                    open: function () {
+                        
+                        $(this).html(html);
+                    }
+                }); 
+               
+            }
+        });
+});
+</script>
+<style>
+
+
+.table-batchs-tbl {
+   /* font-family: verdana,arial,sans-serif;*/
+    font-size:13px;
+    color:#363131;
+    border-width: 1px;
+    border-color:  #363131;
+    border-collapse: collapse;
+    padding: 12px ;
+    font-size: 0.8em;
+    width: 261px !important;
+    /* margin-left: 2px; */
+}
+</style>
+
+

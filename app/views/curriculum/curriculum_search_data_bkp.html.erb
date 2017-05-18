@@ -1,0 +1,149 @@
+<%=@search.inspect%>
+
+<%if @search.present?%>
+<div class="mg-scroll-employee-bar">
+<table border="1" class="mg-showdata-bg mg-homework-tbl" cellspacing="1" cellpadding="1">
+<tr>
+	<th>
+		<label class="mg-label mg-td-width-half" valign="top"> <%= t('academic_year')%></label>    
+	</th>
+	<th>
+		<label class="mg-label mg-td-width-half" valign="top"> <%= t('programme_name')%></label>
+	</th>
+	<th>
+		<label class="mg-label mg-td-width-half" valign="top"> <%= t('semester_name')%></label>
+	</th>
+	<th>
+		<label class="mg-label mg-td-width-half" valign="top"> <%= t('subject_name')%></label>
+	</th>
+	<th>
+		<label class="mg-label mg-td-width-half" valign="top"> <%= t('grade_name')%></label>
+	</th>
+	<th>
+		<label class="mg-label mg-td-width-half" valign="top"> <%= t('paper')%></label>
+	</th>
+	<th>
+		<label class="mg-label mg-td-width-half" valign="top"> <%= t('chapter')%></label>
+	</th>
+	<th>
+		<label class="mg-label mg-td-width-half" valign="top"> <%= t('topic')%></label>
+	</th>
+	<th>
+		<label class="mg-label mg-td-width-half" valign="top"> <%= t('nature_of_document')%></label>
+	</th>
+	<th>
+		<label class="mg-label mg-td-width-half" valign="top"> <%= t('shared_until')%></label>
+	</th>
+	<th>
+		<label class="mg-label mg-td-width-half" valign="top"> <%= t('is_sharable')%></label>
+	</th>
+	<th>
+		<label class="mg-label mg-td-width-half" valign="top"> <%= t('keywords')%></label>
+	</th>
+	<th>
+		<label class="mg-label mg-td-width-half" valign="top"> <%= t('attached_documents')%></label>
+	</th>
+	
+	</tr>
+	<%
+	@search.each do |search|
+	%>
+	<tr>
+		<td class="mg-td-width-half" valign="top">
+			<%if search.mg_timetable_id.present?%>
+      			<%timetable=MgTimeTable.find_by(:id=>search.mg_timetable_id)%>
+     			<%=timetable.try(:name)%><%end%></td>
+		<td class="mg-td-width-half" valign="top">
+			<%if search.mg_wing_id.present?%>
+      		<%wing=MgWing.find(search.mg_wing_id)%>
+     		<%=wing.try(:wing_name)%><%end%>
+		</td>
+
+		<td class="mg-td-width-half" valign="top">
+			<%if search.mg_course_id.present?%>
+      		<%course=MgCourse.find_by(:id=>search.mg_course_id)%>
+     		<%=course.try(:course_name)%><%end%>
+		</td>
+
+		<td class="mg-td-width-half" valign="top">
+			<%if search.mg_subject_id.present?%>
+      		<%currSubject=MgSubject.find(search.mg_subject_id)%>
+     		<%=currSubject.try(:subject_name)%><%end%>
+		</td>
+
+
+		<td class="mg-td-width-half" valign="top">
+			<%if search.mg_curriculum_grade_id.present?%>
+      		<%currGrade=MgCurriculumGrade.find(search.mg_curriculum_grade_id)%>
+     		<%=currGrade.try(:grade_name)%><%end%>
+		</td>
+
+		<td class="mg-td-width-half" valign="top">
+			<%if search.mg_syllabus_id.present?%>
+      		<%currSyll=MgSyllabus.find(search.mg_syllabus_id)%>
+     		<%=currSyll.try(:name)%><%end%>
+		</td>
+
+		<td class="mg-td-width-half" valign="top">
+			<%if search.mg_unit_id.present?%>
+      		<%currSyll=MgUnit.find(search.mg_unit_id)%>
+     		<%=currSyll.try(:unit_name)%><%end%>
+		</td>
+
+		<td class="mg-td-width-half" valign="top">
+			<%if search.mg_topic_id.present?%>
+      		<%currSyll=MgTopic.find(search.mg_topic_id)%>
+     		<%=currSyll.try(:topic_name)%><%end%>
+		</td>
+
+
+		<td class="mg-td-width-half" valign="top">
+			<%if search.mg_nature_of_document_id.present?%>
+      		<%currSyll=MgNatureOfDocument.find(search.mg_nature_of_document_id)%>
+     		<%=currSyll.try(:name)%><%end%>
+		</td>
+
+		<td class="mg-td-width-half" valign="top">
+			<%if search.until_date.present?%>
+     		<%=search.try(:until_date)%><%end%>
+		</td>
+
+		<td class="mg-td-width-half" valign="top">
+			<%if search.is_sharable.present?%>
+     		<%=(search.is_sharable) ? "Yes" : "No"%><%end%>
+		</td>
+
+		<td class="mg-td-width-half" valign="top">
+			<%if search.keywords.present?%>
+     		<%=search.try(:keywords)%><%end%>
+		</td>
+
+		<td class="mg-td-width-half" valign="top">
+			
+
+
+<%@document=MgCurriculumDocumentation.where(:mg_curriculum_document_id=>search.id,:user_type=>"employee",:is_deleted=>0,:mg_school_id=>session[:current_user_school_id])
+        if @document.length>0
+%>
+<%html_icon='<span title="Download" class="mg-icon-btn"><i class="fa fa-download"></i></span>'
+@document.each do |doc|%>
+    <%= link_to_if doc.file.url, html_icon.html_safe, doc.file.url , :target=>"_blank"%>
+    <%=doc.file_file_name%>
+<br/>
+<%end
+end%>
+
+		</td>
+		
+
+		
+</tr>
+	<%end%>
+</table>
+</div>
+<br/>
+<%= link_to t('cancel'), :back, {:class=>"mg-small-form-btn cancel-form-dialog"} %>
+<%else%>
+<br/>
+<h4>No Results found<h4>
+<%end%>

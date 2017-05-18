@@ -1,0 +1,95 @@
+<%= render  partial: 'exam_management_left' %>
+<% navigation_add 'Exam Application Form', exam_management_issue_exam_application_path %>
+<div id="create_exam_application_form_dialog_box">
+
+<h4 class="mg-h4"><label class="mg-label-text-transform-none" for="date_of_birth"><%=t('fill_exam_application_form_list')%></label></h4>
+
+
+ <button title="Application Form"  onclick="window.location = '/exam_management/issue_exam_application_new'" class="mg-custom-form-btn">Application Form</button>
+
+
+ <%#= link_to "Application Form",{ controller:"exam_management",action: "issue_exam_application_new"} ,:class=>"mg-icon-btn mg-rm-a-link" %><br/><br/>
+<% if @application_form_data.length > 0 %>
+<div class="mg_pagination">
+
+<div id="payment_type_datasShow">
+</div>
+<div id="payment_type_datasEdit">
+</div>
+
+
+    <table class="batch-tbl mg-tbl-margin" cellspacing="0" style="padding:0; border-collapse:collapse;">   <!-- border="2" --> 
+    <tr >
+      
+      <th><%=t('exam')%></th>
+      <th><%=t('programme')%></th>
+      <th><%=t('semester_data')%></th>
+      <th><%=t('due_date')%></th>
+      <th align="center"><%=t('actions')%></th>
+     </tr>
+ <% @timeformat=MgSchool.find(session[:current_user_school_id])%>
+    <%@application_form_data.each do |data| %>
+      <tr>
+      <%
+      examination_detail=MgExaminationDetail.find_by(:id=>data.mg_examination_detail_id)
+      batch_detail=MgBatch.find_by(:id=>data.mg_batch_id)
+      course_details=MgCourse.find_by(:id=>batch_detail.mg_course_id)
+      wing_details=MgWing.find_by(:id=>data.mg_wing_id)
+      student=MgStudent.find_by(:is_deleted=>0, :mg_school_id=>session[:current_user_school_id],:id=>data.try(:mg_student_id))
+      %>
+        
+       
+
+        <td><%=examination_detail.name%></td>
+        <td><%=wing_details.try(:wing_name)%></td>
+        <td><%="#{course_details.course_name}-#{batch_detail.name}"%></td>
+        
+        <td><%=data.due_date.strftime(@timeformat.date_format)%></td>
+      <td class="mg-align-center">
+   
+           <button title="Show" id='<%=data.id %>' onclick="window.location = '/exam_management/issue_exam_application_show/<%=data.id %>'" class="mg-icon-btn"><i class="fa fa-eye"></i></button> 
+           <button title="Edit" id='<%=data.id %>'onclick="window.location = '/exam_management/issue_exam_application_edit/<%=data.id %>'" class='mg-icon-btn'><i class="fa fa-pencil-square-o"></i></button>        
+          <span class="mg-a-link-pagination-align" style="left: -2px; position: relative; float: right; top: -2px;">
+           <%= link_to "<i class=\"fa fa-trash\"></i>".html_safe ,{ action: "issue_exam_application_destroy", id: data.id },data: { confirm: "Are you sure to delete?" } ,:title=>"Delete" ,:class=>"mg-icon-btn"  %>
+             </span>
+         </td>
+      </tr>
+
+     <% end %>
+  </table>
+ <%#= will_paginate @all_payment_type, :container => false %>
+</div>
+  <%else %>
+    <h5>Please create some records... </h5>
+
+  <% end %>
+
+</div>
+
+<%= render  partial: 'application/common_left_close' %>
+
+
+<script>
+$(document).ready(function () {
+         
+          focusCurrentTab("issue_exam_application_formAID","issue_exam_application_formLiID");
+          
+
+          
+      });
+// $(document).on("click", "#issue_exam_application_form_create", function(e){
+        
+//         //var Id=$(this).attr('id');
+       
+//         //alert("urlLink");
+//         var urlLink = "/exam_management/issue_exam_application_new/";
+//         $.ajax({
+//             url: urlLink ,
+//             cache: false,
+//             success: function(html){  
+//                     $('#create_exam_application_form_dialog_box').empty().append(html);
+               
+//             }
+//         });
+// });
+</script>

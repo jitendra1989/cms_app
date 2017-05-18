@@ -1,0 +1,225 @@
+<%detailss_datass=MgExaminationDetail.find_by(:id=>params[:exam_type])%>
+
+<h4 class="mg-h4"><%= t('Examination Report') %></h4>
+
+<%=link_to "Download Report",{controller: 'exam_management',action:"generate_report_pdf",:id =>"#{@student_id}-#{@detail_id}-#{@batch_id}"},:class=>"btn btn-default mg-btn-bottom-margin", :target=>"_blank"%><br/>
+ <%#if(user.user_type != "student")%>
+ <div class="mg-back-btn-align-report">
+     <%#= link_to 'Back', :back, {:class=>"btn btn-default cancel-form-dialog"} %>
+  </div>
+ <%#end%>
+        
+
+
+
+<%students=MgStudent.find(params[:id])%>
+ <%batch_names=MgBatch.find(students.mg_batch_id)%>
+ <label class="mg-label"><%="Name :"%></label>
+<span class="mg-font-size"><%=students.first_name%> <%=students.last_name%></span>
+<br/>
+<label class="mg-label"><%="Admission Number :"%></label>
+<span class="mg-font-size"><%=students.admission_number%></span>
+<br/>
+
+
+
+<h5 class="mg-font-bold"> Exam Report</h5>
+<%#if exam_groups.present?%>
+<div style="width: 738px;">
+<div class="mg-scroll-result-bar">
+<table border="1" class="batch-tbl mg-tbl-layout" style="margin-left: 0px;">
+<tr>
+<td class="mg-scholastic-bg"></td>
+<%
+
+ # gradeLevelArray = MgGradingLevel.where(:mg_batch_id=>student.mg_batch_id,:is_deleted=>0,:mg_school_id=>session[:current_user_school_id]).order('min_score DESC')
+  
+@c=0
+puts "asdhkasdkhaj3434ksdasd"
+
+puts params[:id]
+list_of_data=MgExaminationStudentMarks.where(:mg_student_id=>params[:id]).pluck(:mg_examination_marks_evaluation_data_id).uniq
+
+
+details_list=MgExaminationMarksEvaluationData.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id],:id=>list_of_data).pluck(:mg_examination_detail_id).uniq
+
+#exam_detail_list=MgExaminationDetail.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id],:id=>details_list).pluck(:mg_exam_type_id).uniq
+
+
+detail_data=MgExaminationDetail.find_by(:id=>params[:exam_type])
+        exam_type=MgExamType.find_by(:id=>detail_data.mg_exam_type_id)%>
+
+
+<%#=exam_detail_list.inspect%>
+<%#=details_list.inspect%>
+
+        <%#=exam_type.inspect%>
+<%#exam_type.each do |eg|%>
+  <%#@c=@c+1%>  
+<%#=exam_type%>
+
+<%#="demo"%>
+<%#=eg%>
+<td colspan="4" class="mg-scholastic-bg mg-align-center"><%=exam_type.name%></td>
+<%#end%>
+<!-- <td colspan="1" class="mg-scholastic-bg mg-align-center">Remarks</td> -->
+</tr>
+
+<tr>
+
+<th>Subject</th>
+<%@d=0%>
+<%#for i in 1...@c+1%>
+<th><%="Max Marks"%></th>
+<th><%="Marks Obtained"%></th>
+<th>Remarks</th>
+<th>Grade</th>
+
+
+<%#@d=@d+1%>
+<%#end%>
+
+
+</tr>
+
+<%
+   # exams_list = MgExam.where(:mg_exam_group_id=>exam_groups[0].id,:is_deleted=>0,:mg_school_id=>session[:current_user_school_id])
+   student_data=MgStudent.find_by(:id=>params[:id])
+   batch_data=MgBatch.find_by(:id=>student_data.mg_batch_id)
+subject_data=MgSubject.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id],:mg_course_id=>batch_data.mg_course_id)
+@i=0
+batch_data=MgBatch.find_by(:id=>params[:batch_id])
+
+    subject_data.each do|el|
+    subject=MgSubject.find(el.id)
+%>  
+<tr>
+<td><%=subject.subject_name%></td>
+
+<%
+
+data=MgExaminationStudentMarks.where(:mg_student_id=>params[:id],:is_deleted=>0,:mg_school_id=>session[:current_user_school_id]).pluck(:mg_examination_marks_evaluation_data_id).uniq
+marks_data_validation=MgExaminationMarksEvaluationData.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id],:id=>data).pluck(:mg_examination_detail_id).uniq
+marks_data=MgExaminationMarksEvaluationData.where(:mg_examination_detail_id=>params[:exam_type],:is_deleted=>0,:mg_school_id=>session[:current_user_school_id],:mg_course_id=>batch_data.mg_course_id).pluck(:mg_subject_id).uniq
+examination_evaluation_data=MgExaminationMarksEvaluationData.where(:mg_examination_detail_id=>params[:exam_type],:is_deleted=>0,:mg_school_id=>session[:current_user_school_id],:mg_course_id=>batch_data.mg_course_id).pluck(:id)
+    
+%>  
+
+<%if marks_data.include?el.id%>
+
+
+
+
+
+<%time_table_data=MgExaminationTimeTable.find_by(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id],:mg_examination_detail_id=>params[:exam_type],:mg_subject_id=>el.id,:mg_batch_id=>params[:batch_id])%>
+
+<%  data= examination_evaluation_data[@i] %>
+<%student_marks=MgExaminationStudentMarks.find_by(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id],:mg_student_id=>params[:id],:mg_examination_marks_evaluation_data_id=>data)%>
+
+<%if time_table_data.nil?%>
+<td class="mg-align-center"><%="Not Defined"%></td>
+
+
+
+<%else%>
+<td class="mg-align-center"><%=time_table_data.max_marks%></td>
+<%end%>
+
+<td class="mg-align-center"><%=student_marks.marks_obtained%></td>
+
+<%if time_table_data.nil?%>
+<td class="mg-align-center"><%="Not Defined"%></td>
+
+<%else%>
+
+<%if student_marks.marks_obtained>time_table_data.pass_marks%>
+<td class="mg-align-center"><%="p"%></td>
+<%else%>
+<td class="mg-align-center"><%="F"%></td>
+
+<%end%>
+<%end%>
+
+
+<%grade_data=MgCollegeGradingLevel.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id]).where("min_score>=(?)",student_marks.marks_obtained)
+
+ @gradeLevelArray = MgCollegeGradingLevel.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id]).order('min_score DESC')
+
+  @gradeLevelArray.each do |gradeObj|
+      if student_marks.marks_obtained > gradeObj.min_score
+        @gradeLevel = gradeObj.name
+
+       puts student_marks.marks_obtained.to_i.inspect
+       puts gradeObj.min_score.to_i.inspect
+
+
+        break
+      end
+end
+%>
+
+
+<%if @gradeLevel!=nil%>
+<td class="mg-align-center"><%=@gradeLevel%></td>
+<%@gradeLevel=nil%>
+<%else%>
+<td class="mg-align-center"><%="-"%></td>
+<%end%>
+
+<%@i=@i+1%>
+
+<%else%>
+<td class="mg-align-center"><%="-"%></td>
+<td class="mg-align-center"><%="-"%></td>
+<td class="mg-align-center"><%"-"%></td>
+<td class="mg-align-center"><%"-"%></td>
+
+<%end%>
+
+
+
+<%
+
+    end
+    %>
+</tr>
+
+<%
+    #end
+ %>
+</table>
+</div>
+
+<%#else%>
+ 
+<%#end%>
+
+   
+<%  
+#end
+%>
+
+
+
+<%#= render  partial: 'examination/examination_table_close' %>
+
+<script type="text/javascript">
+  // $(document).ready(function() {
+  //       focusCurrentTab("viewResultAID","viewResultLiID");
+  //       focusExaminationHeaderBox();
+  // });
+
+</script>
+
+<style>
+
+    /*.report-tbl{
+        
+        margin-top: 10px;
+        width: 100%;
+    }
+
+    .report-tbl ,.tbl-td , .tbl-tr {
+        border: 1px solid #999999;
+    }*/
+</style>

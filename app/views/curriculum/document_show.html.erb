@@ -1,0 +1,232 @@
+<%@@temp=0%>
+<%if session[:user_type]=="student"%>
+<%= render partial: 'dashboards/student_dashboard_left' %>
+<%@@temp=1%>
+<%else%>
+<%= render partial: 'curriculum/curr_left' %>
+
+<%end%>
+<h4 class="mg-h4"><%= t('curriculum_management') %></h4>
+<table border="1" class="mg-showdata-bg mg-tbl-layout" cellspacing="1" cellpadding="1">
+
+     <tr>
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"> <%= t('academic_year')%></label>
+      </td>
+      <td class="mg-td-width-half" valign="top">
+      <%if @curriculum.mg_timetable_id.present?%>
+      <%timetable=MgTimeTable.find_by(:id=>@curriculum.mg_timetable_id)%>
+     <%=timetable.try(:name)%>
+     <%else%>
+     <%="No Data"%>
+     <%end%>
+      </td>
+ </tr>
+   <tr>
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"> <%= t('programme_name')%></label>
+      </td>
+      <td class="mg-td-width-half" valign="top">
+      <%if @curriculum.mg_wing_id.present?%>
+      <%wing=MgWing.find(@curriculum.mg_wing_id)%>
+     <%=wing.try(:wing_name)%>
+     <%else%>
+     <%="No Data"%>
+     <%end%>
+      </td>
+ </tr>
+ <tr>
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"> <%= t('semester_name')%></label>
+      </td>
+      <td class="mg-td-width-half" valign="top">
+      <%if @curriculum.mg_course_id.present?%>
+      <%course=MgCourse.find_by(:id=>@curriculum.mg_course_id)%>
+     <%=course.try(:course_name)%>
+     <%else%>
+     <%="No Data"%>
+     <%end%>
+      </td>
+ </tr>
+ <tr>
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"> <%= t('subject_name')%></label>
+      </td>
+      <td class="mg-td-width-half" valign="top">
+       <%if @curriculum.mg_subject_id.present?%>
+      <%currSubject=MgSubject.find(@curriculum.mg_subject_id)%>
+     <%=currSubject.try(:subject_name)%>
+     <%else%>
+     <%="No Data"%>
+     <%end%>
+      </td>
+ </tr>
+
+ <tr>
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"> <%= t('grade_name')%></label>
+      </td>
+      <td class="mg-td-width-half" valign="top">
+       <%if @curriculum.mg_curriculum_grade_id.present?%>
+      <%currGrade=MgCurriculumGrade.find(@curriculum.mg_curriculum_grade_id)%>
+     <%=currGrade.try(:grade_name)%>
+     <%else%>
+     <%="No Data"%>
+     <%end%>
+      </td>
+ </tr>
+
+
+
+
+ <tr>
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"> <%= t('paper')%></label>
+      </td>
+      <td class="mg-td-width-half" valign="top">
+       <%if @curriculum.mg_syllabus_id.present?%>
+      <%currSyll=MgSyllabus.find(@curriculum.mg_syllabus_id)%>
+     <%=currSyll.try(:name)%>
+     <%else%>
+     <%="No Data"%>
+     <%end%>
+      </td>
+ </tr>
+
+
+
+ <tr>
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"> <%= t('chapter')%></label>
+      </td>
+      <td class="mg-td-width-half" valign="top">
+       <%if @curriculum.mg_unit_id.present?%>
+      <%currSyll=MgUnit.find(@curriculum.mg_unit_id)%>
+     <%=currSyll.try(:unit_name)%>
+     <%else%>
+     <%="No Data"%>
+     <%end%>
+      </td>
+ </tr>
+
+ <tr>
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"> <%= t('topic')%></label>
+      </td>
+      <td class="mg-td-width-half" valign="top">
+       <%if @curriculum.mg_topic_id.present?%>
+      <%currSyll=MgTopic.find(@curriculum.mg_topic_id)%>
+     <%=currSyll.try(:topic_name)%>
+     <%else%>
+     <%="No Data"%>
+     <%end%>
+      </td>
+ </tr>
+
+
+
+ <tr>
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label mg-label-text-transform-none"> <%= t('nature_of_document')%></label>
+      </td>
+      <td class="mg-td-width-half" valign="top">
+       <%if @curriculum.mg_nature_of_document_id.present?%>
+      <%currSyll=MgNatureOfDocument.find(@curriculum.mg_nature_of_document_id)%>
+     <%=currSyll.try(:name)%>
+     <%else%>
+     <%="No Data"%>
+     <%end%>
+      </td>
+ </tr>
+
+
+
+ <tr>
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label mg-label-text-transform-none"> <%= t('shared_until')%></label>
+      </td>
+      <td class="mg-td-width-half" valign="top">
+       <%if @curriculum.until_date.present?%>
+        <% @timeformat=MgSchool.find_by_id(@curriculum.mg_school_id)%>
+            <% if @timeformat.present?%>
+              <%= @curriculum.until_date.strftime(@timeformat.date_format) %>
+            <%end%>
+     <%else%>
+     <%="No Data"%>
+     <%end%>
+      </td>
+ </tr>
+
+
+
+ <tr>
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"> <%= t('is_sharable')%></label>
+     </td>
+     <td class="mg-td-width-half" valign="top">
+      <%if @curriculum.is_sharable.present?%>
+     <%=(@curriculum.is_sharable) ? "Yes" : "No"%>
+     <%else%>
+     <%="No"%>
+     <%end%>
+     </td>
+ </tr>
+
+
+ <tr>
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"> <%= t('keywords')%></label>
+      </td>
+      <td class="mg-td-width-half" valign="top">
+       <%if @curriculum.keywords.present?%>
+     <%=@curriculum.try(:keywords)%>
+     <%else%>
+     <%="No Data"%>
+     <%end%>
+      </td>
+ </tr>
+ 
+</table>
+<br/>
+
+  
+<p>
+<%@document=MgCurriculumDocumentation.where(:mg_curriculum_document_id=>@curriculum.id,:user_type=>"employee",:is_deleted=>0,:mg_school_id=>session[:current_user_school_id])
+
+        if @document.length>0
+%>
+
+<label class="mg-label" style="width:140px"><%= t('attached_documents') %><span class="required-field">&nbsp;*</span></label><br/>
+
+<%html_icon='<span title="Download" class="mg-icon-btn"><i class="fa fa-download"></i></span>'
+
+@document.each do |doc|%>
+<p>
+    <%= link_to_if doc.file.url, html_icon.html_safe, doc.file.url , :target=>"_blank"%>
+    <%=doc.file_file_name%>
+
+</p>
+<%end
+end%>
+</p>
+
+<br/>
+<%= link_to 'Cancel', :back ,:style=>"font-size: 0.8em; color: #297ACC; text-decoration: none;" ,:class=>"mg-custom-form-btn"%>
+
+<%= render  partial: 'application/common_left_close' %>
+<script>
+$(document).ready(function () {
+  var tempVar=<%=@@temp%>
+  if (tempVar==1)
+        focusCurrentTab("viewStudentCurriculum","viewStudentCurriculumLiID");
+else
+        focusCurrentTab("viewCurriculumDocument","viewEmployeecurriculumDocumentLiID");
+
+
+ // focusCurrentTab("view_curriculum_syllabusAID","syllabusLiID");
+
+  
+});
+</script>
+
+

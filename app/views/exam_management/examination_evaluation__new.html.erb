@@ -1,0 +1,491 @@
+<%= render  partial: 'exam_management_left' %>
+<% navigation_add 'Examination Evaluation List', exam_management_Examination_evaluation_data_path %>
+
+<%# navigation_add 'Examination Evaluation', exam_management_examination_evaluation__new_path %>
+<%# navigation_add '', inventory_inventory_sales_path %>
+
+
+
+<h4 class="mg-h4"><%= t('Examination Evaluation')%></h4>
+<div class="box">
+<%= form_for :examination_evaluation_details_data ,  :url=>{:controller=>'exam_management',:action=>'examination_evaluation_create'}, :html=>{:id=>'evaluation_details_validations'} do |f| %>
+
+        <%= f.hidden_field :is_deleted ,:value=>0%>
+        <%= f.hidden_field :mg_school_id ,:value=>session[:current_user_school_id]%>
+        
+<table class="mg-tbl-margin mg-show-tbl-width">
+    <tr>
+      <td class="mg-td-width-one-third">
+      <label class="mg-label"><%= t ('examination_name') %><span class="required-field">&nbsp;*</span></label><br/>
+      <%detail_data=MgExaminationDetail.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id]).pluck(:name,:id)%>
+      <%= select_tag :mg_examination_detail_id,options_for_select(detail_data),:prompt=>"Select",:class=>"mg-text-field",:onchange=>"examinationDetailData(this.value)"%>
+      </td>
+    </tr>
+    <tr>
+      <td class="mg-td-width-one-third">
+        <label class="mg-label mg-label-text-transform-none" for="dateofPurchase"><%= t ('date_of_evaluation') %><span class="required-field">&nbsp;*</span></label><br/>
+        <%= f.text_field :date_of_evaluation ,:class=>"mg-text-field datefield"%>
+      </td>
+    </tr>
+    
+    <tr>
+    <!-- <tr>
+      <td class="mg-td-width-one-third">
+        <label class="mg-label" for="dateofPurchase"><%#= t ('amount') %><span class="required-field">&nbsp;*</span></label><br/>
+        <%#= f.text_field :amount ,:class=>"mg-text-field"%>
+      </td>
+    </tr> -->
+    
+    <tr>
+    </tr>
+</table>  
+<h4 class="mg-h4"><%= t('examination')%></h4> 
+<a id="examination_details_for_data" class="mg-label-inner-form mg-custom-form-btn" style="color: #297ACC; font-size:0.8em; position: relative;" >Add </a> <br/>
+ <div class="mg-scroll-employee-bar mg-tbl-margin">   
+
+<table class="mg-show-tbl-width mg-table-nowrap batch-tbl mg-adjust-padding">  
+  <th><%=t("sr_no.")%></th>
+  <th><%=t("examiner_name")%><span class="required-field">&nbsp;*</span></th>
+  <th><%=t("select_programme")%><span class="required-field">&nbsp;*</span></th>
+  <th><%=t("select_semester")%><span class="required-field">&nbsp;*</span></th>
+  <th><%=t("select_subject")%><span class="required-field">&nbsp;*</span></th>
+  
+  <th><%=t("college_name")%><span class="required-field">&nbsp;*</span></th>
+  <!-- <th class="mg-rm-text-trans mg-label-text-transform-none"><%#=t("academic_year")%><span class="required-field">&nbsp;*</span></th> -->
+  <th><%=t("copies")%><span class="required-field">&nbsp;*</span></th>
+  <th><%=t('action')%></th>
+  <tr class="demo-div">
+
+    <div id="finalDueFineDivId">
+      <div class="due-fine-div" id="dueFineDivId">
+        <td><span class="required-incremented-field">1</span></td>
+         <td class="mg-align-center cost-td-class">
+          <%= text_field_tag 'name[0]' ,nil,:class=>"mg-text-field-particular demo4 required-field"%>
+        </td>
+        <td class="demo34567">
+          
+           
+            <%= select_tag "mg_inventory_category_id[0]",options_for_select([]),:prompt=>"Select",:class=>"demooo demo1 mg-text-field"%>
+           
+          
+        </td>
+      
+        <td class="mg-align-center demo89012 resource-category-td-class">
+         
+            <%= select_tag "mg_inventory_item_id[0]",options_for_select([[]]) ,:prompt=>"select",:class=>"demooo demo3 mg-text-field"%>
+          
+        </td>
+        <td class="mg-align-center demo111213 resource-category-td-class">
+         
+            <%= select_tag "mg_inventory_subject_id[0]",options_for_select([[]]) ,:prompt=>"select",:class=>"demooo demo2 mg-text-field"%>
+          
+        </td>
+        <!-- <td class="mg-align-center resource-type-td-class">
+          <%#= text_field_tag 'mg_resource_type_id[]',nil,:disabled=>true,:class=>"demooo"%>
+        </td> -->
+     
+        <td class="mg-align-center cost-td-class">
+          <%= text_field_tag 'college_name[0]' ,nil,:class=>"mg-text-field-particular demo6 cost-auto-class required-field"%>
+        </td>
+        <!-- td class="mg-align-center unit-td-class">
+          <%#= text_field_tag 'no_of_copy[]' ,nil,:class=>"mg-text-field-particular demooo required-field unit-auto-class",:id=>"unit_"%>
+        </td> -->
+        <td class="mg-align-center total-td-class">
+          <%= text_field_tag 'copies[0]' ,nil,:class=>"mg-text-field-particular demo5 demooo required-field total-auto-class"%>
+        </td>
+        <td class="mg-align-center">
+          <a title="Remove" class="examination_remove-library-details mg-icon-btn" style="color: #297ACC; font-size:0.8em;"> <i class="fa fa-trash"></i></a>
+        </td>   
+      </div>
+    </div>
+  </tr>
+</table>
+</div>                
+                      
+                     
+
+<%#=f.submit "Submit" ,:class=>"mg-small-form-btn"%>
+ <a onclick="$(this).closest('form').submit()" class="mg-small-form-btn"><%=t("Submit")%></a>
+
+<%= link_to t('cancel'), :back, {:class=>"mg-small-form-btn cancel-form-dialog"} %>
+<%end%>
+</div>
+<%= render  partial: 'application/common_left_close' %>
+
+
+<script>
+$( document ).on( "change", ".unit-auto-class ", function(){ 
+var unit=$(this).val();
+ // console.log($(this).parent('td').siblings(".cost-td-class").children(".cost-auto-class").val());
+  var cost=$(this).parent('td').siblings(".cost-td-class").children(".cost-auto-class").val();
+  if (cost=="")
+  {
+    alert("First provide cost for the perticular category");
+    $(this).val("");
+  }
+  else
+  {
+    var total=cost*unit;
+  $(this).parent('td').siblings(".total-td-class").children(".total-auto-class").val(total);
+  }
+});
+
+$( document ).on( "change", ".cost-auto-class", function(){
+  $(this).parent('td').siblings(".unit-td-class").children(".unit-auto-class").val("");
+  $(this).parent('td').siblings(".total-td-class").children(".total-auto-class").val("");
+});
+
+
+
+
+
+
+
+$(document).ready(function () {
+              focusCurrentTab("examination_evaluationAID","examination_evaluationLiID");
+        
+        $("#evaluation_details_validations").validate({
+//   $(".category-validation-class").rules("add", { 
+//   required:true
+// });
+        rules: {   
+        "mg_examination_detail_id": {required: true}, 
+        "examination_evaluation_details_data[date_of_evaluation]":{required: true,dateFormat: true},
+        "name[]": {required: true}, 
+        "mg_examination_wing_id[]": {required: true},    
+        "mg_course_id[]": {required: true,number: true},
+      //  "library_purchase_details[invoice_number]": {required: true, number: true},
+        "mg_subject_id[]": {required: true},
+        "mg_inventory_category_id[]":{required: true},
+        "mg_inventory_item_id[]":{required: true},
+        "mg_inventory_subject_id[]":{required: true},
+        "college_name[]": {required: true},
+        "copies[]": {required: true, number: true, number: true},
+        
+      }
+    });
+$.validator.addClassRules("demo1", {required: true});
+$.validator.addClassRules("demo5", {required: true, number: true, min: 0});
+$.validator.addClassRules("demo3", {required: true});
+$.validator.addClassRules("demo4", {required: true});
+$.validator.addClassRules("demo2", {required: true});
+$.validator.addClassRules("demo6", {required: true});
+
+
+        dateFormatStr =  getJsDateFormat();
+
+    $('#library_purchase_details_date_of_purchase').datepicker({ changeMonth: true,
+                changeYear: true,yearRange: "-50:+0",maxDate: "0",dateFormat: dateFormatStr});
+
+$(function () {
+    $.validator.addMethod('dateFormat',
+    function (value, element) {
+      dateFormatStr =  getJsDateFormat();
+        if (this.optional(element)) {
+            return true;
+        }
+        var ok = true;
+        try {
+            $.datepicker.parseDate(dateFormatStr, value);
+        }
+        catch (err) {
+            ok = false;
+        }
+        return ok;
+    },
+      "Please enter a date in the format "+ getDateFormat(dateFormatStr) +".");
+      dateFormatStr =  getJsDateFormat();
+
+    $(".datefield").datepicker({ dateFormat: dateFormatStr, changeYear: true });
+});
+//===============category population as per lab starts===================================
+
+
+      var labID = $( ".library-purchas-new-resource-category-class" ).val();
+      
+      var apdStr = '<option value="">Choose Category</option>';
+      $(".library-purchas-new-resource-type-class").empty().append(apdStr);
+
+      if(labID > 0) {
+           var urlLink = "/library/resource_type_list/"+labID;
+           $.ajax({ 
+               url: urlLink,
+               cache: false,
+               success: function(data){
+                 // console.log();
+                  if(data.length > 0){
+                      var apdStr = '<option value="select">Select</option>';
+                     for(key in data){
+                        apdStr += '<option value="'+data[key].id+'">'+data[key].name+'</option>'
+                      }
+                    // console.log(apdStr);
+                      $(".library-purchas-new-resource-type-class").empty().append(apdStr);
+                  }
+               }
+           });
+    }else{
+      var apdStr = '<option value="">Choose Category</option>';
+      $(".library-purchas-new-resource-type-class").empty().append(apdStr);
+      // alert("Please select category");
+    }
+
+
+//===============category population as per lab starts===================================
+
+    });
+
+
+ 
+
+
+
+$(document).on('change','.library-purchas-new-resource-category-class',function(){
+      var labID = $(this).val();
+      
+      var apdStr = '<option value="">Choose Category</option>';
+      var temp =$("#inventory-purchas-news-resources-category-class").parent('.resource-category-td-class').siblings(".resource-type-td-class").children(".resource-type-class");
+      temp.empty().append(apdStr);
+      //$(".library-purchas-new-resource-type-class").empty().append(apdStr);
+
+      if(labID > 0) {
+           var urlLink = "/library/resource_type_list/"+labID;
+           $.ajax({ 
+               url: urlLink,
+               cache: false,
+               success: function(data){
+                 // console.log();
+                  if(data.length > 0){
+                      var apdStr = '<option value="select">Select</option>';
+                     for(key in data){
+                        apdStr += '<option value="'+data[key].id+'">'+data[key].name+'</option>'
+                      }
+                    // console.log(apdStr);
+                      temp.empty().append(apdStr);
+                      //var temp =$(this).parent('.resource-category-td-class').siblings(".resource-type-td-class").children(".resource-type-class");
+                  }
+               }
+           });
+    }else{
+      var apdStr = '<option value="">Choose Category</option>';
+      temp.empty().append(apdStr);
+     // var temp =$(this).parent('.resource-category-td-class').siblings(".resource-type-td-class").children(".resource-type-class");
+      // alert("Please select category");
+    }
+  });
+
+function inventorySalesData(data,that){
+  var urlLink="/inventory/inventory_sales_category_data/"
+$.ajax({ 
+               url: urlLink,
+               cache: false,
+               data:{"id":data},
+               success: function(data){
+                  console.log(that);
+                  // $(that).siblings($(".resource-category-td-class")).html(data);
+                  $(that).parents('td').siblings(".mg-align-center").children("input").val("");
+                  $(that).parents('td').siblings(".resource-category-td-class").html(data);
+                  // console.log(sib);
+                  // $(that).siblings(".resource-category-td-class").append(data);
+                }
+           });
+
+}
+
+
+
+
+$(document).on("click", "#examination_details_for_data", function(e){
+    var lastRepeatingGroup = $('.demo-div').last();
+    //alert(lastRepeatingGroup);
+    var cloned = lastRepeatingGroup.clone();
+    //console.log(cloned);
+    cloned.find('input').val('');
+    cloned.find('select').val('');
+
+
+    //console.log(cloned.find('input').val(''));
+    
+
+
+
+    cloned.insertAfter( lastRepeatingGroup );
+    //alert(temp);
+    // $('.required-incremented-field').last().text(temp);
+    // temp++;
+       $(".required-incremented-field:visible").each(function(index,element){
+          $(this).text(index+1);
+  cloned.find('.demo2').attr('id',   "mg_subject_id[" +index+"]");
+
+  cloned.find('.demo2').attr('name',   "mg_subject_id[" +index+"]");
+       
+ cloned.find('.demo3').attr('name',   "mg_course_id[" +index+"]");
+cloned.find('.demo3').attr('id',   "mg_course_id[" +index+"]");
+
+ cloned.find('.demo4').attr('name',   "name[" +index+"]");
+ cloned.find('.demo4').attr('id',   "name[" +index+"]");
+
+   cloned.find('.demo1').attr('id',   "mg_examination_wing_id[" +index+"]");
+  cloned.find('.demo1').attr('name',   "mg_examination_wing_id[" +index+"]");
+
+ cloned.find('.demo6').attr('id',   "college_name[" +index+"]");
+ cloned.find('.demo6').attr('name',   "college_name[" +index+"]");
+
+ cloned.find('.demo5').attr('id',   "copies[" +index+"]");
+  cloned.find('.demo5').attr('name',   "copies[" +index+"]");
+  
+  
+ 
+  ///cloned.find('label').text(" ");
+ 
+
+    });
+    
+    //add_validation_for_forms();
+    return false;
+
+}); 
+    
+
+
+$(document).on("click", ".examination_remove-library-details", function(e){
+   var total = $('.examination_remove-library-details').length
+   var last_count = $('.examination_remove-library-details').text();
+   //console.log(last_count);
+ //alert(last_count); 
+   if(total!=1)
+   {
+    $(this).parent('td').parent().remove();   
+    }
+   
+    //temp==$('.remove-library-details').length;
+    //temp=temp-1;
+  $(".required-incremented-field:visible").each(function(index,element){
+          $(this).text(index+1);
+
+  
+
+    });
+});
+//=========================
+function examinationDetailData(data)
+{
+
+var total = $('.examination_remove-library-details').length
+
+   var last_count = $('.examination_remove-library-details').text();
+   for(var i=1;i<total;i++)
+   {
+    var lastRepeatingGroup = $('.demo-div').last();
+    lastRepeatingGroup.remove();
+    }
+    // cloned.find('input').val('');
+    // cloned.find('select').val('');
+
+var urlLink="/exam_management/examination_details_for_program/"
+$.ajax({ 
+               url: urlLink,  
+               cache: false,
+               data:{"id":data},
+               success: function(data){
+               
+                  $(".demo34567").empty().append(data);
+
+                  //temp.append(data);
+                }
+           });
+
+}
+//document.on("change","mg_examination_wing_id",function(){
+
+
+function selectCourseForProgramDataExamination(data,that)
+{
+
+  
+  var datass=that.id
+  var demo=datass.split("_");
+var array=demo[3].split("[");
+var index=0
+if (array[1]!=undefined){
+ 
+var array1=array[1].split("]");
+ index=array1[0];
+}
+// else{
+//   array1[0]=0
+// }
+
+ var temp =$(that).parent().siblings(".demo89012");
+
+var urlLink="/exam_management/examination_details_for_course_evaluation/"
+$.ajax({ 
+               url: urlLink,  
+               cache: false,
+               data:{"id":data,"index":demo[4],"index2":index},
+               success: function(data){
+                //$(that).parents('td').siblings(".resource-category-td-class").html(data);
+                  temp.empty().append(data);
+                  //temp.append(data);
+                }
+           });
+
+
+}
+
+function selectSubjectForExamination(data,that){
+  var temp =$(that).parent().siblings(".demo111213");
+
+var urlLink="/exam_management/examination_details_for_subject/"
+$.ajax({ 
+               url: urlLink,  
+               cache: false,
+               data:{"id":data},
+               success: function(data){
+                //$(that).parents('td').siblings(".resource-category-td-class").html(data);
+                  temp.empty().append(data);
+                  //temp.append(data);
+                }
+           });
+
+}
+function selectSubjectForExamination_details_data(data,that){
+
+  var datass=that.id
+  var demo=datass.split("_");
+
+ // console.log(demo);
+// var array=demo[3].split("[");
+// var index=0
+// if (array[1]!=undefined){
+//   alert("data");
+// var array1=array[1].split("]");
+//  index=array1[0];
+// }
+
+
+var urlLink="/exam_management/examination_marks_entry_for_subject_marks_evaluation/"
+
+//var value=$("#mg_examination_detail_id").val();
+var temp =$(that).parent().siblings(".demo111213");
+
+$.ajax({ 
+               url: urlLink,  
+               cache: false,
+               data:{"id":data,"index":demo[3]},
+               success: function(data){
+                //$(that).parents('td').siblings(".resource-category-td-class").html(data);
+                  temp.empty().append(data);
+                  //window.location.reload();
+                  //temp.append(data);
+                }
+           });
+}
+
+
+</script>
+<style>
+.error{
+  float:left;
+  font-size:10px;
+}
+</style>

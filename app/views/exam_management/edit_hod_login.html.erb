@@ -1,0 +1,62 @@
+<div>
+  <%= form_for :store_manager, :url=>{:action=>"update_hod_login"},:html => {:id => 'updateInventoryStoreMannagerId' } do |f| %>
+    <%= f.hidden_field :is_deleted, :value => 0 %>
+    <%= f.hidden_field :mg_school_id, :value => session[:current_user_school_id] %>
+    <%= f.hidden_field :updated_by, :value => session[:user_id] %>
+    <%= f.hidden_field :user_type, :value => "hod_login" %>
+    <%= f.hidden_field "id", :value => @hod_login.id %>
+    <%= hidden_field_tag "change_store_username", params[:change_store_username] %>
+
+    <p>
+      <%login=MgExaminationHodLogin.find_by(:mg_user_id=>@hod_login.id)%>
+      <%logins=MgEmployeeSpecialization.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id]).pluck(:name,:id)%>
+      <label class="mg-label" style="width:140px"><%= t('specialization') %></label><br/>
+      <%= select_tag :mg_employee_specification_id,options_for_select(logins,:selected=>login.mg_employee_specialization_id),:prompt=>"Select",:class=>"mg-text-field",:disabled=>true%>
+    </p>
+
+    <p>
+      <%
+        school_subdomain= MgSchool.where(:id=>session[:current_user_school_id],:is_deleted=>0)
+        @subdomain = school_subdomain[0].subdomain
+        mguser_name = @hod_login.user_name
+        @user_name = mguser_name.sub(@subdomain,"")
+      %>
+      <%= hidden_field_tag "subdomain", @subdomain %>
+      <label class="mg-label" style="width:140px"><%= t('user_name') %><span class="required-field">&nbsp;*</span></label><br/>
+      <%=@subdomain%><%= f.text_field :user_name,:value=>@user_name,:class=>"mg-text-field" %>
+    </p>
+
+    <p class="mg-p-mgtop">
+    <%#=f.submit "submit", :id=>"libraryCreateFormSubmitID", :style=>"display:none"%>
+     <!--  <a onclick="check_unique_username();" class="mg-small-form-btn"><%=t("save")%></a> -->
+      <a onclick="$(this).closest('form').submit()" class="mg-small-form-btn"><%=t("save")%></a>
+      <%= link_to t('cancel'), :back, {:class=>"mg-small-form-btn cancel-form-dialog"} %>
+    </p>
+
+  <% end %>
+</div>
+
+<script>
+$("#updateInventoryStoreMannagerId").validate({
+  rules: {        
+    "store_manager[user_name]": {required: true}
+  }
+});
+// function check_unique_username(){
+//     var user_name=$("#store_manager_user_name").val();
+//     var urlLink = "/exam_management/unique_username";
+//     $.ajax({
+//       url: urlLink ,
+//       cache: false,
+//       data: {"user_name":user_name},
+//       success: function(data){
+//         if(data==1){
+//           alert("User Name already Exists..");
+//           $("#store_manager_user_name").val('');
+//         }else{
+//             $("#libraryCreateFormSubmitID").click();
+//         }
+//       }
+//     });
+//   }
+</script>

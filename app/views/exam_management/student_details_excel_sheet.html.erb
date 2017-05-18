@@ -1,0 +1,51 @@
+<%school=MgSchool.find(session[:current_user_school_id])%>
+
+<h4 class="mg-h4"><label class="mg-label-text-transform-none" for="date_of_birth"><%=t('student_details')%></label></h4>
+<%mg_school_id=session[:current_user_school_id]
+        @school=MgSchool.find(mg_school_id)
+        @examination_detail = MgExaminationDetail.find(params[:id])
+        @exam_plan=MgExamSeatingPlan.where(:is_deleted=>0,:mg_school_id=>mg_school_id, :mg_examination_detail_id=>params[:id])
+        %>
+
+ <div class="mg-scroll-employee-bar">
+<table border="1" class="mg-table-nowrap mg-showdata-bg mg-show-tbl-width" cellspacing="1" cellpadding="1">
+ 
+<tr>
+<th><label class="mg-label"><%=t('sr')%>.<%=t('no')%></label></th>
+       <th><label class="mg-label"> <%=t('room_no')%></label></th>
+        <th><label class="mg-label"> <%=t('date')%></label></th>
+       <th><label class="mg-label"><%=t('start_time')%></label></th>
+        <th><label class="mg-label"> <%=t('end_time')%></label></th>
+        <th><label class="mg-label"> <%=t('admission_number')%></label></th>
+        <th><label class="mg-label"><%=t('student_name')%></label></th>
+
+
+</tr>
+
+ <%count=0%>
+      <%@exam_plan.order(:mg_institute_room_id).each do |s|%>
+     
+        <%s.mg_exam_seating_plan_details.where(:is_deleted=>0, :mg_school_id=>session[:current_user_school_id]).each do |ss|%>
+         <tr>
+        <%student=MgStudent.find_by(:id=>ss.mg_student_id)%>
+<td><%=count+=1%></td>
+<td><%=MgInstituteRoom.find_by(:id=>s.try(:mg_institute_room_id)).try(:room_no)%></td>
+<td><%=s.try(:date).present? ? s.try(:date).strftime(school.try(:date_format)) : ""%></td>
+<td><%=s.try(:start_time).present? ? s.try(:start_time).strftime('%I:%M%p') : ""%></td>
+<td><%=s.try(:end_time).present? ? s.try(:end_time).strftime('%I:%M%p') : ""%></td>
+
+<td><%=student.try(:admission_number)%></td>
+<td><%=student.try(:first_name)%> <%=student.try(:last_name)%></td>
+
+</tr>
+<%end%>
+<%end%>
+
+</table>
+
+</div>
+<p class="mg-p-mgtop">
+    <button class="examination_export_excel mg-small-form-btn"><%=t("generate_excel")%></button>
+    <%= link_to t('cancel'), :back, {:class=>"mg-small-form-btn cancel-form-dialog"}%>
+    <!-- <a class="mg-small-form-btn cancel-form-dialog"><%#=t('cancel')%></a> -->
+  </p>

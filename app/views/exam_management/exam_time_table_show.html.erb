@@ -1,0 +1,45 @@
+<table border="1" class="mg-showdata-bg " cellspacing="1" cellpadding="1">
+   <tr>
+      <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"> <%= t('subject_name')%></label>
+     </td> 
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"> <%= t('date')%></label>
+     </td>
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"> <%= t('start_time')%></label>
+     </td>
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"> <%= t('end_time')%></label>
+     </td>
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"> <%= t('max_marks')%></label>
+     </td>
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"> <%= t('pass_marks')%></label>
+     </td>
+ </tr>
+ <%@time_table.each do |c|%>
+  <tr>
+      <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"> <%= MgSubject.find_by(:id=>c.try(:mg_subject_id)).subject_name%></label>
+     </td> 
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"> <%= c.date.present? ? c.try(:date).strftime(@school.date_format) : "" %></label>
+     </td>
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"> <%= c.start_time.present? ?  c.try(:start_time).strftime('%I:%M%p') : ""%></label>
+     </td>
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"> <%= c.end_time.present? ?  c.try(:start_time).strftime('%I:%M%p') : ""%></label>
+     </td>
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"> <%= c.max_marks%></label>
+     </td>
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"> <%= c.pass_marks%></label>
+     </td>
+ </tr>
+ <%end%>
+
+</table>

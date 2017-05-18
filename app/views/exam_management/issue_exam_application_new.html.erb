@@ -1,0 +1,242 @@
+  <%= render  partial: 'exam_management_left' %>
+<% navigation_add 'Exam Application Form', exam_management_issue_exam_application_path %>
+<% navigation_add 'Create Exam Application', exam_management_issue_exam_application_new_path %>
+
+<h4 class="mg-h4"><label class="mg-label-text-transform-none" for="date_of_birth"><%=t('fill_exam_application_form')%></label></h4>
+
+
+<%=form_for :exam_application_form,:url=>{:controller=>"exam_management",:action=>"issue_exam_application_create"},:html=>{:id=>"exam_application_form_validation"} do |f|%>
+
+
+        
+<table class="pop-up-inner-text mg-tbl-margin mg-show-tbl-width">
+<tr>
+      <td class="mg-td-width-one-third">
+        <label class="mg-label" for="name"><%= t ('select_exam') %><span class="required-field">&nbsp;*</span></label><br/>
+        <%examination_details=MgExaminationDetail.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id]).pluck(:name,:id)%>
+        <%= select_tag :mg_examination_detail_id,options_for_select(examination_details),:prompt=>"Select",:onchange=>"examinationDetailsData(this.value)"%>
+      </td>
+      </tr>
+    <tr>
+      <td class="mg-td-width-one-third">
+        <label class="mg-label" for="name"><%= t ('select_due_date') %><span class="required-field">&nbsp;*</span></label><br/>
+        <%= f.text_field :due_date ,:class=>"mg-text-field"%>
+      </td>
+      </tr>
+     <!--  <tr>
+        <td>
+             <label class="mg-label" for="name"><%#= t ('select_account') %><span class="required-field">&nbsp;*</span></label><br/>
+            <%#=select_tag :mg_account_id,options_for_select([]),:prompt=>"Select",:class=>"mg-text-field",:onchange=>"selectsClasssbasedonWing(this.value)"%>
+        </td>
+      </tr> -->
+      <!-- <tr>
+      <td class="mg-td-width-one-third">
+        <label class="mg-label" for="description"><%#= t ('select_academic_year') %><span class="required-field">&nbsp;*</span></label><br/>
+
+        <%#= f.select :mg_time_table_id,options_for_select(@time_table_data),:prompt=>"Select",:class=>"mg-text-field"%>
+      </td>
+    </tr> -->
+     <tr>
+      <td class="mg-td-width-one-third">
+        <label class="mg-label" for="description"><%= t ('select_programme') %><span class="required-field">&nbsp;*</span></label><br/>
+        <p id="application_ofrm_data_id">
+        <%=select_tag :mg_wing_id,options_for_select([]),:prompt=>"Select",:class=>"mg-text-field",:onchange=>"selectsClasssbasedonWing(this.value)"%>
+        </p>
+      </td>
+    </tr>
+     <tr>
+      <td class="mg-td-width-one-third">
+        <label class="mg-label" for="description"><%= t ('select_semester') %><span class="required-field">&nbsp;*</span></label><br/>
+        <p id="course_data_for_examination">
+        <%= f.select :mg_course_id ,options_for_select([]),:prompt=>"Select",:class=>"mg-text-field"%>
+        </p>
+      </td>
+    </tr>
+    <tr>
+        <td id="selected_students_for_examination">
+            
+
+        </td>
+
+    </tr>
+
+    </table>
+    <p class="mg-p-mgtop">
+    <a onclick="$(this).closest('form').submit()" class="examination_inputs_fields mg-small-form-btn"><%=t("save")%></a>
+    <%= link_to t('cancel'), :back, {:class=>"mg-small-form-btn cancel-form-dialog"}%>
+    <!-- <a class="mg-small-form-btn cancel-form-dialog"><%#=t('cancel')%></a> -->
+  </p>
+         <%#=f.submit 'Submit' ,:class=>" mg-small-form-btn",:id=>"inputs_fields"%>
+         
+<%end%>
+<%= render  partial: 'application/common_left_close' %>
+
+<script>
+
+
+$(document).ready(function(){
+ 
+    
+focusCurrentTab("issue_exam_application_formAID","issue_exam_application_formLiID");
+  $("#exam_application_form_validation").validate({
+      rules:{
+        "mg_examination_detail_id":{required:true},
+        "exam_application_form[due_date]":{required:true,dateFormat: true},
+        "mg_wing_id":{required:true},
+        "mg_batch_id":{required:true},
+        "ExaminationSelectedStudents[]":{required:true},
+        "exam_application_form[mg_course_id]":{required:true},
+        "selectedStudentsId":{required:true},
+        "receipt_no":{required:true},
+      },
+     });
+
+});
+$.validator.addClassRules("demo1", {required: true});
+$.validator.addClassRules("demo2", {required: true, number: true, min: 0});
+
+
+// $(document).on("click","#examination_inputs_fields",function(e){
+  
+// $("#ExaminationSelectedStudents option").prop('selected',true)
+ 
+// });
+dateFormatStr =  getJsDateFormat();
+
+$('#exam_application_form_due_date').datepicker({ changeMonth: true,
+                changeYear: true,yearRange: "-100:+50",maxDate: "100",dateFormat: dateFormatStr});
+
+$(document).on("change", ".demo1 .demo2", function(e){
+  // $(".demo1").each(function() {
+  //   $(this).val($(this).val()).rules("add", {
+  //         min: 0
+  //     });
+  // });
+  // $(".demo2").each(function() {
+  //   $(this).val($(this).val()).rules("add", {
+  //         min: 0
+  //     });
+  // });
+  // $("#sumiteBtnAID").click();
+  $("#examTimeTableFormID").validate();
+
+});
+
+function selectsClasssbasedonWing(data){
+
+        var urlLink = "/exam_management/select_class_based_on_wing/";
+
+    $.ajax({
+        url:urlLink,
+        cache:false,
+        data:{"id":data},
+        success: function(html){
+            
+            $('#course_data_for_examination').empty().append(html);
+
+        }
+
+
+    });
+}
+
+function selectStudentBasedOnExaminationClass(data){
+
+var urlLink = "/exam_management/select_students/";
+
+    $.ajax({
+        url:urlLink,
+        cache:false,
+        data:{"id":data},
+        success: function(html){
+
+            $('#selected_students_for_examination').empty().append(html);
+
+
+        }
+
+
+    });
+
+}
+$(function () {
+    $.validator.addMethod('dateFormat',
+    function (value, element) {
+      dateFormatStr =  getJsDateFormat();
+        if (this.optional(element)) {
+            return true;
+        }
+        var ok = true;
+        try {
+            $.datepicker.parseDate(dateFormatStr, value);
+        }
+        catch (err) {
+            ok = false;
+        }
+        return ok;
+    },
+
+
+      "Please enter a date in the format "+ getDateFormat(dateFormatStr) +".");
+      dateFormatStr =  getJsDateFormat();
+
+    $(".datefield").datepicker({ dateFormat: dateFormatStr, changeYear: true });
+});
+ 
+function examinationDetailsData(data){
+          $('#selected_students_for_examination').empty();
+          $("#mg_batch_id").val(" ");
+          
+  var urlLink="/exam_management/examination_details_for_program/"
+$.ajax({ 
+               url: urlLink,  
+               cache: false,
+               data:{"id":data},
+               success: function(data){
+               
+                  $("#application_ofrm_data_id").empty().append(data);
+
+                  //temp.append(data);
+                }
+           });
+// var urlLink = "/exam_management/select_students/";
+
+//     $.ajax({
+//         url:urlLink,
+//         cache:false,
+//         data:{"id":data},
+//         success: function(html){
+
+//             $('#selected_students_for_examination').empty().append(html);
+
+
+//         }
+
+
+//     });
+
+}
+
+function selectCourseForProgramDataExamination(data,that)
+{
+ // var temp =$(that).parent('.resource-category-td-class').siblings(".resource-type-td-class");
+
+
+var urlLink = "/exam_management/select_class_based_on_wing/";
+
+    $.ajax({
+        url:urlLink,
+        cache:false,
+        data:{"id":data},
+        success: function(html){
+            
+            $('#course_data_for_examination').empty().append(html);
+
+
+        }
+
+
+    });
+
+}
+</script>

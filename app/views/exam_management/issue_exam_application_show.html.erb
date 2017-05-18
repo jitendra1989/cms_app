@@ -1,0 +1,170 @@
+<%= render  partial: 'exam_management_left' %>
+<% navigation_add 'Exam Application Form', exam_management_issue_exam_application_path %>
+<%# navigation_add 'Create Exam Application', exam_management_issue_exam_application_new_path %>
+
+<h4 class="mg-h4"><label class="mg-label-text-transform-none" for="date_of_birth"><%=t('exam_application_form_details')%></label></h4>
+
+<table border="1" class="mg-tbl-layout mg-showdata-bg mg-show-tbl-width" cellspacing="1" cellpadding="1">
+<%
+examination_detail=MgExaminationDetail.find_by(:id=>@data.mg_examination_detail_id)
+      batch_detail=MgBatch.find_by(:id=>@data.mg_batch_id)
+      course_details=MgCourse.find_by(:id=>batch_detail.mg_course_id)
+      wing_details=MgWing.find_by(:id=>@data.mg_wing_id)
+%>
+   <tr>
+     <td class="mg-td-width-half" valign="top">
+     <label class="mg-label"> <%= t('exam')%></label>
+     </td>
+
+     <td class="mg-td-width-half mg-label-inner-form" valign="top">
+     
+     
+     <%=examination_detail.try(:name)%>
+     
+     </td>
+ </tr>
+ <tr>
+     <td class="mg-td-width-half" valign="top">
+     <label class="mg-label mg-label-text-transform-none"> <%= t('due_date')%></label>
+     </td>
+     <td class="mg-td-width-half mg-label-inner-form" valign="top">
+     <% @timeformat=MgSchool.find(session[:current_user_school_id])%>
+     
+      <%= @data.due_date.strftime(@timeformat.date_format) %>
+    
+     </td>
+ </tr>
+  <tr>
+     <td class="mg-td-width-half" valign="top">
+     <label class="mg-label"> <%= t('programme')%></label>
+     </td>
+
+     <td class="mg-td-width-half mg-label-inner-form" valign="top">
+     
+     <%=wing_details.try(:wing_name)%>
+     
+     </td>
+ </tr>
+  <tr>
+     <td class="mg-td-width-half" valign="top">
+     <label class="mg-label"> <%= t('semester_data')%></label>
+     </td>
+
+     <td class="mg-td-width-half mg-label-inner-form" valign="top">
+     
+     <%="#{course_details.course_name}-#{batch_detail.name}"%>
+     
+     </td>
+ </tr>
+ <!-- <tr>
+     <td class="mg-td-width-half" valign="top">
+     <label class="mg-label"> <%#= t('student')%></label>
+     </td>
+
+     <td class="mg-td-width-half mg-label-inner-form" valign="top">
+     <%#student_data=MgStudent.find_by(:id=>@data.mg_student_id)%>
+     <%#="#{student_data.first_name}-#{student_data.last_name}"%>
+     
+     </td>
+ </tr> -->
+ 
+ <tr>
+     <td class="mg-td-width-half" valign="top">
+     <label class="mg-label"> <%= t('total_amount')%></label>
+     </td>
+
+     <td class="mg-td-width-half mg-label-inner-form" valign="top">
+    
+     <%=@data.total_amount%>
+     
+     </td>
+ </tr>
+ 
+ 
+ 
+ </table><br>
+ <%@information=ExamApplicationFormStudent.where(:mg_exam_application_form_data_id=>@data.id,:is_deleted=>0,:mg_school_id=>session[:current_user_school_id])%>
+ 
+ <h4 class="mg-h4"><label class="mg-label-text-transform-none" for="date_of_birth"><%=t('Particulars')%></label></h4>
+
+ <div class="mg-scroll-employee-bar">
+<table border="1" class="mg-table-nowrap mg-showdata-bg mg-show-tbl-width" cellspacing="1" cellpadding="1">
+ 
+<tr>
+<th><label class="mg-label"> <%= t('particulars')%></label> </th>
+<th> <label class="mg-label"> <%= t('amount')%></label>
+
+
+</tr>
+<%@information.each do |info|%>
+<tr>
+    <td class="mg-td-width-half" valign="top">
+
+   
+  <%= info.try(:student_particulars)%>
+     
+    </td>
+
+    
+    
+
+     
+     <td class="mg-td-width-half" valign="top">
+
+     <%= info.try(:amount)%>
+
+   </td>
+
+   
+ </tr>
+
+
+
+ <%end%>
+
+</table>
+
+</div>
+<%@information=MgExamApplicationStudentReceipt.where(:mg_exam_application_form_data_id=>@data.id,:is_deleted=>0,:mg_school_id=>session[:current_user_school_id])%>
+<h4 class="mg-h4"><label class="mg-label-text-transform-none" for="date_of_birth"><%=t('Student Information')%></label></h4>
+<div class="mg-scroll-employee-bar">
+<table border="1" class="mg-table-nowrap mg-showdata-bg mg-show-tbl-width" cellspacing="1" cellpadding="1">
+<tr>
+<th>Student Name</th>
+<th>Form No</th>
+
+</tr>
+<tr>
+<%@information.each do |data|%>
+<%student_data=MgStudent.find_by(:id=>data.mg_student_id)%>
+<td><%="#{student_data.first_name} #{student_data.last_name}"%></td>
+<td><%=data.form_no%></td>
+</tr>
+<%end%>
+</table>
+</div>
+<p class="mg-p-mgtop">
+       <%= link_to t('cancel'), :back, {:class=>"mg-small-form-btn cancel-form-dialog"}%>
+</p>
+<%= render  partial: 'application/common_left_close' %>
+
+<style>
+/*.mg-show-tbl-width {
+    width: 64% !important; 
+}*/
+.table.batch-tbl th {
+    border-color: #363131;
+    border-style: solid;
+    border-width: 1px;
+    padding: 3px;
+    text-align: center;
+}
+</style>
+
+<script>
+$(document).ready(function(){
+ 
+    
+focusCurrentTab("issue_exam_application_formAID","issue_exam_application_formLiID");
+});
+</script>

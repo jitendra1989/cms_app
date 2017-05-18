@@ -1,0 +1,15 @@
+<% navigation_add t('examination_creation'), :controller=>'exam_management', :action=>'examination_creation' %>
+<%=render partial: 'exam_management_left'%>
+<h4 class="mg-h4"><%= t('exam_list') %></h4>
+
+<button class=" mg-btn-bottom-margin mg-custom-form-btn"><%= t('create_exam')%></button>
+
+
+
+<%= render  partial: 'application/common_left_close' %>
+
+<script>
+$(document).ready(function () {
+	focusCurrentTab("viewExaminationCreationAID","viewExaminationCreationLiID");
+});
+</script>

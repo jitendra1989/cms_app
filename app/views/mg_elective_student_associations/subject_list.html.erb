@@ -1,0 +1,5 @@
+<%#= form_for :mg_elective_student_association do |f|%>
+	<label class="mg-label mg-tt-width"><%= t('selectsubject')%><span class="required-field"> *</span></label>
+	<%=select_tag :subject,options_from_collection_for_select(@subjects,"id","subject_name"),:prompt=>t('select')%>
+	<%#=f.select :mg_subject_id,options_from_collection_for_select(@subjects,"id","subject_name"),:prompt=>t('select')%>
+<%#end%>

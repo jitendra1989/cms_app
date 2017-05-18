@@ -1,0 +1,45 @@
+<%#=@studentsList.inspect%>
+<%= fields_for :demo do |f|%>
+<div class="mg-financeFee-pop-up">
+<span>
+<%=select_tag :notSelected, options_for_select(@studentsList),:multiple => true,:size =>10 ,:class=>"mg-add-fee-particular"%>
+</span>
+<a id="addingdatas" class="mg-custom-form-btn mg-fee-btn">Add</a> 
+<span id="selected_students">
+
+<%=select_tag :selectedStudents,options_for_select([]),:multiple => true,:size =>10 ,:class=>"mg-add-fee-particular"%>
+</span>
+<a id="removingdata" class="mg-custom-form-btn mg-fee-btn">Remove</a><br>
+
+
+<%end%>
+
+
+
+<script>
+$(document).on("click","#addingdatas",function(e){
+
+
+
+var selectedOption=$("#notSelected option:selected").remove();
+
+$("#selectedStudents").append(selectedOption);
+
+
+  });
+
+
+$(document).on("click","#removingdata",function(e){
+
+var selectedOption=$("#selectedStudents option:selected").remove();
+
+$("#notSelected").append(selectedOption);
+
+  });
+</script>
+
+
+
+
+
+

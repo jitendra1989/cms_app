@@ -1,0 +1,136 @@
+<%@@temp=0%>
+<%if @syllabus.present?		
+	@syllabus.each do |syllabus|
+  
+  		@unit=MgSyllabusTracker.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id],:mg_timetable_id=>@timetable_id,:mg_wing_id=>@wing_id,:mg_batch_id=>@batch_id,:mg_subject_id=>@subject_id,:mg_syllabus_id=>syllabus.id).pluck(:mg_unit_id).uniq
+
+  			if @unit.present?
+  				@unit=MgUnit.where("is_deleted=? and mg_school_id=? and id IN (?)",0,session[:current_user_school_id],@unit)
+  				
+  				@unit.each do |unit|
+
+  					@topic=MgSyllabusTracker.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id],:mg_timetable_id=>@timetable_id,:mg_wing_id=>@wing_id,:mg_batch_id=>@batch_id,:mg_subject_id=>@subject_id,:mg_syllabus_id=>syllabus.id,:mg_unit_id=>unit.id).pluck(:mg_topic_id).uniq
+
+
+  					if @topic.present?
+  						@topic=MgTopic.where("is_deleted=? and mg_school_id=? and id IN (?)",0,session[:current_user_school_id],@topic)
+  						paper=MgSyllabus.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id],:id=>syllabus.id)
+  						chapter=MgUnit.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id],:id=>unit.id)
+  						%>
+
+						<h4 class="mg-h4"><%= paper[0].name%></h4>
+						<%=chapter[0].unit_name%>
+						<%@@temp=@@temp+1%>
+
+<!-- =============================================================================================== -->
+<%
+	@topic_data=MgTopic.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id],:id=>@topic[0].id)
+
+%>
+<%#if @topic_data.present?%>
+
+<div class="mg-scroll-employee-bar">
+<table border="1" class="mg-showdata-bg mg-homework-tbl" cellspacing="1" cellpadding="1">
+<tr>
+	
+	<th >
+		<label class="mg-label mg-td-width-half" valign="top" > <%= t('employee_name')%></label>
+	</th>
+	
+	<th>
+		<label class="mg-label mg-td-width-half" valign="top"> <%= t('topic_name')%></label>
+	</th>
+	<th>
+		<label class="mg-label mg-td-width-half" valign="top"> <%= t('is_project_work')%></label>
+	</th>
+	<th>
+		<label class="mg-label mg-td-width-half" valign="top"> <%= t('class_alloted (theory)')%></label>
+	</th>
+	
+	<th>
+		<label class="mg-label mg-td-width-half" valign="top"> <%= t('class_taken (theory)')%></label>
+	</th>
+	<th>
+		<label class="mg-label mg-td-width-half" valign="top"> <%= t('class_alloted (practical)')%></label>
+	</th>
+	
+	<th>
+		<label class="mg-label mg-td-width-half" valign="top"> <%= t('class_taken (practical)')%></label>
+	</th>
+	
+	
+	</tr>
+	<%
+	@topic_data.each do |topic|
+	%>
+	<tr>
+		
+
+		<td class="mg-td-width-half" valign="top">
+			<%if topic.mg_employee_id.present?%>
+      		<%employee=MgEmployee.find_by(:id=>topic.mg_employee_id)%>
+     		<%=employee.try(:first_name)%><%=" "%><%=employee.try(:last_name)%><%end%>
+		</td>
+
+
+		
+
+		<td class="mg-td-width-half" valign="top">
+			<%if topic.topic_name.present?%>
+     		<%=topic.try(:topic_name)%><%end%>
+		</td>
+
+		<td class="mg-td-width-half" valign="top">
+			<%if topic.is_project_work.present?%>
+     		<%=(topic.is_project_work) ? "Yes" : "No"%><%end%>
+		</td>
+
+		<td class="mg-td-width-half" valign="top">
+			<%if topic.time_alloted.present?%>
+     		<%=topic.try(:time_alloted)%><%end%>
+		</td>
+
+
+		
+
+		<td class="mg-td-width-half" valign="top">
+		<%topic_count=MgSyllabusTracker.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id],:mg_topic_id=>topic.id).count%>
+			<%if topic_count.present?%>
+     		<%=topic_count%><%end%>
+		</td>
+
+		<td class="mg-td-width-half" valign="top">
+			<%if topic.time_alloted_for_practical.present?%>
+     		<%=topic.try(:time_alloted_for_practical)%><%end%>
+		</td>
+
+
+		
+
+		<td class="mg-td-width-half" valign="top">
+		<%topic_count=MgSyllabusTracker.where(:class_type=>"Practical",:is_deleted=>0,:mg_school_id=>session[:current_user_school_id],:mg_topic_id=>topic.id).count%>
+			<%if topic_count.present?%>
+     		<%=topic_count%><%end%>
+		</td>
+
+
+		
+</tr>
+	<%end%>
+</table>
+</div>
+<%#end%>
+
+<br/>
+<!-- =============================================================================================== -->
+  						<%
+  					end
+
+  				end
+  			end
+	end
+end%>
+
+<%if @@temp==0%>
+<h5>No data to be shown</h5>
+	<%end%>

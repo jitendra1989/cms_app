@@ -1,0 +1,65 @@
+<table border="1" class="mg-showdata-bg " cellspacing="1" cellpadding="1">
+   <tr>
+     <td class="mg-td-width-half" valign="top">
+   		<label class="mg-label"> <%= t('name')%></label>
+   	 </td>
+   	 <td class="mg-td-width-half" valign="top">
+  		<%if @elective_group.name.present?%>
+        <%=@elective_group.name%>
+      <%else%>
+        <%="No Data"%>
+      <%end%>
+  	 </td>
+ </tr>
+
+
+ <tr>
+    <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"> <%= t('elective_type')%></label>
+    </td>
+    <td class="mg-td-width-half" valign="top">
+      <%if @elective_group.mg_elective_type_id.present?%>
+          <%=MgElectiveType.find_by(:id=>@elective_group.mg_elective_type_id).name%>
+        <%else%>
+          <%="No Data"%>
+        <%end%>
+    </td>
+ </tr>
+
+ <tr>
+    <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"> <%= t('max_weekly_class')%></label>
+    </td>
+    <td class="mg-td-width-half" valign="top">
+      <%if @elective_group.max_weekly_class.present?%>
+          <%=@elective_group.max_weekly_class%>
+        <%else%>
+          <%="No Data"%>
+        <%end%>
+    </td>
+ </tr>
+
+ <tr>
+    <td class="mg-td-width-half" valign="top">
+   		<label class="mg-label"> <%= t('description')%></label>
+   	</td>
+   	<td class="mg-td-width-half" valign="top">
+  		<%if @elective_group.description.present?%>
+      <div class="text-scroll-for-log-text-cls comments-space" style="padding: 5px 40 0 10px">
+        	<%=@elective_group.description%>
+      </div>
+      	<%else%>
+        	<%="No Data"%>
+      	<%end%>
+  	</td>
+ </tr>
+ 
+</table>
+</br>
+<a class="mg-small-form-btn cancel-form-dialog"><%=t('cancel')%></a>
+<script type="text/javascript">
+$(document).ready(function () {
+  textSeeMoreLess();
+});
+
+</script>

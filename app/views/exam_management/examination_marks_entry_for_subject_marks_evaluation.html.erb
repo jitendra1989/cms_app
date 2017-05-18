@@ -1,0 +1,5 @@
+<%#=number_field_tag 'marks_data',@timetable_data.max_marks,:readonly=>true%>
+
+<%=select_tag "mg_subject_id[#{params[:index]}]",options_for_select(@timetable_data),:prompt=>"Select",:class=>"demo2"%>
+
+<%#selectSubjectForExamination(this.value,this)%>

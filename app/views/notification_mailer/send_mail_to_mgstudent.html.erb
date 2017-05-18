@@ -1,0 +1,70 @@
+<div class="div-border-width" style="border:1px solid;">
+  <%#= image_tag("public#{@school_logo}", :style=>"width:32px; height:32px; margin-top: 10px; float: left; margin-left: 8px;")%>
+  <center style="font-weight: bold; font-size: 23px; margin-top: 31px;"><%= @school.school_name %></center>
+
+  <hr class="sending-mail-hr-cls">
+  <div class="container">
+
+    <label class="send-mail-label-cls"><%= t('studentname') %></label>:
+    <%=@student_name.try(:first_name)%>&nbsp;<%=@student_name.try(:middle_name)%>&nbsp;<%=@student_name.try(:last_name)%><br/>
+    <label class="send-mail-label-cls"><%= t('dateofbirth') %></label>:
+    <%=@student_name.try(:date_of_birth).try(:strftime, @date_format)%><br/>
+    <label class="send-mail-label-cls"><%= t('coursename') %></label>:
+    <%=@course_name.try(:course_name)%>-<%=@batch_name.name%><br/>
+    <%@count=0%>
+    <table class="table table-bordered" border="1">  
+      <tr>
+        <th><%= t('serial_no')%></th>
+        <th><%= t('subject_name') %></th>
+        <th><%= t('date') %></th>
+        <th><%= t('time') %></th>
+        <th><%= t('signature') %></th>
+      </tr>
+    <%@time_table.each do |c|%>
+      <tr>
+        <td><%=@count+=1%> </td>
+        <td><%=MgSubject.find_by(:id=>c.try(:mg_subject_id)).try(:subject_name)%></td>
+        <td><%= c.date.present? ? c.try(:date).strftime(@school.date_format) : ''%> </td>
+        <td> <%="#{ c.start_time.present? ?  c.try(:start_time).strftime('%I:%M%p') : ''}-#{ c.end_time.present? ?  c.try(:end_time).strftime('%I:%M%p') : ''}"%></td>
+        <td> </td>
+      </tr>
+    <%end%>
+    </table>
+  </div>
+</div>
+
+<style>
+  .table-bordered{
+    border: 1px solid #ddd;
+  }
+  .table{
+    margin-bottom: 20px;
+    max-width: 100%;
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+    font-size: 0.8em;
+    margin-top: 19px;
+  }
+
+  .container{
+    padding-left: 15px;
+    padding-right: 15px;
+    width: 734px;  
+  }
+  .div-border-width{
+    max-width: 95%;
+  }
+  .sending-mail-hr-cls{
+    border-top: 1px solid;
+    padding: 0px;
+    height: 1px;
+    max-width: 96%;
+    
+    margin-top: -4px;
+  }
+  .send-mail-label-cls{
+    font-weight: bold;
+  }
+  
+</style>

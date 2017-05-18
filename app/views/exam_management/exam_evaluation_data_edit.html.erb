@@ -1,0 +1,380 @@
+<%= render  partial: 'exam_management_left' %>
+<% navigation_add 'Examination Evaluation List', exam_management_Examination_evaluation_data_path %>
+
+<h4 class="mg-h4"><label class="mg-label-text-transform-none" for="date_of_birth"><%=t('Examination Evaluation')%></label></h4>
+
+
+<%=form_for :examination_evaluation_details_data,:url=>{:controller=>"exam_management",:action=>"exam_evaluation_data_update",:id=>@evaluation_data.id},:html=>{:id=>"exam_form_validation_edit"} do |f|%>
+
+
+        
+<table class="pop-up-inner-text mg-tbl-margin mg-show-tbl-width">
+<tr>
+      <td class="mg-td-width-one-third">
+        <label class="mg-label" for="name"><%= t ('select_exam') %><span class="required-field">&nbsp;*</span></label><br/>
+        <%examination_details=MgExaminationDetail.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id]).pluck(:name,:id)%>
+
+        <%= select_tag :mg_examination_detail_id,options_for_select(examination_details,:selected=>@evaluation_data.mg_examination_detail_id),:prompt=>"Select",:disabled=>true,:onchange=>"examinationDetailsData(this.value)"%>
+      </td>
+      </tr>
+    <tr>
+      <td class="mg-td-width-one-third">
+        <label class="mg-label" for="name"><%= t ('evaluation_date') %><span class="required-field">&nbsp;*</span></label><br/>
+        <%@timeformat=MgSchool.find(session[:current_user_school_id])%>
+     
+      <% due_date=@evaluation_data.date_of_evaluation.strftime(@timeformat.date_format) %>
+        <%=text_field_tag 'evaluation_date',due_date,:class=>"mg-text-field validate_date_for"%>
+      </td>
+      </tr>
+      
+
+    </table>
+    <h4 class="mg-h4"><%= t('examination')%></h4> 
+<a id="examination_details_for_data" class="mg-label-inner-form mg-custom-form-btn" style="color: #297ACC; font-size:0.8em; position: relative;" >Add </a> <br/>
+ <div class="mg-scroll-employee-bar mg-tbl-margin">   
+
+<table class="mg-show-tbl-width mg-table-nowrap batch-tbl mg-adjust-padding">  
+  <th><%=t("sr_no.")%></th>
+  <th><%=t("examiner_name")%><span class="required-field">&nbsp;*</span></th>
+  <th><%=t("select_programme")%><span class="required-field">&nbsp;*</span></th>
+  <th><%=t("select_semester")%><span class="required-field">&nbsp;*</span></th>
+  <th><%=t("select_subject")%><span class="required-field">&nbsp;*</span></th>
+  
+  <th><%=t("college_name")%><span class="required-field">&nbsp;*</span></th>
+  <!-- <th class="mg-rm-text-trans mg-label-text-transform-none"><%#=t("academic_year")%><span class="required-field">&nbsp;*</span></th> -->
+  <th><%=t("copies")%><span class="required-field">&nbsp;*</span></th>
+  <th><%=t('action')%></th>
+        <%@examination_evaluation_data.each_with_index do |details,i|%>
+
+  <tr class="demo-div">
+
+    <div id="finalDueFineDivId">
+      <div class="due-fine-div" id="dueFineDivId">
+
+  
+
+        <td><span class="required-incremented-field"><%=i+1%></span></td>
+         <td class="mg-align-center cost-td-class">
+         <%= hidden_field_tag "ids[#{i+1}]",details.id,:class=>"demo8 mg-text-field-particular required-field"%>
+          <%= text_field_tag "name[#{i+1}]" ,details.examiner_name,:class=>"demo4 mg-text-field-particular  required-field"%>
+        </td>
+        <td class="demo34567">
+          
+           <%
+           time_table_data=MgExaminationTimeTable.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id],:mg_examination_detail_id=>@evaluation_data.mg_examination_detail_id).pluck(:mg_wing_id).uniq
+
+           wing_data=MgWing.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id],:id=>time_table_data).pluck(:wing_name,:id)
+              course_data=MgCourse.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id],:mg_wing_id=>details.mg_wing_id).pluck(:course_name,:id)
+
+              subject_data=MgSubject.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id],:mg_course_id=>details.mg_course_id).pluck(:subject_name,:id)
+           %>
+            <%= select_tag "mg_examination_wing_id[#{i+1}]",options_for_select(wing_data,:selected=>details.mg_wing_id),:prompt=>"Select",:class=>"demooo demo1 mg-text-field",:onchange=>"selectCourseForProgramDataExamination(this.value,this)"%>
+           
+          
+        </td>
+      
+        <td class="mg-align-center demo89012 resource-category-td-class">
+         
+            <%= select_tag "mg_course_id[#{i+1}]",options_for_select(course_data,:selected=>details.mg_course_id) ,:prompt=>"select",:class=>"demooo demo3 demodata mg-text-field",:onchange=>"selectSubjectForExamination(this.value,this)"%>
+          
+        </td>
+        <td class="mg-align-center demo111213 resource-category-td-class">
+         
+            <%= select_tag "mg_subject_id[#{i+1}]",options_for_select(subject_data,:selected=>details.mg_subject_id) ,:prompt=>"select",:class=>"demooo demo2 demodata mg-text-field"%>
+          
+        </td>
+        <!-- <td class="mg-align-center resource-type-td-class">
+          <%#= text_field_tag 'mg_resource_type_id[]',nil,:disabled=>true,:class=>"demooo"%>
+        </td> -->
+     
+        <td class="mg-align-center cost-td-class">
+          <%= text_field_tag "college_name[#{i+1}]" ,details.try(:college_name_data),:class=>"mg-text-field-particular demo6 cost-auto-class required-field"%>
+        </td>
+        <!-- td class="mg-align-center unit-td-class">
+          <%#= text_field_tag 'no_of_copy[]' ,nil,:class=>"mg-text-field-particular demooo required-field unit-auto-class",:id=>"unit_"%>
+        </td> -->
+        <td class="mg-align-center total-td-class">
+          <%= text_field_tag "copies[#{i+1}]" ,details.copies,:class=>"mg-text-field-particular demooo demo5 required-field total-auto-class"%>
+        </td>
+        <td class="mg-align-center">
+          <a title="Remove" class="examination_remove-library-details mg-icon-btn" style="color: #297ACC; font-size:0.8em;"> <i class="fa fa-trash"></i></a>
+        </td>   
+      </div>
+    </div>
+  </tr>
+  <%end%>
+</table>
+</div>
+<p class="mg-p-mgtop">
+    <a onclick="$(this).closest('form').submit()" class="mg-small-form-btn"><%=t("save")%></a>
+    <!-- <%#= f.submit t('save') ,:class=>"mg-small-form-btn"%> -->
+    <%= link_to t('cancel'), :back, {:class=>"mg-small-form-btn cancel-form-dialog"} %>
+</p>
+         <%#=f.submit 'Submit' ,:class=>"examination_inputs_fields mg-small-form-btn",:id=>"inputs_fields"%>
+         <%#= link_to t('cancel'), :back, {:class=>"mg-small-form-btn cancel-form-dialog"}%>
+<%end%>
+<%= render  partial: 'application/common_left_close' %>
+
+<script>
+
+
+$(document).ready(function(){
+
+            focusCurrentTab("examination_evaluationAID","examination_evaluationLiID");
+
+// var urlLink = "/exam_management/select_students_edit/";
+//   var batch_data=$("#mg_batch_data_id").val();
+//   var data_id=$("#data_id_data").val();
+  
+
+//     $.ajax({
+//         url:urlLink,
+//         cache:false,
+//         data:{"id":batch_data,"data":data_id},
+//         success: function(html){
+
+//             $('#selected_students_for_examination').empty().append(html);
+
+
+
+//         }
+$("#exam_form_validation_edit").validate({
+//   $(".category-validation-class").rules("add", { 
+//   required:true
+// });
+        rules: {   
+        "mg_examination_detail_id": {required: true}, 
+        "evaluation_date":{required: true,dateFormat: true},
+        "name[]": {required: true}, 
+        "mg_examination_wing_id[]": {required: true},    
+        "mg_course_id[]": {required: true,number: true},
+      //  "library_purchase_details[invoice_number]": {required: true, number: true},
+        "mg_subject_id[]": {required: true},
+        "mg_inventory_category_id[]":{required: true},
+        "mg_inventory_item_id[]":{required: true},
+        "mg_inventory_subject_id[]":{required: true},
+        "college_name[]": {required: true},
+        "copies[]": {required: true, number: true, number: true},
+        
+      }
+    });
+
+     });
+      
+
+      $.validator.addClassRules("demo1", {required: true});
+$.validator.addClassRules("demo5", {required: true, number: true, min: 0});
+$.validator.addClassRules("demo3", {required: true});
+$.validator.addClassRules("demo4", {required: true});
+$.validator.addClassRules("demo2", {required: true});
+$.validator.addClassRules("demo6", {required: true});
+
+
+  
+
+
+dateFormatStr =  getJsDateFormat();
+
+$('.validate_date_for').datepicker({ changeMonth: true,
+                changeYear: true,yearRange: "-100:+50",maxDate: "100",dateFormat: dateFormatStr});
+
+
+
+
+$(document).on("click", "#examination_details_for_data", function(e){
+    var lastRepeatingGroup = $('.demo-div').last();
+    //alert(lastRepeatingGroup);
+    var cloned = lastRepeatingGroup.clone();
+    //console.log(cloned);
+    cloned.find('input').val('');
+    cloned.find('select').val('');
+
+    cloned.find('.demodata').empty();
+
+
+    //console.log(cloned.find('input').val(''));
+    
+
+
+
+    cloned.insertAfter( lastRepeatingGroup );
+    //alert(temp);
+    // $('.required-incremented-field').last().text(temp);
+    // temp++;
+      $(".required-incremented-field:visible").each(function(index,element){
+          $(this).text(index+1);
+ cloned.find('.demo2').attr('id',   "mg_subject_id[" +index+1+"]");
+
+  cloned.find('.demo2').attr('name',   "mg_subject_id[" +index+1+"]");
+cloned.find('.demo3').attr('id',   "mg_course_id[" +index+1+"]");
+       
+ cloned.find('.demo3').attr('name',   "mg_course_id[" +index+1+"]");
+ cloned.find('.demo4').attr('id',   "name[" +index+1+"]");
+
+ cloned.find('.demo4').attr('name',   "name[" +index+1+"]");
+
+   cloned.find('.demo1').attr('id',   "mg_examination_wing_id[" +index+1+"]");
+  cloned.find('.demo1').attr('name',   "mg_examination_wing_id[" +index+1+"]");
+
+ cloned.find('.demo6').attr('id',   "college_name[" +index+1+"]");
+ cloned.find('.demo6').attr('name',   "college_name[" +index+1+"]");
+
+ cloned.find('.demo5').attr('id',   "copies[" +index+1+"]");
+  cloned.find('.demo5').attr('name',   "copies[" +index+1+"]");
+  
+
+   cloned.find('.demo8').attr('id',   "ids[" +index+1+"]");
+  cloned.find('.demo8').attr('name',   "ids[" +index+1+"]");
+  
+    });
+    
+    //add_validation_for_forms();
+    return false;
+
+}); 
+    
+$(function () {
+    $.validator.addMethod('dateFormat',
+    function (value, element) {
+      dateFormatStr =  getJsDateFormat();
+        if (this.optional(element)) {
+            return true;
+        }
+        var ok = true;
+        try {
+            $.datepicker.parseDate(dateFormatStr, value);
+        }
+        catch (err) {
+            ok = false;
+        }
+        return ok;
+    },
+
+
+      "Please enter a date in the format "+ getDateFormat(dateFormatStr) +".");
+      dateFormatStr =  getJsDateFormat();
+
+    $(".datefield").datepicker({ dateFormat: dateFormatStr, changeYear: true });
+});
+ 
+
+$(document).on("click", ".examination_remove-library-details", function(e){
+   var total = $('.examination_remove-library-details').length
+   var last_count = $('.examination_remove-library-details').text();
+   //console.log(last_count);
+ //alert(last_count); 
+   if(total!=1)
+   {
+    $(this).parent('td').parent().remove();   
+    }
+   
+    //temp==$('.remove-library-details').length;
+    //temp=temp-1;
+  $(".required-incremented-field:visible").each(function(index,element){
+          $(this).text(index+1);
+    });
+});
+
+function examinationDetailData(data)
+{
+
+var total = $('.examination_remove-library-details').length
+
+   var last_count = $('.examination_remove-library-details').text();
+   for(var i=1;i<total;i++)
+   {
+    var lastRepeatingGroup = $('.demo-div').last();
+    lastRepeatingGroup.remove();
+    }
+   
+var urlLink="/exam_management/examination_details_for_program/"
+$.ajax({ 
+               url: urlLink,  
+               cache: false,
+               data:{"id":data},
+               success: function(data){
+               
+                  $(".demo34567").empty().append(data);
+
+                  //temp.append(data);
+                }
+           });
+
+}
+//document.on("change","mg_examination_wing_id",function(){
+
+
+function selectCourseForProgramDataExamination(data,that)
+{
+ // var temp =$(that).parent('.resource-category-td-class').siblings(".resource-type-td-class");
+ var temp =$(that).parent().siblings(".demo89012");
+var datass=that.id
+  var demo=datass.split("_");
+
+//  var demo=da/ console.log(demo);
+var array=demo[3].split("[");
+var index=0
+if (array[1]!=undefined){
+  
+  
+var array1=array[1].split("]");
+ index=array1[0];
+}
+var urlLink="/exam_management/examination_details_for_course/"
+$.ajax({ 
+               url: urlLink,  
+               cache: false,
+               data:{"id":data,"index12":demo[4],"index":index},
+               success: function(data){
+                //$(that).parents('td').siblings(".resource-category-td-class").html(data);
+                  temp.empty().append(data);
+                  //temp.append(data);
+                }
+           });
+
+
+}
+
+function selectSubjectForExamination(data,that){
+  var temp =$(that).parent().siblings(".demo111213");
+var datass=that.id
+  var demo=datass.split("_");
+
+var urlLink="/exam_management/examination_details_for_subject/"
+$.ajax({ 
+               url: urlLink,  
+               cache: false,
+               data:{"id":data,"index":demo[3]},
+               success: function(data){
+                //$(that).parents('td').siblings(".resource-category-td-class").html(data);
+                  temp.empty().append(data);
+                  //temp.append(data);
+                }
+           });
+
+}
+
+function selectSubjectForExamination_details_data(data,that){
+
+  var datass=that.id
+  console.log(datass);
+  var demo=datass.split("_");
+
+var urlLink="/exam_management/examination_marks_entry_for_subject_marks_evaluation/"
+
+//var value=$("#mg_examination_detail_id").val();
+var temp =$(that).parent().siblings(".demo111213");
+
+$.ajax({ 
+               url: urlLink,  
+               cache: false,
+               data:{"id":data,"index":demo[3]},
+               success: function(data){
+                //$(that).parents('td').siblings(".resource-category-td-class").html(data);
+                  temp.empty().append(data);
+                  //window.location.reload();
+                  //temp.append(data);
+                }
+           });
+}
+</script>

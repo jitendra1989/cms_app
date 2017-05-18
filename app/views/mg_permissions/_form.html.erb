@@ -1,0 +1,26 @@
+<!-- Sec --> 
+<%= form_for(@mg_permission) do |f| %>
+  <% if @mg_permission.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@mg_permission.errors.count, "error") %> prohibited this mg_permission from being saved:</h2>
+
+      <ul>
+      <% @mg_permission.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :mg_model_id ,:class=>"mg-label"%><br>
+    <%= f.collection_select(:mg_model_id,MgModel.all, :id, :model_name,{:include_blank => 'Please Select'})%>
+  </div>
+  <div class="field">
+    <%= f.label :mg_action_id ,:class=>"mg-label"%><br>
+     <%= f.collection_select(:mg_action_id,MgAction.all, :id, :action_name,{:include_blank => 'Please Select'})%>
+  </div><br>
+  <div class="actions">
+    <%= f.submit "Submit" ,:class=>"mg-small-form-btn"%>
+  </div>
+<% end %>

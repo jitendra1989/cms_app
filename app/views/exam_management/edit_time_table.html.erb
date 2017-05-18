@@ -1,0 +1,224 @@
+<% navigation_add t('time_table'), :controller=>'exam_management' , :action=>'time_table'%>
+<% navigation_add t('edit'), :controller=>'exam_management' , :action=>'edit_time_table', :id=>@time_table.id%>
+
+<%=render partial: 'exam_management_left'%>
+<h4 class="mg-h4"><%= t('edit_time_table') %></h4>
+
+ <%= form_for :time_table, :url=>create_time_table_path, method: :post, :html => {
+                            :id => 'examTimeTableFormID' } do |f| %>
+   
+
+  <p>
+   <label class="mg-label mg-tt-width "><%=t('select_exam') %><span class="required-field"> *</span></label>
+    <%= f.collection_select(:mg_examination_detail_id, MgExaminationDetail.where(:is_deleted=>0, :mg_school_id=>session[:current_user_school_id]), :id, :name,{:include_blank => 'Select'} ,:class=>"mg-select-btn reday-on-edit-cls" , :onchange=>"selectExamShow(this.value, 'mg_examination_detail_id');")  %>
+  </p>
+   <p>
+   <label class="mg-label mg-tt-width "><%=t('start_date') %></label>
+   <%=text_field_tag :start_date ,nil,:class=>"mg-select-btn", :readonly=>true%>
+   </p>
+   <p>
+   <label class="mg-label mg-tt-width "><%=t('end_date') %></label>
+   <%=text_field_tag :end_date ,nil,:class=>"mg-select-btn", :readonly=>true%>
+  </p>
+
+
+  <p>
+   <label class="mg-label mg-tt-width "><%=t('select_academic_year') %></label>
+   <%=select_tag :mg_time_table_id ,options_for_select(@acadimic_year),:prompt=>t('select'),:class=>"mg-select-btn"%>
+  </p>
+   <p>
+   <label class="mg-label mg-tt-width "><%=t('select_exam_type') %></label>
+   <%=select_tag :mg_exam_type_id ,options_for_select(@exam_types),:prompt=>t('select'),:class=>"mg-select-btn"%>
+  </p>
+
+  <p>
+   <label class="mg-label mg-tt-width "><%=t('select_examination_category') %></label>
+   <%=select_tag :mg_examination_category_id ,options_for_select(@examination_category),:prompt=>t('select'),:class=>"mg-select-btn"%>
+  </p>
+
+   <p>
+   <label class="mg-label mg-tt-width "><%=t('select_program_category') %></label>
+   <%=select_tag :mg_examination_program_category_id ,options_for_select(@examination_program_category),:prompt=>t('select'),:class=>"mg-select-btn"%>
+  </p>
+ <!-- <p>
+   <label class="mg-label mg-tt-width "><%#=t('select_programme') %></label>
+   <%#=select_tag :mg_wing_id ,options_for_select(@wing),:prompt=>t('select'),:class=>"mg-select-btn"%>
+  </p>
+ <p>
+   <label class="mg-label mg-tt-width "><%#=t('select_semester') %></label>
+   <%#=select_tag :mg_course_id ,options_for_select(@course),:prompt=>t('select'),:class=>"mg-select-btn"%>
+  </p> -->
+
+
+<p>
+    <%#= f.label :mg_wing_id, t('select_wing') ,:class=>"mg-label"%>
+     <label class="mg-label mg-tt-width "><%=t('select_wing') %><span class="required-field"> *</span></label>
+    <%= f.collection_select(:mg_wing_id, MgWing.where(:is_deleted=>0, :mg_school_id=>session[:current_user_school_id]), :id, :wing_name,{:include_blank => 'Select'} ,:class=>"mg-select-btn", :onchange=>"selectSectionExamManagementTimeTable(this);" )  %>
+  </p> 
+
+ <!--   <p>
+    <%#= f.label :mg_course_id, t('select_semester') ,:class=>"mg-label"%>
+    <label class="mg-label mg-tt-width "><%#=t('select_semester') %><span class="required-field"> *</span></label>
+    <%#= f.collection_select(:mg_course_id, MgCourse.where(:is_deleted=>0, :mg_school_id=>session[:current_user_school_id]), :id, :course_name,{:include_blank => 'Select'} ,:class=>"mg-select-btn" , :onchange=>"selectSectionExamManagement(this, 'mg_course_id');")  %>
+       <%#= f.collection_select(:mg_course_id,[], :id, :course_name,{:include_blank => 'Select'} ,:class=>"mg-select-btn" , :onchange=>"subject_list(this.value);")  %>
+  </p>
+ -->
+  <p>
+    <label class="mg-label mg-tt-width "><%=t('select_semester') %><span class="required-field"> *</span></label>
+       <%= f.collection_select(:mg_batch_id,[], :id, :course_batch_name,{:include_blank => 'Select'} ,:class=>"mg-select-btn" , :onchange=>"subject_list(this.value);")  %>
+  </p> 
+
+<div class="mg-scroll-page-inner mg-tbl-border" id="subjectListDIVID"></div>
+<!--   <p>
+  	<button type="button" onclick="cloneFunction();">+</button>
+  </p> -->
+  
+  <%= f.hidden_field :mg_examination_detail_id, :value => @time_table.mg_examination_detail_id%>
+  <%= f.hidden_field :mg_school_id, :value => session[:current_user_school_id]%>
+
+  <%= f.hidden_field :created_by, :value => session[:user_id]%> 
+  <%= f.hidden_field :updated_by, :value => session[:user_id]%> 
+
+  <%= f.hidden_field :is_deleted, :value => 0%> 
+
+  <p class="mg-p-mgtop">
+    <a onclick="$(this).closest('form').submit()" class="mg-small-form-btn" id="sumiteBtnAID"><%=t("save")%></a>
+    <!-- <a class="mg-small-form-btn cancel-form-dialog"><%#=t('cancel')%></a> -->
+     <%= link_to t('cancel'), :back, {:class=>"mg-small-form-btn cancel-form-dialog"} %>
+  </p>
+<% end %>
+
+
+
+<%= render  partial: 'application/common_left_close' %>
+<script>
+
+function cloneFunction(){
+ var $tr    = $("#time_table_id").next('.clone-spt-tr-cls');
+    var $clone = $tr.clone();
+    $clone.find(':text').val('');
+    $tr.after($clone);
+}
+function cloneFunctionRemove(that){
+	console.log($('.clone-spt-tr-cls').length);
+	if($('.clone-spt-tr-cls').length>1){
+		$(that).parent("td").parent("tr").remove();
+	}
+	
+}
+// $("input.tr_clone_add").live('click', function() {
+//     var $tr    = $(this).closest('.tr_clone');
+//     var $clone = $tr.clone();
+//     $clone.find(':text').val('');
+//     $tr.after($clone);
+// });
+$(document).ready(function () {
+	$("#mg_time_table_id").attr("disabled", true);
+	$("#mg_exam_type_id").attr("disabled", true);
+	$("#mg_examination_category_id").attr("disabled", true);
+	$("#mg_examination_program_category_id").attr("disabled", true);
+	$("#mg_wing_id").attr("disabled", true);
+	$("#mg_course_id").attr("disabled", true);
+  $(".reday-on-edit-cls").attr("disabled", true);
+
+  
+  // alert($("#time_table_mg_examination_detail_id").val());
+  selectExamShow($("#time_table_mg_examination_detail_id").val(), "mg_examination_detail_id")
+
+	var dateFormatStr =  getJsDateFormat();
+	   $(function () {
+    $.validator.addMethod('dateFormat',
+    function (value, element) {
+      dateFormatStr =  getJsDateFormat();
+        if (this.optional(element)) {
+            return true;
+        }
+        var ok = true;
+        try {
+            $.datepicker.parseDate(dateFormatStr, value);
+        }
+        catch (err) {
+            ok = false;
+        }
+        return ok;
+    },
+      "Please enter a date in the format "+ getDateFormat(dateFormatStr) +".");
+      dateFormatStr =  getJsDateFormat();
+
+    $(".datefield").datepicker({ dateFormat: dateFormatStr, changeYear: true });
+});
+
+	   	$("#examTimeTableFormID").validate({
+
+			rules: {
+			"time_table[mg_examination_detail_id]": {required: true},
+      "time_table[mg_course_id]": {required: true},
+      "time_table[mg_wing_id]": {required: true}
+
+			// ".max_marks_text_field_cls": {required: true}
+			}
+		});
+
+
+     // $.validator.addClassRules("max_marks_text_field_cls", { required: true, number: true, min: 0 });
+     // $.validator.addClassRules("pass_marks_text_field_cls", { required: true , number: true, min: 0 });
+     // $.validator.addClassRules("date_picker_text_field_cls", { required: true, dateFormat: true });
+     // $.validator.addClassRules("start_time_picker_text_field_cls", { required: true });
+     // $.validator.addClassRules("end_time_picker_text_field_cls", { required: true });
+
+
+    $("#examTimeTableFormID").validate();
+	focusCurrentTab("timeTableAID","timeTableLiID");
+});
+
+function selectSectionExamManagementEdit(that, str_select){
+      $("#subjectListDIVID").html('');
+     $("#time_table_mg_course_id").val('');
+
+  console.log(that.value+"   ~>  "+str_select);
+  var urlLink = "/exam_management/multi_skilled_worker";
+  var json_object={mg_wing_id: "time_table_mg_course_id", mg_course_id: "examination_mg_batch_id"};
+
+   if("mg_wing_id"==str_select || "mg_course_id"==str_select){
+          $.ajax({
+              url: urlLink ,
+              cache: false,
+              data:{ 
+                selecter: str_select,
+                id: that.value
+              },
+              success: function(data){
+                  console.log("data   ~>  "+data.main);
+                  $("#"+json_object[str_select]).html(data.main);
+              }
+          });
+   }
+
+  
+}
+
+function selectSectionExamManagementTimeTable(that){
+  var mg_examination_detail_id=$("#time_table_mg_examination_detail_id").val();
+  if(mg_examination_detail_id){
+    var urlLink = "/exam_management/multi_skilled_worker";
+          $.ajax({
+              url: urlLink ,
+              cache: false,
+              data:{ 
+                selecter: "mg_wing_id_mg_batch_id",
+                mg_wing_id: that.value,
+                mg_examination_detail_id: mg_examination_detail_id
+              },
+              success: function(data){
+                  console.log("data   ~>  "+data.main);
+                  $("#time_table_mg_batch_id").html(data.main);
+              }
+          });
+  }else{
+    alert("Please select examination");
+    $("#time_table_mg_wing_id").val('');
+  }
+}
+
+</script>
+

@@ -1,0 +1,152 @@
+<%= render partial: 'curriculum/curr_left' %>
+<% navigation_add t('course_type'), :controller=>'curriculum' ,:action=> 'course' %>
+
+
+<h4 class="mg-h4"><%= t('course_type_list') %></h4>
+
+<button class="new-add-course mg-btn-bottom-margin mg-custom-form-btn"><%= t('add_course_type')%></button>
+<!-- <%#= button_to 'Add Lab Inventory', {:controller => "laboratory", :action => "unit_new" } ,:class=>"mg-custom-form-btn"%> -->
+<div class="mg_pagination">
+<%if @curriculum_type.length>0%>
+<table  class="batch-tbl mg-tbl-margin">   <!-- border="2" --> 
+  <tr class="subject-table-header">
+    <!-- <th>Subject Id</th> -->
+    <th><%= t('course_type') %></th>
+    <th><%= t('description') %></th>
+    <th><%= t('actions') %></th>
+  </tr>
+ 
+  <% @curriculum_type.each do |course| %>
+    <tr>
+      <td><%= course.course_name %></td>
+      <td class="mg-desc-text-justify"><%= truncate(course.description ,length: 25) %></td>
+      <td>
+      	<button title="Show" id="<%=raw course.id %>-showlabunitBTNID" class="show-curr-course-btn mg-icon-btn"><i class="fa fa-eye"></i></button>
+
+        <button title="Edit" id="<%=raw course.id %>-editlabunitBTNID" class="edit-curr-course-btn mg-icon-btn"><i class="fa fa-pencil-square-o"></i></button>
+
+      <!-- <%#= link_to "<i class=\"fa fa-pencil-square-o\"></i>".html_safe, {:controller => "laboratory", :action => "unit_edit",:id =>lab.id} , :method=>'post' ,:title=>"Edit" ,:class=>"mg-icon-btn"%> -->
+        <button title="Delete" id="<%=raw course.id %>-editlabinventoryBTNID" class="delete-curr-course-btn mg-icon-btn"><i class="fa fa-trash"></i></button>
+
+      <!-- <%#= link_to "<i class=\"fa fa-trash\"></i>".html_safe, {:controller => "laboratory", :action => "unit_delete",:id =>lab.id }, :method=>'post' ,:title=>"Delete" ,:class=>"mg-icon-btn",data: { confirm: 'Are you sure to delete?' } %> -->
+
+      </td>
+
+    </tr>
+  <% end %>
+</table>
+<br/>
+ <div class="pagination-align" style="position: relative; bottom: 10px;">
+              <%= will_paginate @curriculum_type, :container => false %>
+           </div>
+<%else%>
+<h5>No course type is created </h5>
+<%end%>
+</div>
+<div id="showCurrCourseDIVID"></div>
+<div id="addCurrCourseDIVID"></div>
+<div id="editCurrCourseDIVID"></div>
+
+
+
+<%= render  partial: 'application/common_left_close' %>
+
+<script>
+$( document ).ready(function() {
+            focusCurrentTab("view_curriculum_course_typeAID","syllabusCourseTypeSystemLiID");
+          //focusStudentHeaderBox();
+});
+
+
+
+
+
+
+$(document).on("click", ".edit-curr-course-btn", function(e){
+        var myID =$(this).attr('id');
+        var Id=myID.split("-");
+        var urlLink = "/curriculum/course_edit/"+Id[0];
+        $.ajax({
+            url: urlLink ,
+            cache: false,
+            success: function(html){
+                  $('#editCurrCourseDIVID').dialog({
+                    modal: true,
+                    minHeight: 'auto',
+                    width: '290px',
+                    title: "Edit Course Type",
+                    open: function () {
+                        
+                        $(this).html(html);
+                    }
+                }); 
+               
+            }
+        });
+});
+
+$(document).on("click", ".show-curr-course-btn", function(e){
+        var myID =$(this).attr('id');
+        var Id=myID.split("-");
+        var urlLink = "/curriculum/course_show/"+Id[0];
+        $.ajax({
+            url: urlLink ,
+            cache: false,
+            success: function(html){
+                  $('#showCurrCourseDIVID').dialog({
+                    modal: true,
+                    minHeight: 'auto',
+                    width: 'auto',
+                    title: "Show Course Type",
+                    open: function () {
+                        
+                        $(this).html(html);
+                    }
+                }); 
+               
+            }
+        });
+});
+$(document).on("click", ".new-add-course", function(e){
+        var urlLink = "/curriculum/course_new";
+        $.ajax({
+            url: urlLink ,
+            cache: false,
+            success: function(html){
+                  $('#addCurrCourseDIVID').dialog({
+                    modal: true,
+                    minHeight: 'auto',
+                    width: '290px',
+                    title: "Add Course Type",
+                    open: function () {
+                        
+                        $(this).html(html);
+                    }
+                });                
+            }
+        });
+});
+</script>
+<style>
+.table-max-width{
+  border-color: #363131;
+  border-style: solid;
+  border-width: 1px;
+  padding: 12px !important;
+  text-align: center;
+}
+
+.table-batch-tbl {
+   /* font-family: verdana,arial,sans-serif;*/
+    font-size:13px;
+    color:#363131;
+    border-width: 1px;
+    border-color:  #363131;
+    border-collapse: collapse;
+    padding: 12px ;
+    font-size: 0.8em;
+    width: 303px !important;
+    /* margin-left: 2px; */
+}
+</style>
+

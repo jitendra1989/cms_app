@@ -1,0 +1,244 @@
+<%= form_for :question_paper_data, :url=>{:controller=>"dashboards",:action=>"employee_question_paper_update",:id=>@question_paper_data.id},:html=>{:id=>"employee_question_pape"} do |f|%> 
+ 
+<%= hidden_field_tag 'question_paper_id',@question_paper_data.id%>
+<%= hidden_field_tag 'course_data',@question_paper_data.mg_course_id%>
+<%if params[:data]=="demo"%>
+<%= hidden_field_tag 'data',"demo"%>
+<%end%>
+     <p>
+     <%= f.label :select_academic_year ,:class=>"mg-label"%><span class="required-field"> *</span><br>
+     <%@time_table_data=MgTimeTable.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id]).pluck(:name,:id)%>
+     <div>
+        <%= f.select :mg_time_table_id,options_for_select(@time_table_data,:selected=>@question_paper_data.mg_time_table_id),:prompt=>"Select",:class=>"mg-text-field"%>
+     </div>
+
+      </p>
+      <p>
+        <%= f.label :select_program ,:class=>"mg-label"%><span class="required-field"> *</span><br>
+        <%@wing_data=MgWing.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id]).pluck(:wing_name,:id)%>
+        <div>
+        <%= select_tag 'mg_wing_id',options_for_select(@wing_data,:selected=>@question_paper_data.mg_wing_id),:prompt=>"Select",:class=>"mg-text-field",:onchange=>"selectClassfromWing(this.value)"%>
+        </div>
+      </p>
+
+
+       <p>
+      <%= f.label :select_Semester ,:class=>"mg-label"%><span class="required-field"> *</span><br>
+       <div id="exam_management_class">
+        <%= f.select :mg_course_id,options_for_select([]),:prompt=>"Select",:class=>"mg-text-field"%>
+        </div>
+      </p>
+
+      <%= f.label :select_subject ,:class=>"mg-label"%><span class="required-field"> *</span><br>
+        <div id="exam_management_subject">
+        <%= f.select :mg_subject_id,options_for_select([]),:prompt=>"Select",:class=>"mg-text-field"%>
+        </div>
+      </p>
+ <p>
+     
+        <label class="mg-label"><%=t('file')%></label>
+      <% document_data=MgDocumentManagement.where(:mg_employee_question_paper_id=>@question_paper_data.id)
+%>
+<%=hidden_field_tag 'no_of_data',document_data.size%>
+<%document_data.each_with_index do |user,i|%>
+                    
+                      <li data-index="<%= i %>" class="mg-custom-labels">
+                      <div delete-index="<%= i %>">
+                          <label class="mg-file-clr mg-label-inner-form"><%= user.file_file_name %></label>
+                          
+                         <a class="deletes-operation1_datass mg-icon-btn" style="cursor: pointer; text-decoration: none; color: #363131; font-size: 0.85em;" id="<%=user.id %>" title="Delete"><i class="fa fa-trash"></i></a>
+                         </div>
+                         <%#= link_to_if document_data.try(:file).url,'<i class="fa fa-download"></i>'.html_safe,document_data.try(:file).url,:class=>"mg-icon-btn mg-download-icon-font",:title=>"Download" %>
+                      </li>
+                     
+                   <%end%>
+         <%#= document_data.file_file_name %>
+         <%#= link_to_if document_data.try(:file).url,'<i class="fa fa-download"></i>'.html_safe,document_data.try(:file).url,:class=>"mg-icon-btn mg-download-icon-font",:title=>"Download" %>
+    
+ </p>
+
+<p>
+    <%= f.label :upload_file,:class=>"mg-label"%><br>
+    <%= f.file_field :file   %>
+  </p>
+
+
+
+
+
+<p class="mg-p-mgtop">
+    <!-- <a onclick="$(this).closest('form').submit()" class="mg-small-form-btn"><%#=t("save")%></a> -->
+     <a class="submit_button_data_question_paper mg-small-form-btn"><%=t("save")%></a>
+     <%= f.submit t('save') ,:class=>"submit_button_data_for mg-small-form-btn",:style=>"display:none"%>
+    <%= link_to t('cancel'), :back, {:class=>"mg-small-form-btn cancel-form-dialog"} %>
+</p>
+<%end%>
+
+<script>
+$(document).ready(function () {
+$("#employee_question_pape").validate({
+//   $(".category-validation-class").rules("add", { 
+//   required:true
+// });
+        rules: {   
+        "question_paper_data[mg_time_table_id]": {required: true}, 
+        "mg_wing_id":{required: true},
+        "mg_course_id": {required: true}, 
+        "mg_subject_id": {required: true},    
+        "question_paper_data[mg_course_id]": {required: true},
+        "question_paper_data[mg_subject_id]": {required: true},
+      }
+    });
+});
+$(document).on("click",".submit_button_data_question_paper",function(){
+      var data=$("#no_of_data").val();
+    
+      if (Number(data)>0){
+     
+
+       $(".submit_button_data_for").click();
+      }
+      else
+      {
+        var data123=$("#question_paper_data_file").val();
+         
+        if (data123==""){
+          alert("Please Upload File")
+        }
+        else{
+          $(".submit_button_data_for").click();
+        }
+      }
+
+});
+
+$(document).ready(function(){
+  var imp_id=$("#question_paper_id").val();
+  
+  var data=$("#mg_wing_id").val();
+var urlLink="/dashboards/exam_management_select_class"
+                 
+
+$.ajax({
+                url: urlLink ,
+                cache: false,
+                data:{"id":data,"impo_id":imp_id},
+                success: function(html){
+                 
+                      $('#exam_management_class').empty();
+                      $('#exam_management_class').append(html);
+
+                }
+            });
+
+  var urlLink="/dashboards/exam_management_select_subject"
+var data1=$("#course_data").val();
+                 
+$.ajax({
+                url: urlLink ,
+                cache: false,
+                data:{"id":data1,"impos_ids":imp_id},
+                success: function(html){
+                 
+                      $('#exam_management_subject').empty();
+                      $('#exam_management_subject').append(html);
+
+                }
+            });
+
+
+});
+
+
+
+
+function selectsectionfromclass(data){
+var urlLink="/dashboards/exam_management_select_section"
+
+
+$.ajax({
+                url: urlLink ,
+                cache: false,
+                data:{"id":data},
+                success: function(html){
+                      $('#exam_management_section').empty();
+                      $('#exam_management_section').append(html);
+
+                }
+            });
+
+
+}
+  
+function selectClassfromWing(data){
+
+var urlLink="/dashboards/exam_management_select_class"
+
+$.ajax({
+                url: urlLink ,
+                cache: false,
+                data:{"id":data},
+                success: function(html){
+                      $('#exam_management_class').empty();
+                      $('#exam_management_class').append(html);
+
+                }
+            });
+
+}
+function selectSubjectfromclass(data){
+var urlLink="/dashboards/exam_management_select_subject"
+var data1=$("#mg_course_id").val();
+$.ajax({
+                url: urlLink ,
+                cache: false,
+                data:{"id":data1},
+                success: function(html){
+                      $('#exam_management_subject').empty();
+                      $('#exam_management_subject').append(html);
+
+                }
+            });
+
+
+}
+$(document).on("click", ".deletes-operation1_datass", function(e){
+    var myID =$(this).attr('id');
+    //alert(myID)
+
+    var splString = myID.split("-");
+    var retVal = confirm("Are you sure to delete?");
+    if(retVal){
+       // alert(retVal);
+         var urlLink = "/dashboards/delete_record_data/"
+
+          $.ajax({
+            url: urlLink ,
+            cache: false,
+            data:{"documentID":myID},
+
+            success: function(html){
+              alert("SuccessFully Deleted");
+              console.log("$(this)");
+           console.log($("#"+myID));
+           console.log("$(this).parent()");
+           console.log($("#"+myID).parent().parent());
+           $("#"+myID).parent().parent().hide();
+
+               
+
+                           
+            }
+        });
+
+
+
+
+
+    }else{
+       // alert(retVal);     
+       return false;
+    }
+   
+});   
+</script>

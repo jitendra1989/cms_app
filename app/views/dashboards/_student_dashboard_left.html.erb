@@ -1,0 +1,181 @@
+<!-- Sec -->  <section id="userBodyContentBox" style="margin: 0 auto;">
+    <table width=100% border="0" cellspacing="0" cellpadding="0"  style="margin-bottom: 0px;">
+        <tr>
+            <td valign="top" class="userBodyContentBox1">
+                <aside class="userMenuBoxLeft" style="width: 210px;">
+                    <ul class="menuListHome">
+
+                        <li class="myAccountMenu">Student </li>
+                        <li id="viewStudentDashboardLiID">
+
+                            <a class="Student-Profile" href="/dashboards/student/" id="viewStudentDashboard" >
+                                <div class="setMenu"><i class="fa fa-bar-chart">&nbsp;&nbsp;</i>My dashboard<!-- <i class="fa fa-caret-left" style="color:#d5d8d9; position: absolute; right: 0px; transform: translateY(33%);"></i> -->
+                                </div>
+                            </a>
+                        </li>
+
+
+                        <li id="ViewStudentAttendenceLiID">
+                            <a class="Student-attendence" href="/attendances/student/" id="ViewStudentAttendence">
+                                <div class="setMenu"><i class="fa fa-shield">&nbsp;&nbsp;</i>Attendances<!-- <i class="fa fa-caret-left" style="color:#d5d8d9; position: absolute; right: 0px; transform: translateY(33%);"></i> -->
+                                </div>
+                            </a>
+                        </li>
+
+                        <li id="showPrincipleNotificationLiID">
+
+                            <a class="Principle-Profile" href="/notifications/show_notification/" id="showPrincipleNotification">
+                                <div class="setMenu"><i class="fa fa-weixin">&nbsp;&nbsp;</i>Show Notification<!-- <i class="fa fa-caret-left" style="color:#d5d8d9; position: absolute; right: 0px; transform: translateY(33%);"></i> -->
+                                </div>
+                            </a>
+                        </li>
+
+                        <!-- <li id="ViewStudentNewsLiID">
+                            <a class="Student-News" href="/dashboards/student_news/" id="ViewStudentNews">
+                                <div class="setMenu"><i class="fa fa-newspaper-o">&nbsp;&nbsp;</i>News --><!-- <i class="fa fa-caret-left" style="color:#d5d8d9; position: absolute; right: 0px; transform: translateY(33%);"></i> -->
+                                <!-- </div>
+                            </a>
+                        </li> -->
+
+                        <li id="viewStudentEventsLiID">
+
+                            <a class="Student-Events" href="/dashboards/student_event/" id="viewStudentEvents" >
+                                <div class="setMenu"><i class="fa fa-tasks">&nbsp;&nbsp;</i>Events<!-- <i class="fa fa-caret-left" style="color:#d5d8d9; position: absolute; right: 0px; transform: translateY(33%);"></i> -->
+                                </div>
+                            </a>
+                        </li>
+<!--                         <li id="ViewStudentMessagesLiID">
+                            <a class="Student-Messages" href="#" id="ViewStudentMessages">
+                                <div class="setMenu"><i class="fa fa-envelope">&nbsp;&nbsp;</i>Messages<i class="fa fa-caret-left" style="color:#d5d8d9; position: absolute; right: 0px; transform: translateY(33%);"></i>
+                                </div>
+                            </a>
+                        </li> -->
+
+                        <li id="viewStudentProfileLiID">
+
+                            <a class="Student-Profile" href="/dashboards/show/" id="viewStudentProfile" >
+                                <div class="setMenu"><i class="fa fa-user">&nbsp;&nbsp;</i>Profile<!-- <i class="fa fa-caret-left" style="color:#d5d8d9; position: absolute; right: 0px; transform: translateY(33%);"></i> -->
+                                </div>
+                            </a>
+                        </li>
+
+                        <li id="viewStudentTimetableLiID">
+
+                            <a class="Student-Profile" href="/dashboards/student_timetable/" id="viewStudentTimetableAID" >
+                                <div class="setMenu"><i class="fa fa-table">&nbsp;&nbsp;</i>View Timetable</div>
+                            </a>
+                        </li>
+                         <li id="viewStudentDocumentsLiID">
+
+                            <a class="Student-Documents" href="/document_managements/files_for_student/" id="viewStudentDocumentsAID" >
+                                <div class="setMenu"><i class="fa fa-file-text-o">&nbsp;&nbsp;</i>Documents</div>
+                            </a>
+                        </li>
+                         <!-- <li id="ReservebooksLiID">
+
+                            <a class="Student-Documents" href="/dashboards/reserve_books_index/" id="ReservebooksAID" >
+                                <div class="setMenu"><i class="fa fa-file-text-o">&nbsp;&nbsp;</i>Reserve Books</div>
+                            </a>
+                        </li> -->
+                        <li id="searchReservebooksLiID">
+
+                            <a class="Student-Documents" href="/dashboards/search_reserve_books_index/" id="searchReservebooksAID" >
+                                <div class="setMenu"><i class="fa fa-search">&nbsp;&nbsp;</i>Search Reserved Books</div>
+                            </a>
+                        </li>
+
+                        <%
+                            user=MgUser.find(session[:user_id])
+                            student_mg_user_id=user.id
+                            @id=MgStudent.where(:mg_user_id=>student_mg_user_id,:mg_school_id=>session[:current_user_school_id],:is_deleted=>0).pluck(:id)
+                        %>
+                        <li id="viewResultLiID">
+                            <a class="guardian-profile" href='/cce_reports/make_scholastic_report/<%=@id[0]%>' id="viewResultAID">
+                                <div class="setMenu"><i class="fa fa-file-text">&nbsp;&nbsp;</i>Result<!-- <i class="fa fa-caret-left" style="color:#d5d8d9; position: absolute; right: 0px; transform: translateY(33%);"></i> -->
+                                </div>
+                            </a>
+                        </li>
+                        <li id="viewStudentHomeworkLiID">
+
+                            <a class="Student-Homework" href="/homework/student/" id="viewStudentHomework" >
+                                <div class="setMenu"><i class="fa fa-book">&nbsp;&nbsp;</i>Homework<!-- <i class="fa fa-caret-left" style="color:#d5d8d9; position: absolute; right: 0px; transform: translateY(33%);"></i> -->
+                                </div>
+                            </a>
+                        </li>
+						<li id="viewStudentAlbumLiID">
+                            <a class="guardian-profile" href='/albums/student_albums/' id="viewStudentAlbumAID">
+                                <div class="setMenu"><i class="fa fa-picture-o">&nbsp;&nbsp;</i><%=t('albums')%><!-- <i class="fa fa-caret-left" style="color:#d5d8d9; position: absolute; right: 0px; transform: translateY(33%);"></i> -->
+                                </div>
+                            </a>
+                        </li>
+
+						<li id="viewStudentCurriculumLiID">
+
+                            <a class="Student-Curriculum" href="/curriculum/student_search/" id="viewStudentCurriculum" >
+                                <div class="setMenu"><i class="fa fa-cogs">&nbsp;&nbsp;</i>Curriculum<!-- <i class="fa fa-caret-left" style="color:#d5d8d9; position: absolute; right: 0px; transform: translateY(33%);"></i> -->
+                                </div>
+                            </a>
+                        </li>
+
+                        <!-- <li id="search_alumniLiID">
+                            <a class="Student-Curriculum" href="/alumni/search_alumni_data/" id="search_alumniAid" >
+                                <div class="setMenu"><i class="fa fa-search">&nbsp;&nbsp;</i><%#=t('search_alumni')%>
+                                </div>
+                            </a>
+                        </li> -->
+
+                        <li id="alumniSearchAIDLId">
+                                <a class="menuItemsActivities" href="/alumni/alumni_search" id="alumniSearchAID">
+                                    <div class="setMenu"><i class="fa fa-search">&nbsp;&nbsp;</i><%=t('alumni_search')%>
+                                    </div>
+                                </a>
+                        </li>
+
+
+
+                         <li id="job_applyLiID">
+                          <a class="menuItemsActivities" href="/placements/job_apply" id="job_applyAID">
+                            <div class="setMenu"><i class="fa fa-list">&nbsp;&nbsp;</i><%="Campus Placement/Job Apply"%>
+                            </div>
+                          </a>
+                        </li>
+
+                         <li id="placementsTrainigOfferedLiID">
+                            <a class="Principle-Profile" href="/placements/training_offered_student" id="placementsTrainigOfferedAID">
+                                <div class="setMenu"><i class="fa fa-graduation-cap">&nbsp;&nbsp;</i><%=t('training')%>
+                                </div>
+                            </a>
+                        </li>
+                        <li id="trainingRequestsLiID">
+                            <a class="menuItemsActivities" href="/placements/placement_training_required_index" id="trainingRequestsAID">
+                                <div class="setMenu"><i class="fa fa-arrow-circle-o-up">&nbsp;&nbsp;</i><%=t('training_required')%>
+                                </div>
+                            </a>
+                        </li>
+
+                        <!-- <li id="studentPlacementsLiID">
+                          <a class="menuItemsActivities" href="/placements/placement_student_detail_index" id="studentPlacementsAID">
+                            <div class="setMenu"><i class="fa fa-graduation-cap">&nbsp;&nbsp;</i><%#=t("job_profile")%>
+                            </div>
+                          </a>
+                        </li> -->
+
+                        <li id="studentUploadResumeLiID">
+                          <a class="menuItemsActivities" href="/placements/student_uploaded_resume_index" id="studentUploadResumeAID">
+                            <div class="setMenu"><i class="fa fa-upload">&nbsp;&nbsp;</i><%=t("upload_CV")%>
+                            </div>
+                          </a>
+                        </li>
+
+                        <li id="InterviewStatusLiID">
+                          <a class="menuItemsActivities" href="/placements/interview_status_for_student" id="InterviewStatusAID">
+                            <div class="setMenu"><i class="fa fa-link">&nbsp;&nbsp;</i><%="Interview Status"%>
+                            </div>
+                          </a>
+                        </li>
+                        
+                    </ul>    
+
+                </aside>
+            </td>
+            <td  valign="top" id="manageStudentCategoryID" class="mg-table-td-main-2">

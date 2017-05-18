@@ -1,0 +1,87 @@
+<div class="main_header clearfix">
+<p><center><font size="4"><%= link_to "Mindcom Forum", {:action=>"index"},:id=>"Color_data55" %></font></center></p>
+
+<%= link_to 'Sign UP', {:action=>"registration_sign_up"} ,:class=>"mg-small-form-btn123"%>
+
+</div><br/>
+<div class="wrapper_class post1">
+<h2>Sign In</h2>
+
+<%=form_for :resource_name, url:{:action=>"registration_sign_in_create"} do |f| %>
+ 
+
+  <div class="field">
+    <%= f.label :email %><br/>
+    <%= f.email_field :email, autofocus: true %>
+  </div>
+
+  <div class="field">
+    <%= f.label :password %><br/>
+    
+    
+    <%=f.password_field :encrypted_password, autocomplete: "off" %>
+  </div>
+
+  <div class="field">
+    <%#= f.label :password_confirmation %><br/>
+    <%#=f.password_field :password_confirmation, autocomplete: "off" %>
+  </div>
+
+  <div class="actions">
+    <%= f.submit "Sign in", :class=>"mg-small-form-btn"%>
+   <!--  <a id="accept-class-forum-password-recheck" class="mg-custom-labels mg-small-form-btn"><%#=t("save")%></a> -->
+        <%#= link_to t('cancel'), :back, {:class=>"mg-small-form-btn cancel-form-dialog"} %>
+       <%#=f.submit t("save") ,:id=>"submitalumnipasswordForuumBtnId" , :style=>"display:none"%>
+  </div>
+<% end %>
+</div>
+
+<script>
+$(document).on("change","#resource_name_email",function(e){
+ var urlLink = "/alumni/email_search_data";
+        $("#newpassworddivId") .text("");
+var email=$(this).val();
+  
+    
+  $.ajax({
+            url: urlLink,
+            cache: false,
+            data: {"email":email},
+            success: function(html){  
+                       if (parseInt(html.name)>0){
+
+                        $("#email_id_data").text("");
+                          //alert(html.data);
+                       }
+                       else{
+                        // alert(html.data);
+                         //alert("Wrong password")
+                          $("#email_id_data").text("Email Id does not match with Registered email Id");
+                          $("#resource_name_email").val("");
+                       }
+                    }
+                }); 
+               
+   
+
+});
+$(document).on("click","#accept-class-forum-password-recheck",function(e){
+   
+   
+    var temp=$("#resource_name_encrypted_password").val();
+    var tempo=$("#password_confirmation").val();
+    if(temp==tempo)
+    {
+       $("#email_id_data_password").text("");
+      
+       $("#submitalumnipasswordForuumBtnId").click();
+    }
+    else
+    {
+      $("#password_confirmation").val("");
+      $("#email_id_data_password").text("Password doesn't matches..");
+    }
+  
+    
+  });
+</script>

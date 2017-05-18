@@ -1,0 +1,149 @@
+<%#= render partial: 'curriculum/curr_left' %>
+
+<%= render  partial: 'master_settings/master_settings_left.html' %>
+<% navigation_add 'Institute Specialization','/employees/specialization' %>
+
+<h4 class="mg-h4"><%= t('manage_specialization') %></h4>
+
+<button class="new-add-specialization mg-btn-bottom-margin mg-custom-form-btn"><%= t('add_specialization')%></button>
+<!-- <%#= button_to 'Add Lab Inventory', {:controller => "laboratory", :action => "unit_new" } ,:class=>"mg-custom-form-btn"%> -->
+<div class="mg_pagination">
+<%if @specialization.length>0%>
+<table  class="batch-tbl mg-tbl-margin">   <!-- border="2" --> 
+  <tr class="subject-table-header">
+    <!-- <th>Subject Id</th> -->
+    <th><%= t('specialization_name') %></th>
+    <th><%= t('description') %></th>
+    <th style="width: 69px;"><%= t('actions') %></th>
+  </tr>
+ 
+  <% @specialization.each do |spec| %>
+    <tr>
+      <td><%= spec.name %></td>
+      <td class="mg-desc-text-justify"><%= truncate(spec.description.to_s, :length => 25, :separator => ' ') %></td>
+      <td>
+     <!--  	<button title="Show" id="<%#=raw lab.id %>-showlabunitBTNID" class="show-lab-unit-btn mg-icon-btn"><i class="fa fa-eye"></i></button> -->
+
+        <button title="Edit" id="<%=raw spec.id %>-editlabunitBTNID" class="edit-emp-spec-btn mg-icon-btn"><i class="fa fa-pencil-square-o"></i></button>
+
+      <!-- <%#= link_to "<i class=\"fa fa-pencil-square-o\"></i>".html_safe, {:controller => "laboratory", :action => "unit_edit",:id =>lab.id} , :method=>'post' ,:title=>"Edit" ,:class=>"mg-icon-btn"%> -->
+        <button title="Delete" id="<%=raw spec.id %>-editlabinventoryBTNID" class="delete-emp-spec-btn mg-icon-btn"><i class="fa fa-trash"></i></button>
+
+      <!-- <%#= link_to "<i class=\"fa fa-trash\"></i>".html_safe, {:controller => "laboratory", :action => "unit_delete",:id =>lab.id }, :method=>'post' ,:title=>"Delete" ,:class=>"mg-icon-btn",data: { confirm: 'Are you sure to delete?' } %> -->
+
+      </td>
+
+    </tr>
+  <% end %>
+</table>
+<br/>
+ <div class="pagination-align" style="position: relative; bottom: 10px;">
+              <%= will_paginate @specialization, :container => false %>
+           </div>
+<%else%>
+<h5>No Specialization is created </h5>
+<%end%>
+</div>
+<div id="showCurrGradeDIVID"></div>
+<div id="addEmpSpecializationDIVID"></div>
+<div id="editEmpSpecializationDIVID"></div>
+
+
+
+<%= render  partial: 'application/common_left_close' %>
+
+<script>
+$( document ).ready(function() {
+            focusCurrentTab("employeeSpecializationFieldsAID","manageEmployeeSpecializationiID");
+            focusMasterSettings();
+});
+
+
+$(document).on("click", ".edit-emp-spec-btn", function(e){
+        var myID =$(this).attr('id');
+        var Id=myID.split("-");
+        var urlLink = "/employees/specialization_edit/"+Id[0];
+        $.ajax({
+            url: urlLink ,
+            cache: false,
+            success: function(html){
+                  $('#editEmpSpecializationDIVID').dialog({
+                    modal: true,
+                    minHeight: 'auto',
+                    width: '290px',
+                    title: "Edit Specialization",
+                    open: function () {
+                        
+                        $(this).html(html);
+                    }
+                }); 
+               
+            }
+        });
+});
+
+// $(document).on("click", ".show-lab-unit-btn", function(e){
+//         var myID =$(this).attr('id');
+//         var Id=myID.split("-");
+//         var urlLink = "/curriculum/grade_show/"+Id[0];
+//         $.ajax({
+//             url: urlLink ,
+//             cache: false,
+//             success: function(html){
+//                   $('#showCurrGradeDIVID').dialog({
+//                     modal: true,
+//                     minHeight: 'auto',
+//                     minWidth: 'auto',
+//                     title: "Show Grade",
+//                     open: function () {
+                        
+//                         $(this).html(html);
+//                     }
+//                 }); 
+               
+//             }
+//         });
+// });
+$(document).on("click", ".new-add-specialization", function(e){
+        var urlLink = "/employees/specialization_new";
+        $.ajax({
+            url: urlLink ,
+            cache: false,
+            success: function(html){
+                  $('#addEmpSpecializationDIVID').dialog({
+                    modal: true,
+                    minHeight: 'auto',
+                    width: '290px',
+                    title: "Add Specialization",
+                    open: function () {
+                        
+                        $(this).html(html);
+                    }
+                });                
+            }
+        });
+});
+</script>
+<style>
+.table-max-width{
+  border-color: #363131;
+  border-style: solid;
+  border-width: 1px;
+  padding: 12px !important;
+  text-align: center;
+}
+
+.table-batch-tbl {
+   /* font-family: verdana,arial,sans-serif;*/
+    font-size:13px;
+    color:#363131;
+    border-width: 1px;
+    border-color:  #363131;
+    border-collapse: collapse;
+    padding: 12px ;
+    font-size: 0.8em;
+    width: 303px !important;
+    /* margin-left: 2px; */
+}
+</style>
+

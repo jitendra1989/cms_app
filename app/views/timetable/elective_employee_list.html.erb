@@ -1,0 +1,51 @@
+
+<table width="100%" cellspacing="0" cellpadding="0" border="0" style="margin-bottom: 0px;" class="mg-employee-cls-table ">
+  <% count=-1 %>
+  <% @elective_subject.each do |f|%>
+    <%count=count+1%>
+    <% @id = f.id%>    
+    <% @mg_employee_id = MgEmployeeSubject.where(:mg_subject_id=>@id,:is_deleted=>0,:mg_school_id=>session[:current_user_school_id]).pluck(:mg_employee_id) %>
+     
+    <% array = []%>
+    <%if @mg_employee_id.present? %>
+      <% for i in 0...@mg_employee_id.size %>           
+        <% @time_table_entry=MgTimeTableEntry.where(:mg_employee_id=>@mg_employee_id[i],:mg_class_timings_id=>@mg_class_timings_id, :mg_weekday_id=>@weekday_id_list, :is_deleted=>0, :mg_timetable_id=>@mg_time_table_id,:mg_school_id=>session[:current_user_school_id]) %>
+
+        <%if !@time_table_entry.present? %>
+          <% array.push(@mg_employee_id[i]) %>            
+        <%end%>          
+      <%end%>
+    <%end%>
+    <% @array_id= array  %>
+    <tr class="mg-timetable-tr-border-nil mg-employee-cls-row" style="height: 55px;">
+      <td class="mg-timetable-td-padding-nil mg-employee-cls" style="padding: 0px; border: 0px;">
+        <% @mg_employee = MgEmployee.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id]).where("id IN(?)",@array_id).pluck(:first_name,:id) %>
+        <%=select_tag 'elective_subject_teacher[]', options_for_select(@mg_employee),:prompt=>t('select'),:onchange=>"subjectTeachersFunction(this.value,this,#{count})",:class=>"mg-inside-tbl-width eteacher employee-cls#{count}"%>  
+      </td>
+    </tr>    
+  <% end %>
+</table>  
+
+<script>
+
+  function subjectTeachersFunction(eid,that,count){    
+   
+    var arr=[];
+    $(that).parents(".mg-employee-cls-table").find(".mg-employee-cls").children(".eteacher").each(function(){
+        var a=$(this).val();   
+        arr.push(a);
+      }); 
+    
+    for(var i=0;i<arr.length;i++)
+    {
+      if(i!=count){
+        if(arr[i]==eid){
+          console.log($(that).parents(".mg-employee-cls").children(".employee-cls"+count));
+          alert("Faculty Already selected please select other");          
+          $(that).parents(".mg-employee-cls-table").find(".mg-employee-cls").children(".employee-cls"+count).val('');
+          return false;           
+        }        
+      }
+    }  
+  }
+</script>

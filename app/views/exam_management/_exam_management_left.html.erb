@@ -1,0 +1,213 @@
+<!-- Sec --><section id="userBodyContentBox" >
+    <table width=100% border="0" cellspacing="0" cellpadding="0">
+        <tr>
+            <td valign="top" class="userBodyContentBox1">
+                <div class="userMenuBoxLeft" style="width: 210px;">
+                    <ul class="menuListHome">
+                     <%=hidden_field_tag "user_type",session[:user_type]%>
+                     <%if session[:user_type]=="admin" || session[:user_type]=="principal"%>
+                        <li class="myAccountMenu"><%=t('about_exam')%></li>
+                      <!--   <div class="mg-left-sub-menu-title"> -->
+                             <li id="viewExamTypeLiID">
+                                <a class="menuItemsActivities" href="/exam_management" id="viewExamTypeAID">
+                                    <div class="setMenu"><i class="fa fa-bars">&nbsp;&nbsp;</i><%=t('exam_type')%>
+                                    </div>
+                                </a>
+                            </li>
+                            <li id="viewExaminationCategoryLiID">
+                                <a class="menuItemsActivities" href="/exam_management/examination_category" id="viewExaminationCategoryAID">
+                                    <div class="setMenu"><i class="fa fa-sitemap">&nbsp;&nbsp;</i><%=t('examination_category')%>
+                                    </div>
+                                </a>
+                            </li>
+                            
+                            <li id="category_of_programLiID">
+                                <a class="menuItemsActivities" href="/exam_management/program_category_data/" id="category_of_programAID">
+                                    <div class="setMenu"><i class="fa fa-bars">&nbsp;&nbsp;</i><label class="mg-label-text-transform-none" for="category_of_program"><%=t('programme_type')%>
+                                   </label></div>
+                                </a>
+                            </li>
+                             <li id="viewExaminationCreationLiID">
+                                <a class="menuItemsActivities" href="/exam_management/examination" id="viewExaminationCreationAID">
+                                    <div class="setMenu"><i class="fa fa-calendar">&nbsp;&nbsp;</i><%=t('examination_schedule')%>
+                                    </div>
+                                </a>
+                            </li>
+
+                            <li id="examination_gradesLiID">
+                                <a class="menuItemsActivities" href="/exam_management/examination_grades" id="examination_gradesAID">
+                                    <div class="setMenu"><i class="fa fa-bar-chart">&nbsp;&nbsp;</i><%=t('examination_grades')%>
+                                    </div>
+                                </a>
+                            </li>
+                            
+                           <li id="examination_feeLiID">
+                                <a class="menuItemsActivities" href="/exam_management/exam_fee_category/" id="examination_feeAID">
+                                    <div class="setMenu"><i class="fa fa-credit-card-alt">&nbsp;&nbsp;</i><label class="mg-label-text-transform-none" for="examination_controller"><%=t('exam_fee')%>
+                                   </label></div>
+                                </a>
+                            </li>
+                            <li id="examination_fee_scheduleLiID">
+                                <a class="menuItemsActivities" href="/exam_management/examination_fee_schedule/" id="examination_fee_scheduleAID">
+                                    <div class="setMenu"><i class="fa fa-calendar-check-o">&nbsp;&nbsp;</i><label class="mg-label-text-transform-none" for="examination_controller"><%=t('exam_fee_schedule')%>
+                                   </label></div>
+                                </a>
+                            </li> 
+                       <!--  </div> -->
+                        <!-- <li class="myAccountMenu mg-toggle-plus mg-rm-text-trans"><%#=t('controller_of_examination')%></li>
+                        <div class="mg-left-sub-menu-title">
+                            
+                        </div> -->
+                        <%end%> 
+                        <%if session[:user_type]=="hod_login"%>
+                        <li class="myAccountMenu"><%=t('about_exam')%></li>
+                        <!-- <div class="mg-left-sub-menu-title"> -->
+                        
+                        <li id="assignInvigilatorsLiID">
+                                <a class="menuItemsActivities" href="/exam_management/invigilators/" id="assignInvigilatorsAID">
+                                    <div class="setMenu"><i class="fa fa-sitemap">&nbsp;&nbsp;</i><label class="mg-label-text-transform-none" for="examination_controller"><%=t('assign_invigilators')%>
+                                   </label></div>
+                                </a>
+                            </li>
+                        <!-- <li id="timeTableSeatingPlanLiID">
+                            <a class="menuItemsActivities" href="/seating_plan/" id="timeTableSeatingPlanAID">
+                                <div class="setMenu"><i class="fa fa-cubes">&nbsp;&nbsp;</i><label class="mg-label-text-transform-none" for="examination_controller"><%#=t('seating_plan')%>
+                               </label></div>
+                            </a>
+                        </li> -->
+                        <li id="login_informationLiID">
+                            <a class="menuItemsActivities" href="/exam_management/login_information" id="login_informationAID">
+                                <div class="setMenu"><i class="fa fa-cubes">&nbsp;&nbsp;</i><label class="mg-label-text-transform-none" for="examination_controller"><%=t('login_information')%>
+                               </label></div>
+                            </a>
+                        </li>
+                        <li id="subjectSpecializationLiID">
+                            <a class="menuItemsActivities" href="/subject_specialization" id="subjectSpecializationAID">
+                                <div class="setMenu"><i class="fa fa-cubes">&nbsp;&nbsp;</i><label class="mg-label-text-transform-none" for="examination_controller"><%=t('subject_specialization')%>
+                               </label></div>
+                            </a>
+                        </li>
+                        <%#empl_hod_count=MgEmployee.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id],:mg_user_id=>session[:user_id],:is_hod=>true).count%>
+                        <%#if empl_hod_count>0%>
+                        <li id="hod_question_paper_listLiID">
+                            <a class="Employee-HOD-Syllabus-Tracker-Department-Report" href="/dashboards/hod_question_paper/" id="hod_question_paper_listAID">
+                                <div class="setMenu"><i class="fa fa-cube">&nbsp;&nbsp;</i><%=t("question_paper_list")%><!-- <i class="fa fa-caret-left" style="color:#d5d8d9; position: absolute; right: 0px; transform: translateY(33%);"></i> -->
+                                </div>
+                            </a>
+                        </li>
+
+                         <li id="employee_question_paperLiID">
+                            <a class="menuItemsActivities" href="/dashboards/employee_question_paper_hod" id="employee_question_paperAID">
+                                <div class="setMenu"><i class="fa fa-book">&nbsp;&nbsp;</i><%=t('upload_question_paper')%><!-- <i class="fa fa-caret-left" style="color:#d5d8d9; position: absolute; right: 0px; transform: translateY(33%);"></i> -->
+                                </div>
+                            </a>
+                        </li>
+                        <%#end%>
+                       <!--  </div> -->
+                        <%end%>
+                        <%if session[:user_type]=="examination_controller"%>
+                        <li class="myAccountMenu mg-toggle-plus"><%=t('about_exam')%></li>
+                        <div class="mg-left-sub-menu-title">
+                        <li id="invigilatorsDetailsLiID">
+                                <a class="menuItemsActivities" href="/exam_management/invigilation_details/" id="invigilatorsDetailsAID">
+                                    <div class="setMenu"><i class="fa fa-user">&nbsp;&nbsp;</i><label class="mg-label-text-transform-none" for="examination_controller"><%=t('invigilation_details')%>
+                                   </label></div>
+                                </a>
+                            </li>
+                           
+                            <li id="timeTableLiID">
+                                <a class="menuItemsActivities" href="/exam_management/time_table/" id="timeTableAID">
+                                    <div class="setMenu"><i class="fa fa-calendar-times-o">&nbsp;&nbsp;</i><label class="mg-label-text-transform-none" for="examination_controller"><%=t('time_table')%>
+                                   </label></div>
+                                </a>
+                            </li>
+                            <li id="timeTableSeatingPlanLiID">
+                            <a class="menuItemsActivities" href="/seating_plan/" id="timeTableSeatingPlanAID">
+                                <div class="setMenu"><i class="fa fa-cubes">&nbsp;&nbsp;</i><label class="mg-label-text-transform-none" for="examination_controller"><%=t('seating_plan')%>
+                               </label></div>
+                            </a>
+                        </li>
+                            <li id="timeTableExcelLiID">
+                                <a class="menuItemsActivities" href="/exam_management/excel/" id="timeTableExcelAID">
+                                    <div class="setMenu"><i class="fa fa-file-excel-o">&nbsp;&nbsp;</i><label class="mg-label-text-transform-none" for="examination_controller"><%=t('generate_excel')%>
+                                   </label></div>
+                                </a>
+                            </li>
+                            <li id="issue_exam_application_formLiID">
+                                <a class="menuItemsActivities" href="/exam_management/issue_exam_application/" id="issue_exam_application_formAID">
+                                    <div class="setMenu"><i class="fa fa-pencil-square-o">&nbsp;&nbsp;</i><%=t('fill_exam_application_form')%>
+                                  </div>
+                                </a>
+                            </li>
+                            <li id="examination_evaluationLiID">
+                                <a class="menuItemsActivities" href="/exam_management/Examination_evaluation_data/" id="examination_evaluationAID">
+                                    <div class="setMenu"><i class="fa fa-sitemap">&nbsp;&nbsp;</i><%=t('examination_evaluation')%>
+                                  </div>
+                                </a>
+                            </li>
+                            <li id="examination_marks_sheet_detailsLiID">
+                                <a class="menuItemsActivities" href="/exam_management/examination_marks_sheet_details/" id="examination_marks_sheet_detailsAID">
+                                    <div class="setMenu"><i class="fa fa-area-chart">&nbsp;&nbsp;</i><%=t('answer_sheet_marks_details ')%>
+                                  </div>
+                                </a>
+                            </li>
+                            <li id="timeTableExaminationNotificationLiID">
+                                <a class="menuItemsActivities" href="/exam_notification/" id="timeTableExaminationNotificationAID">
+                                    <div class="setMenu"><i class="fa fa-comment">&nbsp;&nbsp;</i><label class="mg-label-text-transform-none" for="examination_controller"><%=t('exam_notification')%>
+                                   </label></div>
+                                </a>
+                            </li>
+                        <li id="ExaminationHallTicketLiID">
+                            <a class="menuItemsActivities" href="/exam_management/exam_hall_ticket" id="ExaminationHallTicketLAID">
+                                <div class="setMenu"><i class="fa fa-file-text">&nbsp;&nbsp;</i><%=t('examination_hall_ticket')%>
+                                </div>
+                            </a>
+                        </li>   
+                        <li id="change_credentialLiID">
+                            <a class="menuItemsActivities" href="/exam_management/change_credential" id="change_credentialAID">
+                                <div class="setMenu"><i class="fa fa-unlock">&nbsp;&nbsp;</i><%=t('change_password')%>
+                                </div>
+                            </a>
+                        </li>  
+                         <li id="subjectSpecializationDetailsLiID">
+                            <a class="menuItemsActivities" href="/subject_specialization_details" id="subjectSpecializationDetailsAID">
+                                <div class="setMenu"><i class="fa fa-cubes">&nbsp;&nbsp;</i><label class="mg-label-text-transform-none" for="examination_controller"><%=t('subject_specialization')%>
+                               </label></div>
+                            </a>
+                        </li>
+                         <li id="controller_question_paper_listLiID">
+                            <a class="Employee-HOD-Syllabus-Tracker-Department-Report" href="/dashboards/controller_question_paper/" id="controller_question_paper_listAID">
+                                <div class="setMenu"><i class="fa fa-cube">&nbsp;&nbsp;</i><%=t("question_paper_list")%><!-- <i class="fa fa-caret-left" style="color:#d5d8d9; position: absolute; right: 0px; transform: translateY(33%);"></i> -->
+                                </div>
+                            </a>
+                        </li>
+                        </div>
+                        <li class="myAccountMenu mg-toggle-plus"><%=t('reports')%></li>
+                        <div class="mg-left-sub-menu-title">
+                            
+                         <li id="generate_exam_reportLiID">
+                            <a class="menuItemsActivities" href="/exam_management/generate_exam_report" id="generate_exam_reportAID">
+                                <div class="setMenu"><i class="fa fa-file-text-o">&nbsp;&nbsp;</i><%=t('generate_report')%>
+                                </div>
+                            </a>
+                        </li>
+                        
+                        </div>
+                        <%end%>
+                    </ul>
+                </div>
+            </td>
+            <td  valign="top" id="manageAdminCategoryID" class="mg-table-td-main-2">
+              
+<%=render partial: 'layouts/messages'%>
+<script>
+$( document ).ready(function() {
+    var user_type=$("#user_type").val();
+    if (user_type!="admin"){
+        collapseLeftMenu();
+    }
+    // focusheaderBox("EXAM_MANAGEMENT");
+    focusExaminationHeaderBox ();
+});
+</script>
+

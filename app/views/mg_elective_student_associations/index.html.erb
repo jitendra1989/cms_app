@@ -1,0 +1,76 @@
+<% navigation_add 'Elective Student Association', mg_elective_student_associations_path %>
+<%=render partial:"subjects/subject_left"%>
+<h4 class="mg-h4"><%= t('elective_student_asso') %></h4>
+<%= form_for :mg_elective_student_association, url: mg_elective_student_associations_path,:html => {:id => 'electiveStudentAssocFormId', :class => 'elm_class',:style => 'elm_style' } do |f| %>
+	<%= f.hidden_field :mg_school_id, :value=> session[:current_user_school_id]%>
+	<%= f.hidden_field :is_deleted, :value=>0%>
+	<%= f.hidden_field :created_by, :value=>session[:user_id]%>
+	<%= f.hidden_field :updated_by, :value=>session[:user_id]%>
+
+
+	<p>
+		<label class="mg-label mg-tt-width "><%= t('select_semester')%><span class="required-field"> *</span></label>
+		<%=f.collection_select(:mg_batch_id,MgBatch.where(:is_deleted => '0', :mg_school_id=>session[:current_user_school_id]), :id, :course_batch_name,{:include_blank => t("select")},onchange: "section_change(this.value)")%>
+  	</p>
+  	<%=hidden_field_tag 'section_id'%>
+  	<p>
+		<label class="mg-label mg-tt-width "><%= t('select')%> <%= t('elective_group')%><span class="required-field"> *</span></label>
+		<%= f.collection_select(:mg_elective_group_id,MgElectiveGroup.where(:is_deleted => '0', :mg_school_id=>session[:current_user_school_id]), :id, :name,{:include_blank => t("select")},:onchange=>"elective_group_change(this.value)")%>
+  	</p>
+  	<p id="subjectPID">
+		<label class="mg-label mg-tt-width "><%= t('selectsubject')%><span class="required-field"> *</span></label>
+		<%=select_tag :subject,options_for_select([]),:prompt=>t('select')%>
+		<%#=f.select :mg_subject_id,options_for_select([]),:prompt=>t('select')%>
+  	</p>
+  	<%=f.hidden_field :mg_subject_id%>
+
+  	<div id="studentListDivID">
+    </div>
+    <p>
+        <%#=f.submit 'Submit' ,:class=>"mg-small-form-btn",:id=>"student_selected_list"%>
+        <a  class="mg-small-form-btn" id="student_selected_list" ><%=t("save")%></a>
+        <%= link_to t('cancel'), mg_elective_student_associations_path, {:class=>"mg-small-form-btn cancel-form-dialog"}%>
+    </p>
+<%end%>
+<%=render partial:"common_left_close"%>
+
+
+<script>
+$(document).ready(function(){
+	focusCurrentTab("electiveStudentAssoAID","electiveStudentAssoLiID");
+    focusSubject();
+
+    $("#electiveStudentAssocFormId").validate({
+      rules:{
+        "mg_elective_student_association[mg_batch_id]":{required:true},
+        "mg_elective_student_association[mg_elective_group_id]":{required:true,number:true},
+        "mg_elective_student_association[mg_subject_id]":{required:true},
+        "subject":{required:true},
+        "selectedStudents[]":{required:true}
+      }
+	});
+});
+
+$(document).on("change","#subject",function(){
+	var section_id=$("#mg_elective_student_association_mg_batch_id").val();
+	var elective_group_id=$("#mg_elective_student_association_mg_elective_group_id").val();
+	var subject_id=$(this).val();
+	$("#mg_elective_student_association_mg_subject_id").val(subject_id);
+	$.ajax({
+		url:"/mg_elective_student_associations/show",
+		data:{"batch_id":section_id,"mg_elective_group_id":elective_group_id,"mg_subject_id":subject_id},
+		success:function(html){
+			$("#studentListDivID").html(html);
+		},
+		error:function(){
+			alert("inside error");
+		}
+	});
+});
+
+$(document).on("click","#student_selected_list",function(e){
+	$("#selectedStudents option").prop('selected',true);
+	$(this).closest('form').submit();
+});
+
+</script>

@@ -1,0 +1,51 @@
+<% navigation_add t('assign_invigilators'), :controller=>'exam_management' ,:action=>'invigilators'%>
+<%=render partial: 'exam_management_left'%>
+<h4 class="mg-h4"><%= t('assign_invigilators') %></h4>
+
+<button class="mg-btn-bottom-margin mg-custom-form-btn" onclick="window.location.href='/exam_management/new_invigilators/'"><%= t('assign_invigilators')%></button>
+
+<div class="mg_pagination">
+<%if @invigilators.present?%>
+<table  class="batch-tbl mg-tbl-margin">   <!-- border="2" --> 
+  <tr class="subject-table-header">
+    <th><%= t('Date') %></th>
+    <th><%= t('time') %></th>
+    <th><%= t('subject_name') %></th>
+    <th class="mg-rm-text-trans"><%= t('no_of_invigilators') %></th>
+    <th style="width: 92px;"><%= t('actions') %></th>
+  </tr>
+ 
+  <% @invigilators.each do |s| %>
+    <tr>
+      <td><%= s.try(:date).present? ? s.try(:date).strftime(@school.date_format) : ""%></td>
+      <td ><%= s.try(:time).present? ? s.try(:time).strftime('%I:%M%p') : "" %></td>
+      <td ><%= MgSubject.find_by(s.try(:mg_subject_id)).try(:subject_name) %></td>
+      <td ><%= s.try(:no_of_invigilators) %></td>
+      <td>
+      <button title="Show" id="<%=raw s.id %>-showInvigilatorsBTNID" class="show-invigilators-btn mg-icon-btn"><i class="fa fa-eye"></i></button>
+
+        <button title="Edit" id="<%=raw s.id %>-editInvigilatorsBTNID" class=" mg-icon-btn" onclick="window.location.href='/exam_management/<%=s.id%>/edit_invigilators/'"><i class="fa fa-pencil-square-o"></i></button>
+
+        <button title="Delete" id="<%=raw s.id %>-deleteInvigilatorsBTNID" class="delete-invigilators-btnn mg-icon-btn"><i class="fa fa-trash"></i></button>
+
+      </td>
+    </tr>
+  <% end %>
+</table>
+<br/>
+ <div class="pagination-align" style="position: relative; bottom: 10px;">
+              <%= will_paginate @invigilators, :container => false %>
+           </div>
+<%else%>
+<h5>Invigilators are not assign </h5>
+<%end%>
+</div>
+
+<div id="invigilatorsShowDIVID"></div>
+
+<%= render  partial: 'application/common_left_close' %>
+<script>
+$(document).ready(function () {
+	focusCurrentTab("assignInvigilatorsAID","assignInvigilatorsLiID");
+});
+</script>

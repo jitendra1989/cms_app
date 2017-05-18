@@ -1,0 +1,43 @@
+<%= hidden_field_tag "mandatory_weekday_id[]",@weekday_id_list %>
+<%= hidden_field_tag "mandatory_class_timings_id[]",@mg_class_timings_id %>
+<%= hidden_field_tag "mandatory_subject_type_id[]",@subject_type_id %>
+
+<table width="100%" cellspacing="0" cellpadding="0" border="0" style="margin-bottom:
+  0px;" class="">
+  <tr class="mg-timetable-tr-border-nil" style="height: 55px;">
+  <td class="mg-timetable-td-padding-nil" style="padding: 0px; border: 0px;">
+  <%=select_tag 'mandatory_subject_id[]', options_for_select(@subjects),:prompt=>t('select'),:onchange=>"selectTeacherForSubject(this.value,this)" ,:class=>"mg-inside-tbl-width" %></td></tr>
+</table>
+
+
+<script>
+  function selectTeacherForSubject(subject_id, that){ 
+    
+    var weekday_id_list = <%=@weekday_id_list%>;
+    var mg_class_timings_id = <%=@mg_class_timings_id%>;
+    var mg_time_table_id = <%=@mg_time_table_id%>;
+
+    $.ajax({
+      url:'/timetable/mandatory_subject',
+      data:{"subject_id":subject_id, "weekday_id_list":weekday_id_list, "mg_class_timings_id":mg_class_timings_id, "mg_time_table_id":mg_time_table_id},
+      type:"GET",
+      success:function(data){
+        console.log(that);
+        $(that).parents('.subject-list-cls').siblings(".employee-list-cls").children(".elective-employee-cls").html(data);    
+        selectRoomForSubject(subject_id,that);                           
+      }
+    });
+  }
+
+  function selectRoomForSubject(subject_id,that){ 
+    $.ajax({
+      url:'/timetable/mandatory_subject_room',
+      data:{"mg_subject_id":subject_id},
+      type:"GET",
+      success:function(data){
+        // console.log(that);
+        $(that).parents('.subject-list-cls').siblings(".room-list-cls").children(".elective-room-cls").html(data);                                 
+      }
+    });
+  }
+</script>

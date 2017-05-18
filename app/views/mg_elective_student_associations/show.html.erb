@@ -1,0 +1,55 @@
+<%if @students_lists.length>0 %>
+	
+	<table class="mg-tbl-margin mg-tbl-layout">
+		<tr>
+			<td class="mg-td-width-one-third" valign="top">
+				<%="Select Students:"%>
+			</td>
+			<td class="mg-td-width-one-third" valign="top">
+				<%="Assigned Students:"%>
+			</td>
+		</tr>
+		<tr>
+			<td class="mg-td-width-one-third" valign="top">
+		 		<span id="selected_students">
+		 		<%#if @new_student_list.length>0%>
+		    		<%=select_tag :studentsId, options_for_select(@new_student_list),:multiple => true,:size =>10 ,:class=>"mg-add-library-particular"%>
+		    	<%#else%>
+		    		<%#=select_tag :studentsId, options_for_select([]),:prompt=>"No Students",:multiple => true,:size =>10 ,:class=>"mg-add-library-particular",:disabled=>"disabled"%>
+		    	<%#end%>
+				</span>
+		    	<a  id="AddStudents" class="mg-custom-form-btn mg-add-rem-btn">Add</a> 
+			</td>
+			<td class="mg-td-width-one-third" valign="top">
+				
+			    <span id="remove_students">
+					<%=select_tag :selectedStudents,options_for_select(@selected_student_list),:multiple => true,:size =>10 ,:class=>"mg-add-library-particular"%>
+				</span>
+				<a  id="RemoveStudents" class="mg-custom-form-btn mg-add-rem-btn">Remove</a>
+			</td>
+		</tr>
+	</table><br/>
+<%else%>
+	<h5>No Student in this class</h5>
+<%end%>
+
+<script type="text/javascript">
+	$(document).on("click","#AddStudents",function(){
+		var students_selected_for_add=$("#studentsId option:selected").remove();
+		$("#selectedStudents").append(students_selected_for_add);
+	});
+
+	$(document).on("click","#RemoveStudents",function(){
+		var students_selected_for_remove=$("#selectedStudents option:selected").remove();
+		$("#studentsId").append(students_selected_for_remove);
+	});
+</script>
+
+<style>
+	.mg-add-rem-btn {
+		position: relative;
+		top: -7em;
+		margin-right: 5px;
+	}
+</style>
+

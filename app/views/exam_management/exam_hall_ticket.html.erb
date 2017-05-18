@@ -1,0 +1,142 @@
+<% navigation_add t('hall_ticket'), exam_hall_ticket_path %>
+<%= render  partial: 'exam_management_left' %>
+<%if params[:select_batch].present?
+    @select_batch =  params[:select_batch]
+  else
+    @select_batch =  0
+  end
+%>
+
+<%= form_for :exam_hall_ticket,url: exam_admit_card_path, :html=>{:id => "studentEXMHallTicketForm",:multipart=>true} do |f| %>
+  <h4 class="mg-h4"><%=t('student_list')%></h4>
+  <%=hidden_field_tag :format,"pdf" %>
+    <label class="mg-label mg-tt-width" for="select_class"><%= t('select_examination') %><span class="required-field"> *</span></label>    
+    <%=select_tag :mg_examination_detail_id,options_for_select(MgExaminationDetail.where(:is_deleted=>0, :mg_school_id=>session[:current_user_school_id]).pluck(:name, :id), :selected=>params[:mg_examination_detail_id]),:prompt=>"Select",:onchange=>"select_examination_detail_hall_tiket(this.value)"%><br/>
+
+    <label class="mg-label mg-tt-width" for="select_class"><%= t('select_academic_year') %><span class="required-field"> *</span></label>    
+    <%=select_tag :academig_year_id,options_for_select(@academic_name, :selected=>params[:academig_year_id]),:prompt=>"Select",:onchange=>"selectAcademicYR(this.value)"%><br/>
+    <label class="mg-label mg-tt-width" for="select_class"><%= t('select_programme') %><span class="required-field"> *</span></label>
+    <%=hidden_field_tag :academig_year_id,params[:academig_year_id], :class=>"academig-year-cls" %>
+    <%=select_tag :programme_ids,options_for_select(@programme_name, :selected=>params[:programme_ids]),:prompt=>"Select",:onchange=>"selectProgrammeFunction(this.value)"%>
+     
+    <div id="selectSemesterDivID" class=""></div>   
+    <div id="studentListDivID" class=""></div>
+
+    
+    <div id=""></div>
+    <p class="mg-p-mgtop">
+      <a onclick="$(this).closest('form').submit()" class="mg-small-form-btn"><%=t("send")%></a>
+      <%= link_to t('cancel'), :back, {:class=>"mg-small-form-btn cancel-form-dialog"} %>
+    </p><br>
+  
+<%end%>
+
+
+
+<%= render  partial: 'application/common_left_close' %>
+
+
+
+
+
+
+<script>
+  $(document).ready(function() {
+    focusCurrentTab("ExaminationHallTicketLAID","ExaminationHallTicketLiID");
+    $("#academig_year_id").attr("disabled", true);
+    //focusExaminationHeaderBox();
+    var a = $("#programme_ids").val();
+    if(a!=''){
+      selectProgrammeFunction(a);
+    }
+  });
+
+  $("#studentEXMHallTicketForm").validate({
+    rules: {     
+        "academig_year_id": {required: true},
+        "programme_ids": {required: true},
+        "select_batch": {required: true},
+        "mg_examination_detail_id": {required: true}            
+    }
+  });
+
+  function selectAcademicYR(academic_year_ids){
+    $("#studentListDivID").empty();
+    $("#select_batch").empty();
+    //$("#programme_ids").empty();
+
+
+  }
+
+
+
+
+  function selectProgrammeFunction(wing_id){
+    var select_batch= <%=@select_batch%>;
+    $("#studentListDivID").empty();
+    $("#select_batch").empty();
+    var academig_year_id = $("#academig_year_id").val();
+    //alert(wing_id);
+    var mg_examination_detail_id=$("#mg_examination_detail_id").val();
+    urlLink = "/exam_management/select_wing";
+
+    if(wing_id!='' && academig_year_id!=''){    
+      $.ajax({
+        url: urlLink,
+        data: {
+                "academig_year_id":academig_year_id,
+                "wing_id":wing_id,"select_batch":select_batch, 
+                mg_examination_detail_id: mg_examination_detail_id
+              },
+        cache: false,
+        success: function(data){
+          $("#selectSemesterDivID").html(data);
+        }
+      });
+    }
+  }
+
+  function select_examination_detail_hall_tiket(mg_examination_detail_id){
+     var urlLink = "/exam_management/multi_skilled_worker";
+    $.ajax({
+        url: urlLink ,
+        cache: false,
+        data:{ 
+          selecter: "select_examination_detail_hall_tiket",
+          id: mg_examination_detail_id
+        },
+        success: function(data){
+            console.log("data   ~>  "+data.main);
+            
+            $("#academig_year_id").val(data.main.acadimic_year);
+            $(".academig-year-cls").val(data.main.acadimic_year);
+            $("#programme_ids").html(data.main.str);
+            $("#select_batch").val('');
+            $("#studentListDivID").html('');
+        }
+    });
+    
+
+  }
+
+function selectStudentFunction(batch_id){ 
+  urlLink = "/exam_management/batch_wise_students";
+var mg_examination_detail_id=$("#mg_examination_detail_id").val();
+  if(batch_id!='' && mg_examination_detail_id!=''){    
+    $.ajax({
+      url: urlLink,
+      data: {
+            "batch_id":batch_id,
+            mg_examination_detail_id: mg_examination_detail_id
+            },
+      cache: false,
+      success: function(data){
+        $("#studentListDivID").html(data);
+      }
+    });
+  }else{
+    $("#studentListDivID").empty();
+  }
+}
+
+</script

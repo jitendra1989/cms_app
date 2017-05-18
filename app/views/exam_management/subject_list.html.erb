@@ -1,0 +1,337 @@
+<table  class="batch-tbl mg-tbl-margin " >
+	<tr id="time_table_id">
+		<td style="width:50px;"><%= label_tag :mg_subject_id, t('select_subject') ,:class=>"mg-label"%></td>
+		<td style="width:50px;"><%= label_tag :date, t('max_marks') ,:class=>"mg-label "%></td>
+		<td style="width:50px;"><%= label_tag :date, t('pass_marks') ,:class=>"mg-label "%></td>
+		<td style="width:50px;"><%= label_tag :date, t('date') ,:class=>"mg-label "%></td>
+		<td style="width:50px;"><%= label_tag :start_time, t('start_time') ,:class=>"mg-label"%></td>
+		<td style="width:50px;"><%= label_tag :end_time, t('end_time') ,:class=>"mg-label"%></td>
+		<!-- <td></td> -->
+	</tr>
+	<%@temp_obj=[]%>
+	<%@subject.each do |s|%>
+	<%=hidden_field_tag "mg_subject_id[]",  s.id%>
+	<%if @time_table.present?%>
+		<%@temp_obj=@time_table.find_by(:mg_subject_id=>s.id)%>
+	<%end%>
+		<tr class="clone-spt-tr-cls" >
+			<td  style="width:50px;"> <%=s.subject_name%></td>
+			<td  style="width:50px;" class="max-marks-td-cls"><%= number_field_tag "max_marks[#{s.id}]",@temp_obj.present? ?  @temp_obj.try(:max_marks) : 0 ,:class=>'mg-text-field max_marks_text_field_cls'   %></td>
+			<!---->
+			<td  style="width:50px;" class="pass-marks-td-cls"><%= number_field_tag "pass_marks[#{s.id}]",@temp_obj.present? ?  @temp_obj.try(:pass_marks) : 0,:class=>'mg-text-field pass_marks_text_field_cls' %></td>
+			<td  style="width:50px;" id="date" class="date-time-table-cls"><%= text_field_tag "date[#{s.id}]",@temp_obj.present? ? @temp_obj.try(:date).strftime(@school.date_format) : nil,:class=>'mg-text-field date_picker_text_field_cls' ,:onchange=>"startDateAndEndDateValidation(this.value, this);"%></td>
+			<td style="width:50px;" class="start-time-picker-text-field-cls" id="s-time"><%= text_field_tag "start_time[#{s.id}]",@temp_obj.present? ?  @temp_obj.try(:start_time).strftime('%I:%M%p') : nil,:class=>'mg-text-field start_time_picker_text_field_cls'%></td>
+			<td id="e-time" style="width:50px;" class="end-time-picker-text-field-cls"><%= text_field_tag "end_time[#{s.id}]",@temp_obj.present? ?  @temp_obj.try(:end_time).strftime('%I:%M%p') : nil ,:class=>'mg-text-field end_time_picker_text_field_cls'%></td>
+			<!-- <td><button type="button" onclick="cloneFunctionRemove(this);">-</button></td> -->
+		</tr>
+	<%end%>
+</table>
+
+<!-- @time_table -->
+
+
+
+<script type="text/javascript">
+	$(document).ready(function () {
+
+	var dateFormatStr =  getJsDateFormat();
+	$('.start_time_picker_text_field_cls').timepicker({ 'scrollDefault': 'now' });
+    $('.end_time_picker_text_field_cls').timepicker({ 'scrollDefault': 'now' });
+ 	$( ".date_picker_text_field_cls" ).datepicker({  minDate: new Date($.datepicker.parseDate(dateFormatStr, $("#start_date").val())),maxDate: new Date($.datepicker.parseDate(dateFormatStr, $("#end_date").val())),changeMonth: true,changeYear: true,yearRange: "-100:+0", dateFormat: dateFormatStr});
+
+
+	$(".max_marks_text_field_cls").each(function() {
+		$(this).val($(this).val()).rules("add", {
+	        min: parseInt($(this).parent('td').siblings('.pass-marks-td-cls').children('input').val()),
+	         messages: {
+			    min: jQuery.validator.format("Max Marks should be greater than Pass Marks.")
+			  }
+	    });
+	});
+	$(".pass_marks_text_field_cls").each(function() {
+		$(this).val($(this).val()).rules("add", {
+	        max: parseInt($(this).parent('td').siblings('.max-marks-td-cls').children('input').val()),
+	         messages: {
+			    max: jQuery.validator.format("Pass Marks should be less than Max Marks.")
+			  }
+	    });
+	});
+
+ });
+	
+	$.validator.addClassRules("max_marks_text_field_cls", {required: true, number: true, min: 0});
+    $.validator.addClassRules("pass_marks_text_field_cls", { required: true , number: true, min: 0 });
+    $.validator.addClassRules("date_picker_text_field_cls", { required: true, dateFormat: true });
+    $.validator.addClassRules("start_time_picker_text_field_cls", { required: true });
+    $.validator.addClassRules("end_time_picker_text_field_cls", { required: true });
+
+
+// $("#examTimeTableFormID").validate();
+// $(document).on("change", ".max_marks_text_field_cls", function(){
+$(document).on("change", ".pass_marks_text_field_cls", function(e){
+
+	$(".max_marks_text_field_cls").each(function() {
+		$(this).val($(this).val()).rules("add", {
+	        min: parseInt($(this).parent('td').siblings('.pass-marks-td-cls').children('input').val()),
+	         messages: {
+			    min: jQuery.validator.format("Max Marks should be greater than Pass Marks.")
+			  }
+
+	    });
+	    // $("#sumiteBtnAID").click();
+	});
+	$(".pass_marks_text_field_cls").each(function() {
+		$(this).val($(this).val()).rules("add", {
+	        max: parseInt($(this).parent('td').siblings('.max-marks-td-cls').children('input').val()),
+	         messages: {
+			    max: jQuery.validator.format("Pass Marks should be less than Max Marks.")
+			  }
+
+	    });
+	    // $("#sumiteBtnAID").click();
+	});
+	// $("#sumiteBtnAID").click();
+	$("#examTimeTableFormID").validate();
+	$('#examTimeTableFormID').valid();
+});
+
+$(document).on("change", ".max_marks_text_field_cls", function(e){
+	$(".max_marks_text_field_cls").each(function() {
+		$(this).val($(this).val()).rules("add", {
+	        min: parseInt($(this).parent('td').siblings('.pass-marks-td-cls').children('input').val()),
+	         messages: {
+			    min: jQuery.validator.format("Max Marks should be greater than Pass Marks.")
+			  }
+	    });
+	    // $("#sumiteBtnAID").click();
+	});
+	$(".pass_marks_text_field_cls").each(function() {
+		$(this).val($(this).val()).rules("add", {
+	        max: parseInt($(this).parent('td').siblings('.max-marks-td-cls').children('input').val()),
+	         messages: {
+			    max: jQuery.validator.format("Pass Marks should be less than Max Marks.")
+			  }
+	    });
+	    // $("#sumiteBtnAID").click();
+	});
+	// $("#sumiteBtnAID").click();
+	$("#examTimeTableFormID").validate();
+	$('#examTimeTableFormID').valid();
+
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function minJqeryValidation(that){
+	// alert("hi");
+	console.log("minJqeryValidation");
+	console.log($(that).parent('td').siblings('.max-marks-td-cls').children('input').val());
+	var value= $(that).parent('td').siblings('.max-marks-td-cls').children('input').val();
+	if(typeof value === "undefined"){
+		return 0
+	}else{
+		return value
+	}
+}
+
+function maxJqeryValidation(that){
+	// alert("hi");
+	console.log("maxJqeryValidation");
+
+	console.log($(that).parent('td').siblings('.pass-marks-td-cls').children('input').val());
+	var value= $(that).parent('td').siblings('.pass-marks-td-cls').children('input').val();
+	if(typeof value === "undefined"){
+		return 0
+	}else{
+		return value
+	}
+}
+
+function maxMinValidation(that){
+// alert(that.value);
+// var value = $(that).parent('td').siblings('.pass-marks-td-cls').children('input').val();
+// console.log("value-->"+value);
+
+}
+
+function startDateAndEndDateValidation(date,that){
+	var dateFormatStr =  getJsDateFormat();
+    var start_date=$("#start_date").val();
+    var end_date=$("#end_date").val();
+     if(start_date && end_date && date){
+      if(!(compareDate(start_date,date,dateFormatStr))){
+        alert("Date should be greater than start date");
+        $(that).val('');
+      }
+      if(!(compareDate(date,end_date,dateFormatStr))){
+        alert("Date should be less than end date");
+        $(that).val('');
+      }
+    }
+}
+
+$(document).on("change", ".date_picker_text_field_cls", function(e){
+	var date=this.value;
+	var start_time=$(this).parent('td').siblings('.start-time-picker-text-field-cls').children('input').val();
+	console.log("start_time---->"+start_time);
+	var end_time=$(this).parent('td').siblings('.end-time-picker-text-field-cls').children('input').val();
+	console.log("end_time--->"+end_time);
+	if(date && start_time && end_time){
+		console.log(date+"<-->"+start_time+"<-->"+end_time);
+		$(".date_picker_text_field_cls").each(function(){
+			var start_time1=$(this).parent('td').siblings('.start-time-picker-text-field-cls').children('input').val();
+			var end_time1=$(this).parent('td').siblings('.end-time-picker-text-field-cls').children('input').val();
+			var date1=this.value;
+			if(date1 && start_time1 && end_time1){
+				//alert(date1+"<-->"+start_time1+"<-->"+end_time1);
+				if(date==date1){
+					console.log("equal ----- >>>>->>>->>");
+				}else{
+					console.log("not equal ----- >>>>>>>>>>");
+				}
+			}
+		});
+	}else{
+		console.log("not present");
+	}
+	
+});
+
+$(document).on("change", ".start_time_picker_text_field_cls", function(e){
+	var start_time=$(this).val();
+	var date=$(this).parent('td').siblings('.date-time-table-cls').children('input').val();
+	console.log("date---->"+date);
+	var end_time=$(this).parent('td').siblings('.end-time-picker-text-field-cls').children('input').val();
+	console.log("end_time--->"+end_time);
+	if(date && start_time && end_time){
+		console.log(date+"<-->"+start_time+"<-->"+end_time);
+	}else{
+		console.log("not present");
+	}
+	
+});
+$(document).on("change", ".end_time_picker_text_field_cls", function(e){
+	var end_time=$(this).val();
+	console.log("end_time---->"+end_time);
+	var start_time=$(this).parent('td').siblings('.start-time-picker-text-field-cls').children('input').val();
+	console.log("start_time---->"+start_time);
+	var date=$(this).parent('td').siblings('.date-time-table-cls').children('input').val();
+	console.log("date--->"+date);
+	if(date && start_time && end_time){
+		console.log(date+"<-->"+start_time+"<-->"+end_time);
+	}else{
+		console.log("not present");
+	}
+	
+});
+
+
+
+
+
+
+$(".start_time_picker_text_field_cls").on('change', function () {
+//$(".start_time_picker_text_field_cls").keyup(function(){
+    submission_criteria();
+});
+
+
+$(".end_time_picker_text_field_cls").on('change', function () {
+
+//$(".end_time_picker_text_field_cls").keyup(function(){
+    submission_criteria();
+});
+
+
+function submission_criteria(){
+  var count=0;
+  $(".date_picker_text_field_cls:visible").each(function(){
+    var date=$(this).val();
+    if (date==""){return;}
+    var start_time=minFromMidnight($(this).parent('td').siblings(".start-time-picker-text-field-cls").children(".start_time_picker_text_field_cls").val());
+    var end_time=minFromMidnight($(this).parent('td').siblings(".end-time-picker-text-field-cls").children(".end_time_picker_text_field_cls").val());
+    //alert(date+" ==== "+start_time+ "===="+end_time);
+    $(this).addClass( "synchronize" );
+    //$(".date_picker_text_field_cls:not(:$(this))").each(function(){});
+    $('.date_picker_text_field_cls:visible').not($('.synchronize:visible')).each(function(){
+      var c_date=$(this).val();
+      var s_time=minFromMidnight($(this).parent('td').siblings(".start-time-picker-text-field-cls").children(".start_time_picker_text_field_cls").val());
+    var e_time=minFromMidnight($(this).parent('td').siblings(".end-time-picker-text-field-cls").children(".end_time_picker_text_field_cls").val());
+
+    count=0;
+    if (date == c_date)
+    {
+      if (start_time && end_time){
+      //  if (s_time && e_time){
+          if (s_time>=start_time && s_time<=end_time)
+          {
+            count++;
+            alert("Date and Time cann't overlap.");
+            $(this).parent('td').siblings(".start-time-picker-text-field-cls").children(".start_time_picker_text_field_cls").val(null);
+            
+          }
+          if (e_time>=start_time && e_time<=end_time){
+            count++;
+            if (count==1)
+            {
+            	alert("Date and Time cann't overlap.");
+            }
+            $(this).parent('td').siblings(".end-time-picker-text-field-cls").children(".end_time_picker_text_field_cls").val(null);
+            
+
+          }
+          if (start_time>=s_time && start_time<=e_time){
+            count++;
+            if (count==1)
+            {
+            	alert("Date and Time cann't overlap.");
+            }
+            $(this).parent('td').siblings(".end-time-picker-text-field-cls").children(".end_time_picker_text_field_cls").val(null);
+            
+
+          }
+          if (end_time>=s_time && end_time<=e_time){
+            count++;
+            if (count==1)
+            {
+            	alert("Date and Time cann't overlap.");
+            }
+            $(this).parent('td').siblings(".end-time-picker-text-field-cls").children(".end_time_picker_text_field_cls").val(null);
+            
+
+          }
+      //  }
+      }
+    }   
+    count=0;    
+  });
+    $(this).removeClass( "synchronize" );
+  });
+// if (count>0)
+// {
+//   alert("Exam can't be conducted on same time");
+// }else{
+//   alert("Ok");
+// }
+}
+
+// function minFromMidnight(tm){
+//  var ampm= tm.substr(-2)
+//  var clk = tm.substr(0, 4);
+//  var m  = parseInt(clk.match(/\d+$/)[0], 10);
+//  var h  = parseInt(clk.match(/^\d+/)[0], 10);
+//  h += (ampm.match(/pm/i))? 12: 0;
+//  return h*60+m;
+// }
+</script>

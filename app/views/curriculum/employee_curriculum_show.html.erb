@@ -1,0 +1,142 @@
+
+<%= render partial: 'curriculum/curr_left' %>
+<h4 class="mg-h4"><%= t('curriculum_management') %></h4>
+<table border="1" class="mg-showdata-bg mg-tbl-layout" cellspacing="1" cellpadding="1">
+
+     <tr>
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"> <%= t('academic_year')%></label>
+      </td>
+      <td class="mg-td-width-half" valign="top">
+      <%if @curriculum.mg_timetable_id.present?%>
+      <%timetable=MgTimeTable.find_by(:id=>@curriculum.mg_timetable_id)%>
+     <%=timetable.name%>
+     <%else%>
+     <%="No Data"%>
+     <%end%>
+      </td>
+ </tr>
+   <tr>
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"> <%= t('programme_name')%></label>
+      </td>
+      <td class="mg-td-width-half" valign="top">
+      <%if @curriculum.mg_wing_id.present?%>
+      <%wing=MgWing.find(@curriculum.mg_wing_id)%>
+     <%=wing.wing_name%>
+     <%else%>
+     <%="No Data"%>
+     <%end%>
+      </td>
+ </tr>
+ <tr>
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"> <%= t('semester_name')%></label>
+      </td>
+      <td class="mg-td-width-half" valign="top">
+      <%if @curriculum.mg_course_id.present?%>
+      <%course=MgCourse.find_by(:id=>@curriculum.mg_course_id)%>
+     <%=course.course_name%>
+     <%else%>
+     <%="No Data"%>
+     <%end%>
+      </td>
+ </tr>
+ <tr>
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"> <%= t('subject_name')%></label>
+      </td>
+      <td class="mg-td-width-half" valign="top">
+       <%if @curriculum.mg_subject_id.present?%>
+      <%currSubject=MgSubject.find(@curriculum.mg_subject_id)%>
+     <%=currSubject.subject_name%>
+     <%else%>
+     <%="No Data"%>
+     <%end%>
+      </td>
+ </tr>
+
+ <tr>
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"> <%= t('grade_name')%></label>
+      </td>
+      <td class="mg-td-width-half" valign="top">
+       <%if @curriculum.mg_curriculum_grade_id.present?%>
+      <%currGrade=MgCurriculumGrade.find(@curriculum.mg_curriculum_grade_id)%>
+     <%=currGrade.grade_name%>
+     <%else%>
+     <%="No Data"%>
+     <%end%>
+      </td>
+ </tr>
+
+
+
+
+ <tr>
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"> <%= t('paper')%></label>
+      </td>
+      <td class="mg-td-width-half" valign="top">
+       <%if @curriculum.mg_syllabus_id.present?%>
+      <%currSyll=MgSyllabus.find(@curriculum.mg_syllabus_id)%>
+     <%=currSyll.name%>
+     <%else%>
+     <%="No Data"%>
+     <%end%>
+      </td>
+ </tr>
+
+
+
+ <tr>
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"> <%= t('status')%></label>
+      </td>
+      <td class="mg-td-width-half" valign="top">
+       <%if @curriculum.status.present?%>
+          <%=@curriculum.try(:status)%>
+     <%else%>
+     <%="No Data"%>
+     <%end%>
+      </td>
+ </tr>
+
+<%if @curriculum.comments.present?%>
+
+ <tr>
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"> <%= t('comments')%></label>
+      </td>
+      <td class="mg-td-width-half" valign="top">
+       <%if @curriculum.comments.present?%>
+          <%=@curriculum.try(:comments)%>
+     <%else%>
+     <%="No Data"%>
+     <%end%>
+      </td>
+ </tr>
+
+ <%end%>
+
+
+
+
+
+
+ 
+</table>
+<br/>
+<%= link_to 'Cancel', :back ,:style=>"font-size: 0.8em; color: #297ACC; text-decoration: none;" ,:class=>"mg-custom-form-btn"%>
+
+<%= render  partial: 'application/common_left_close' %>
+<script>
+$(document).ready(function () {
+focusCurrentTab("viewEmployeeCurriculum","viewEmployeecurriculumLiID");
+ // focusCurrentTab("view_curriculum_syllabusAID","syllabusLiID");
+
+  
+});
+</script>
+
+

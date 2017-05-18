@@ -1,0 +1,38 @@
+<table border="1" class="mg-showdata-bg " cellspacing="1" cellpadding="1">
+   <tr>
+     <td class="mg-td-width-half" valign="top">
+   		<label class="mg-label"> <%= t('name')%></label>
+   	 </td>
+   	 <td class="mg-td-width-half" valign="top">
+  		<%if @subject_type.name.present?%>
+        <%=@subject_type.name%>
+      <%else%>
+        <%="No Data"%>
+      <%end%>
+  	 </td>
+ </tr>
+ <tr>
+     <td class="mg-td-width-half" valign="top">
+   		<label class="mg-label"> <%= t('description')%></label>
+   	 </td>
+   	 <td class="mg-td-width-half " valign="top">
+  		<%if @subject_type.description.present?%>
+        <div class="text-scroll-for-log-text-cls comments-space" style="padding: 5px 40 0 10px">
+        <%=@subject_type.description%>
+        </div>
+      <%else%>
+        <%="No Data"%>
+      <%end%>
+  	 </td>
+ </tr>
+
+</table>
+</br>
+<%#= link_to 'Cancel', :back ,:style=>"font-size: 0.8em; color: #297ACC; text-decoration: none;" ,:class=>"mg-custom-form-btn"%>
+ <a class="mg-small-form-btn cancel-form-dialog"><%=t('cancel')%></a>
+<script type="text/javascript">
+$(document).ready(function () {
+  textSeeMoreLess();
+});
+
+</script>

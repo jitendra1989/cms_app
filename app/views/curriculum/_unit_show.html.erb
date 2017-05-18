@@ -1,0 +1,80 @@
+<% navigation_add 'Chapter', :controller => 'curriculum', :action => 'unit_show' %>
+<!-- Sec --> 
+
+<%  @employee_id=MgEmployee.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id],:mg_user_id=>session[:user_id])
+%>
+
+<%@curriculum=MgUnit.where(:is_deleted => '0',:mg_school_id=>session[:current_user_school_id],:mg_employee_id=>@employee_id[0].id).paginate(page: params[:page], per_page: 10)%>
+ <h4 class="mg-h4"><%= t('chapter_list') %></h4>
+<div>
+<%= button_to 'Add Chapter', {:controller => "curriculum", :action => "unit_index" } ,:class=>"mg-custom-form-btn"%>
+
+
+<div class="mg_pagination">
+<%if @curriculum.length>0%>
+<table  class="batch-tbl mg-tbl-margin">   <!-- border="2" --> 
+  <tr class="subject-table-header">
+    <th><%=t('subject_name')%></th>
+    <th><%=t('paper_name')%></th>
+  	<th><%=t('chapter_name')%></th>
+    <!-- <th><%#=t('durationinhr')%></th>
+    <th><%#=t('durationinmin')%></th> -->
+     <!-- <th>Periods Alloted</th> -->
+     <th><%=t('actions')%></th>
+  </tr>
+ 
+  <% @curriculum.each do |curr| %>
+    <tr>
+      <!-- <td> <#%@temp=Syllabus.find_by_id( curr.mg_syllabus_id)%>
+      <#%= @temp.class_name%></td> -->
+      <!-- <td><#%= curr.mg_syllabus_id %></td> -->
+      <td><% if curr.mg_subject_id.present?
+      subject=MgSubject.find_by(:id=>curr.mg_subject_id) 
+      %>
+      <%=subject.try(:subject_name)%>
+      <%end%>
+      </td>
+      <td>
+      <%syllabus=MgSyllabus.where(:id=>curr.mg_syllabus_id)%>
+          <%=syllabus[0].try(:name)%>
+
+      </td>
+      <td><%= curr.try(:unit_name) %></td>
+      
+      <!-- <td><%= curr.hour %></td>
+       <td><%= curr.min %></td> -->
+       
+<!-- 
+     <%#if curr.time!=nil%>
+      <th><%#=curr.time%></th>
+      <%#else%>
+      <td></td>
+      <%#end%> -->
+
+
+      <td>
+      <%= link_to "<i class=\"fa fa-eye\"></i>".html_safe, {:controller => "curriculum", :action => "unit_display",:id =>curr.id } , :method=>'post' ,:title=>"Show" ,:class=>"mg-icon-btn"%>
+      <%= link_to "<i class=\"fa fa-pencil-square-o\"></i>".html_safe, {:controller => "curriculum", :action => "unit_edit",:id =>curr.id } , :method=>'post' ,:title=>"Edit" ,:class=>"mg-icon-btn"%>
+      <%= link_to "<i class=\"fa fa-trash\"></i>".html_safe, {:controller => "curriculum", :action => "unit_delete",:id =>curr.id } , :method=>'post' ,:title=>"Delete" ,:class=>"mg-icon-btn" ,data: { confirm: 'Are you sure to delete?' }%>
+      </td>
+
+    </tr>
+  <% end %>
+</table>
+<br/>
+ <div class="pagination-align" style="position: relative; bottom: 10px;">
+              <%= will_paginate @curriculum, :container => false %>
+           </div>
+<%else%>
+<h5>No chapter is created </h5>
+<%end%>
+</div>
+</div>
+
+<script>
+$(document).ready(function () {
+
+focusCurrentTab("unitCurriculamManagementsAID","unitLiID");
+        //focusCurriculum();
+      });
+</script>

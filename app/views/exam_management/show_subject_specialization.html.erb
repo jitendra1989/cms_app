@@ -1,0 +1,41 @@
+<%employee=MgEmployee.find_by(:id=>@subject_specialization.try(:mg_employee_id))%>
+<%subject=MgSubject.find_by(:id=>@subject_specialization.try(:mg_subject_id))%>
+<%exam=MgExaminationDetail.find_by(:id=>@subject_specialization.try(:mg_examination_detail_id))%>
+<table border="1" class="mg-showdata-bg " cellspacing="1" cellpadding="1">
+     <tr>
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"> <%= t('exam_name')%></label>
+     </td>
+     <td class="mg-td-width-half" valign="top">
+      <%= exam.try(:name).try(:titleize) %>
+     </td>
+ </tr>
+   <tr>
+     <td class="mg-td-width-half" valign="top">
+   		<label class="mg-label"> <%= t('subject_name')%></label>
+   	 </td>
+   	 <td class="mg-td-width-half" valign="top">
+  		<%= subject.try(:subject_name).try(:titleize) %>
+  	 </td>
+ </tr>
+ <tr>
+     <td class="mg-td-width-half" valign="top">
+  		<label class="mg-label"><%=t('employee_name')%></label>
+  	 </td>
+  	 <td class="mg-td-width-half " valign="top">
+          <%= employee.try(:first_name).try(:titleize) %> <%= employee.try(:last_name).try(:titleize)  %> 
+  	 </td>
+ </tr>
+ <tr>
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"><%=t('employee_number')%></label>
+     </td>
+     <td class="mg-td-width-half " valign="top">
+          <%= employee.try(:employee_number) %>
+     </td>
+ </tr>
+</table>
+ <p class="mg-p-mgtop">
+     <a class="mg-small-form-btn cancel-form-dialog"><%=t('cancel')%></a>
+
+  </p>

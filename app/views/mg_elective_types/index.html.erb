@@ -1,0 +1,46 @@
+<!-- Sec --> 
+<% navigation_add 'Elective Type', mg_elective_types_path %>
+<%=render partial:"subjects/subject_left"%>
+<button class="mg-btn-bottom-margin mg-custom-form-btn" id="newElectiveTypeBtnID">New Elective Type</button>
+<h4 class="mg-h4"><%=t('elective_type')%></h4>
+<% if @elective_types.length > 0 %>
+<div class="mg_pagination">
+    <table class="batch-tbl mg-tbl-margin" id="electiveTypeTableID">
+        <tr>
+          <th><%= t('name') %></th>
+          <th><%= t('description') %></th>
+          <th><%= t('actions') %></th>
+        </tr>
+       
+        <% @elective_types.each do |elective_type| %>
+          <tr>
+          	<td><%=elective_type.name%></td>
+          	<td><%=truncate(elective_type.description.to_s, :length => 25, :separator => ' ')%></td>
+          	<td>
+          		<button title="Show" class="showElectiveType mg-icon-btn" id="showID-<%= elective_type.id%>"><i class="fa fa-eye"></i></button>
+                <button title="Edit" class="editElectiveType mg-icon-btn" id="editID-<%= elective_type.id%>"><i class="fa fa-pencil-square-o"></i></button>
+                <button title="Edit" class="deleteElectiveType mg-icon-btn" id="deleteID-<%= elective_type.id%>"><i class="fa fa-trash"></i></button>
+                <%#= link_to "<i class=\"fa fa-trash\"></i>".html_safe, mg_elective_type_path(elective_type),method: :delete,data: { confirm: 'Are you sure to delete?' },:class=>"mg-icon-btn"%>
+          	</td>
+          </tr>
+
+        <% end %>
+    </table><br/>
+     <%= will_paginate @elective_types, :container => false %>
+    </div>
+<% else %>
+  <h5>Please create some elective type... </h5>
+
+<% end %>
+
+<div id="newElectiveTypeDialogID" ></div>
+<div id="editElectiveTypeDialogID"></div>
+<div id="showElectiveTypeDialogID"></div>
+<%=render partial:"common_left_close"%>
+
+<script>
+$( document ).ready(function() {
+    focusCurrentTab("electiveTypeAID","electiveTypeLiID");
+    focusSubject();
+});
+</script>

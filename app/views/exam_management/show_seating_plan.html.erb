@@ -1,0 +1,80 @@
+ <%# navigation_add t('seating_plan'), :controller=>'exam_management', :action=>'seating_plan' %>
+ <%# navigation_add t('show'), :controller=>'exam_management', :action=>'show_seating_plan', :id=>params[:id] %>
+ <%#=render partial: 'exam_management_left'%>
+<%student=@seating_plan.mg_exam_seating_plan_details.where(:is_deleted=>0, :mg_school_id=>session[:current_user_school_id]).pluck(:mg_student_id)
+  student_list=MgStudent.where(:id=>student, :is_deleted=>0)
+%>
+
+ <table border="1" class="mg-showdata-bg " cellspacing="1" cellpadding="1">
+   <tr>
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"> <%= t('room_no')%></label>
+     </td>
+     <td class="mg-td-width-half" valign="top">
+      <%= MgInstituteRoom.find_by(:id=>@seating_plan.try(:mg_institute_room_id)).try(:room_no) %>
+     </td>
+ </tr>
+ <tr>
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"> <%= t('date')%></label>
+     </td>
+     <td class="mg-td-width-half" valign="top">
+      <%= @seating_plan.try(:date).present? ? @seating_plan.try(:date).strftime(@school.date_format) : ""
+ %>
+     </td>
+ </tr>
+ <tr>
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"><%=t('specialization.')%></label>
+     </td>
+     <td class="mg-td-width-half" valign="top">
+      <%= MgEmployeeSpecialization.find_by(:id=>@seating_plan.try(:mg_employee_specialization_id)).try(:name) %>
+     </td>
+ </tr>
+
+ <tr>
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"><%=t('total_seats')%></label>
+     </td>
+     <td class="mg-td-width-half" valign="top">
+      <%= @seating_plan.try(:total_seats) %>
+     </td>
+ </tr>
+ <tr>
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"><%=t('seat_available')%></label>
+     </td>
+     <td class="mg-td-width-half" valign="top">
+      <%= @seating_plan.try(:seat_available) %>
+     </td>
+ </tr>
+  <tr>
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"><%=t('students')%></label>
+     </td>
+     <td class="mg-td-width-half" valign="top">
+      <%student_list.order(:first_name, :last_name).each do |s|%>
+        <%=s.first_name%> <%=s.last_name%> (<%=s.admission_number%>),<br>
+      <%end%>
+     </td>
+ </tr>
+
+</table>
+<p class="mg-p-mgtop">
+     <a class="mg-small-form-btn cancel-form-dialog"><%=t('cancel')%></a>
+
+</p>
+ 
+
+
+<%#= render  partial: 'application/common_left_close' %>
+
+<script>
+// // $(document).ready(function () {
+// // focusCurrentTab("timeTableSeatingPlanAID","timeTableSeatingPlanLiID");
+  
+// // });
+
+
+ </script>
+

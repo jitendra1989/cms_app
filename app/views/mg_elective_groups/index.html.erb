@@ -1,0 +1,51 @@
+<!-- Sec --> 
+<% navigation_add 'Elective Group', mg_elective_groups_path %>
+<%=render partial:"subjects/subject_left"%>
+<button class="mg-btn-bottom-margin mg-custom-form-btn" id="newElectiveGroupBtnID">New Elective Group</button>
+<h4 class="mg-h4"><%=t('elective_group')%></h4>
+<% if @elective_groups.length > 0 %>
+<div class="mg_pagination">
+    <table class="batch-tbl mg-tbl-margin" id="electiveGroupTableID">
+        <tr>
+          <th><%= t('name') %></th>
+          <th><%= t('elective_type') %></th>
+          <th><%= t('max_weekly_class') %></th>
+          <th><%= t('description') %></th>
+          <th><%= t('actions') %></th>
+        </tr>
+       
+        <% @elective_groups.each do |elective_group| %>
+          <tr>
+          	<td><%=elective_group.name%></td>
+            <td><%=MgElectiveType.find_by(:id=>elective_group.mg_elective_type_id).name%></td>
+          	<td><%=elective_group.try(:max_weekly_class)%></td>
+            <td><%=truncate(elective_group.description.to_s, :length => 25, :separator => ' ')%></td>
+          	<td>
+          		<button title="Show" class="showElectiveGroup mg-icon-btn" id="showID-<%= elective_group.id%>"><i class="fa fa-eye"></i></button>
+                <button title="Edit" class="editElectiveGroup mg-icon-btn" id="editID-<%= elective_group.id%>"><i class="fa fa-pencil-square-o"></i></button>
+                <button title="Edit" class="deleteElectiveGroup mg-icon-btn" id="deleteID-<%= elective_group.id%>"><i class="fa fa-trash"></i></button>
+                <%#= link_to "<i class=\"fa fa-trash\"></i>".html_safe, mg_elective_group_path(elective_group),method: :delete,data: { confirm: 'Are you sure to delete?' },:class=>"mg-icon-btn"%>
+          	</td>
+          </tr>
+
+        <% end %>
+    </table><br/>
+     <%= will_paginate @elective_groups, :container => false %>
+    </div>
+<% else %>
+  <h5>Please create some elective Group... </h5>
+
+<% end %>
+
+<div id="newElectiveGroupDialogID" ></div>
+<div id="editElectiveGroupDialogID"></div>
+<div id="showElectiveGroupDialogID"></div>
+<%=render partial:"common_left_close"%>
+
+<script>
+$( document ).ready(function() {
+    focusCurrentTab("electiveGroupAID","electiveGroupLiID");
+    focusSubject();
+});
+</script>
+

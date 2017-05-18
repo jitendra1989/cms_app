@@ -1,0 +1,29 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  mg_to_account_id: 1
+  mg_from_account_id: 1
+  current_date: 2015-10-27
+  for_module: MyString
+  mg_particular_id: 1
+  is_deleted: false
+  mg_school_id: 1
+  created_by: 1
+  updated_by: 1
+  amount: 1
+  transaction_type: MyString
+  amount_transfer_type: MyString
+
+two:
+  mg_to_account_id: 1
+  mg_from_account_id: 1
+  current_date: 2015-10-27
+  for_module: MyString
+  mg_particular_id: 1
+  is_deleted: false
+  mg_school_id: 1
+  created_by: 1
+  updated_by: 1
+  amount: 1
+  transaction_type: MyString
+  amount_transfer_type: MyString

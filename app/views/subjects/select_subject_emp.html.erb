@@ -1,0 +1,273 @@
+<% navigation_add '  Employee Subject List', :controller => 'subjects', :action => 'emp_subject_asso' %>
+<% navigation_add '    Employee Subject Association', :controller => 'subjects', :action => 'select_subject_emp' %>
+
+
+<!-- Sec --> 
+<%= render  partial: 'subject_left' %>
+
+
+<% emp_id=@employees.id%>
+<%@employeeId=@employees.id%>
+<%
+$count=0
+$sub_count=0
+@selected_subjects.each {
+$count +=1
+}
+@subjects.each{
+$sub_count +=1
+}
+%>
+<%$count %>
+<%$sub_count=$sub_count%>
+<!-- <%= @selected_subjects.inspect%> -->
+<h4 class="mg-h4"><%=@employees.first_name%>'s <%=t("subjects")%></h4>
+
+<div class="mg-scroll-subject-bar mg-btn-bottom-margin">
+<table class="batch-tbl">   <!-- border="2" --> 
+    <tr class="subject-table-header">
+    <th><%=t("specialization")%></th>
+  	<th><%=t("subjectname")%></th>
+    <th><%=t("subjectcode")%></th>
+
+    <th><%=t("is_specialized")%></th>
+    
+
+     <th><%=t("select")%></th>
+  </tr>
+ <%if ($count !=0) %>
+
+            <% @subjects.each do |sub| %>
+                      <%$man=0%>
+                              <%@selected_subjects.each do|a| %>
+                                    <tr>
+                                              <%if (sub.id==a.mg_subject_id) %>
+                                              <%spec_id=MgSubject.where(:id=>sub.id).pluck(:mg_employee_specialization_id)
+                                              temp_count=0
+                                              if spec_id.present?
+                                            temp_count=MgParticularSpecialization.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id],:mg_employee_id=>@employees.id,:mg_employee_specialization_id=>spec_id[0]).count
+
+                                              end
+                                              %>
+                                                      <td>
+                                                        <%spec_sub_name=MgSubject.find_by(:id=>sub.id)
+                                                          spec_name=MgEmployeeSpecialization.find_by(:id=>spec_sub_name.mg_employee_specialization_id)
+
+                                                        %>
+                                                          <%=spec_name.try(:name)%>
+
+
+                                                      </td>
+
+                                                      <td><%= sub.subject_name %></td>
+                                                      <td><%= sub.subject_code %></td>
+                                                      <td><%if temp_count>0%><%="Yes"%><%else%><%="No"%><%end%></td>
+                                                      <td class="mg-align-center employee-subject-alert-class"><%= check_box_tag(sub.id, "sub_check", true, :onclick=>"toggleAll(#{sub.id});")%></td>
+                                                      
+                                                   </tr>    
+                                                <%else%>
+
+                                                 <% $man +=1%>
+
+                                              <%end%>
+
+                                              <%if($count==$man )%>
+                                              <%spec_id=MgSubject.where(:id=>sub.id).pluck(:mg_employee_specialization_id)
+                                              temp_count=0
+                                              if spec_id.present?
+                                              temp_count=MgParticularSpecialization.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id],:mg_employee_id=>@employees.id,:mg_employee_specialization_id=>spec_id[0]).count
+
+                                              end
+                                              %>
+
+
+                                                    <td>
+                                                        <%spec_sub_name=MgSubject.find_by(:id=>sub.id)
+                                                          spec_name=MgEmployeeSpecialization.find_by(:id=>spec_sub_name.mg_employee_specialization_id)
+
+                                                        %>
+                                                          <%=spec_name.try(:name)%>
+
+
+                                                      </td>
+
+                                                    <td><%= sub.subject_name %></td>
+                                                    <td><%= sub.subject_code %></td>
+                                                    <td><%if temp_count>0%><%="Yes"%><%else%><%="No"%><%end%></td>
+                                                    <td class="mg-align-center employee-subject-alert-class"><%= check_box_tag(sub.id, "sub_check", false, :onclick=>"toggleAll(#{sub.id});")%></td>
+                                                    
+                                                </tr>
+                                              <%end%>
+                             <%end%>
+                <!-- <td><input type="checkbox" value="1" name="45" id="45"></td> -->
+                               
+              <% end %>
+<%else%>
+
+ <% @subjects.each do |subs| %>
+          <tr>
+              <%spec_id=MgSubject.where(:id=>subs.id,:is_deleted=>0,:mg_school_id=>session[:current_user_school_id]).pluck(:mg_employee_specialization_id)
+              
+                                              temp_count=0
+                                              if spec_id.present?
+                                               
+                                              temp_count=MgParticularSpecialization.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id],:mg_employee_id=>@employees.id,:mg_employee_specialization_id=>spec_id[0]).count
+
+                                              end
+                                              %>
+
+              <td>
+                                                        <%spec_sub_name=MgSubject.find_by(:id=>subs.id)
+                                                          spec_name=MgEmployeeSpecialization.find_by(:id=>spec_sub_name.mg_employee_specialization_id)
+
+                                                        %>
+                                                          <%=spec_name.try(:name)%>
+
+
+                                                      </td>
+              <td><%= subs.subject_name %></td>
+              <td><%= subs.subject_code %></td>
+              <td><%if temp_count>0%><%="Yes"%><%else%><%="No"%><%end%></td>
+              <td class="mg-align-center employee-subject-alert-class"><%= check_box_tag(subs.id, "sub_check", false, :onclick=>"toggleAll(#{subs.id});")%></td>
+              
+          </tr>
+  <%end%>
+         
+<% end %>
+</table>
+</div>
+<br>
+<p>
+<!-- <input type="submit" id='<%#=raw emp_id %>' class="emp_subject_class mg-small-form-btn" value= <%#= t("save")%>> -->
+<a onclick="$(this).closest('form').submit()" id='<%=raw emp_id %>' class="emp_subject_class mg-small-form-btn"><%=t("save")%></a>
+<%= link_to t('back'), emp_subject_asso_path ,:class=>"mg-small-form-btn"%>
+  </p> 
+
+
+<%= render  partial: 'subject_left_close' %>
+
+
+<script type="text/javascript">
+
+     $(document).ready(function(){
+
+      $("li").removeClass( "active" );
+        $("a").removeClass( "activeMenu" );
+
+       $("#empSubjectAssoLiID").addClass("active");
+         $("#empSubjectAssoID").addClass("activeMenu");
+
+           focusSubject();
+   });
+     
+// $(".employee-subject-alert-class").click(function(){
+//   var value=$(".employee-subject-alert-class").val();
+//   alert(toggleAll());
+
+// });
+
+
+// ===============================================================================================
+
+$(".employee-subject-alert-class").click(function(){
+var sub_id= $(this).children().attr('id');
+var employeeId=<%=@employeeId%>
+
+if ($(this).children().prop('checked')==true)
+{
+        if(sub_id > 0 && employeeId>0) {
+         var employee_subject_Id=employeeId+"#"+sub_id
+        //alert(employee_subject_Id);
+
+                 var urlLink = "/subjects/specialization_verification_list/";
+                 $.ajax({ 
+                     url: urlLink,
+                     data: {"sub_id": sub_id , "employeeId": employeeId},
+                     cache: false,
+                     success: function(data){
+                       // console.log();
+                        if(data > 0){
+                           // alert("ok");
+                        }
+                        else{
+                          alert("Selected subject is not under his specialization");
+                        }
+
+                     }
+                        
+                 });
+                 }
+  }
+});
+
+
+// ===================================================================================================
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+var sub_id_list = new Array();
+function toggleAll(sub_id)
+{
+     // alert("i'm in toggleAll function");
+  var subId =sub_id
+     // alert(subId);
+
+
+    if("input:checkbox"){
+       // alert("aaa");
+      sub_id_list.push(subId);
+    }else{
+       // alert("bbb");
+      sub_id_list.pop(subId);
+    };
+}
+
+
+$(document).on("click", ".emp_subject_class", function(e){
+        var studentCategoryID =$(this).attr('id');
+         //     alert(studentCategoryID);
+         // sub_id_list.push(studentCategoryID);
+        //var urlLink = "/student_categories/"+studentCategoryID+"/edit";
+         // alert(sub_id_list);
+        var urlLink = "/subjects/emp_subject/"+studentCategoryID;
+          // alert(urlLink);
+           
+
+        $.ajax({
+            url: urlLink ,
+            data: {'sub_id_list': sub_id_list, 'some_id':studentCategoryID},
+
+            // contentType: 'json',
+            cache: true,
+
+            success: function(html){
+             window.location = "/subjects/emp_subject_asso"
+          //   alert(location);
+             // location.reload();
+               
+            }
+        });
+});
+
+
+</script>

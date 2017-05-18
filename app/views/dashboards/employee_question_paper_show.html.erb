@@ -1,0 +1,66 @@
+<table border="1" class="mg-showdata-bg" cellspacing="1" cellpadding="1">
+<%
+
+       time_table_data=MgTimeTable.find_by(:id=>@question_paper_data.mg_time_table_id)
+
+       wing_data=MgWing.find_by(:id=>@question_paper_data.mg_wing_id)
+       course_data=MgCourse.find_by(:id=>@question_paper_data.mg_course_id)
+       document_data=MgDocumentManagement.where(:mg_employee_question_paper_id=>@question_paper_data.id)
+       subject_data=MgSubject.find_by(:id=>@question_paper_data.mg_subject_id)
+
+        %>
+   <tr>
+     <td class="mg-td-width-half" valign="top">
+        <label class="mg-label"> <%= t('academic_year')%></label>
+     </td>
+     <td class="mg-td-width-half" valign="top">
+        <%= time_table_data.try(:name) %>
+     </td>
+ </tr>
+
+ <tr>
+     <td class="mg-td-width-half" valign="top">
+        <label class="mg-label"><%=t('wing_name')%></label>
+     </td>
+     <td class="mg-td-width-half" valign="top">
+        <%= wing_data.try(:wing_name) %>
+     </td>
+ </tr>
+
+ <tr>
+     <td class="mg-td-width-half" valign="top">
+        <label class="mg-label"><%=t('semester')%></label>
+     </td>
+     <td class="mg-td-width-half" valign="top">
+        <%= course_data.try(:course_name) %>
+     </td>
+ </tr>
+
+ <tr>
+     <td class="mg-td-width-half" valign="top">
+        <label class="mg-label"><%=t('subject')%></label>
+     </td>
+     <td class="mg-td-width-half" valign="top">
+        <%= subject_data.try(:subject_name) %>
+     </td>
+ </tr>
+
+ 
+ <tr>
+     <td class="mg-td-width-half" valign="top">
+        <label class="mg-label"><%=t('file')%></label>
+     </td>
+     <td class="mg-td-width-half" valign="top">
+     <%document_data.each do|data|%>
+         <%= data.file_file_name %>
+         <%= link_to_if data.try(:file).url,'<i class="fa fa-download"></i>'.html_safe,data.try(:file).url,:class=>"mg-icon-btn mg-download-icon-font",:title=>"Download" %><br/>
+ <%end%>
+
+     </td>
+ </tr>
+</table>
+ <p class="mg-p-mgtop">
+     <a class="mg-small-form-btn cancel-form-dialog"><%=t('cancel')%></a>
+
+  </p>
+

@@ -1,0 +1,215 @@
+<%= render  partial: 'exam_management_left' %>
+<% navigation_add 'Examination Marks List', exam_management_examination_marks_sheet_details_path %>
+
+<% navigation_add 'Enter Marks', exam_management_examination_marks_sheet_details_new_path %>
+<%# navigation_add '', inventory_inventory_sales_path %>
+
+
+
+<h4 class="mg-h4"><%= t('Examination Marks Entry')%></h4>
+<div class="box">
+<%= form_for :examination_evaluation_details_data ,  :url=>{:controller=>'exam_management',:action=>'examination_marks_entry_create'}, :html=>{:id=>'evaluation_details_validations'} do |f| %>
+
+        <%= f.hidden_field :is_deleted ,:value=>0%>
+        <%= f.hidden_field :mg_school_id ,:value=>session[:current_user_school_id]%>
+        <table class="mg-tbl-margin mg-show-tbl-width">
+    <tr>
+      <td class="mg-td-width-one-third">
+      <label class="mg-label"><%= t ('examination_name') %><span class="required-field">&nbsp;*</span></label><br/>
+      <%detail_data=MgExaminationDetail.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id]).pluck(:name,:id)%>
+      <p>
+      <%= select_tag :mg_examination_detail_id,options_for_select(detail_data),:prompt=>"Select",:class=>"mg-text-field",:onchange=>"examinationDetailData(this.value)"%>
+      </p>
+      </td>
+    </tr>
+
+    <tr>
+      <td class="mg-td-width-one-third">
+        <label class="mg-label mg-label-text-transform-none" for="dateofPurchase"><%= t ('date_of_evaluation') %><span class="required-field">&nbsp;*</span></label><br/>
+        <p>
+        <%= f.text_field :date_of_evaluation ,:class=>"mg-text-field datefield date_of_marks_entry"%>
+        </p>
+      </td>
+    </tr>
+
+    <tr>
+      <td class="mg-td-width-one-third">
+        <label class="mg-label mg-label-text-transform-none" for="dateofPurchase"><%= t ('programme') %><span class="required-field">&nbsp;*</span></label><br/>
+        <p class="demo34567">
+        <%= select_tag "mg_examination_wing_id[]",options_for_select([]),:prompt=>"Select",:class=>"mg-text-field"%>
+        </p>
+      </td>
+    </tr>
+     <tr>
+      <td class="mg-td-width-one-third">
+        <label class="mg-label mg-label-text-transform-none" for="dateofPurchase"><%= t ('select_semester') %><span class="required-field">&nbsp;*</span></label><br/>
+        <p id="demos4567">
+        <%= select_tag "mg_examination_wing_id[]",options_for_select([]),:prompt=>"Select",:class=>"mg-text-field"%>
+        </p>
+      </td>
+    </tr>
+     <tr>
+      <td class="mg-td-width-one-third">
+        <label class="mg-label mg-label-text-transform-none" for="dateofPurchase"><%= t ('select_subject') %><span class="required-field">&nbsp;*</span></label><br/>
+        <p id="demossubject">
+        <%= select_tag "mg_examination_wing_id[]",options_for_select([]),:prompt=>"Select",:class=>"mg-text-field"%>
+        </p>
+      </td>
+    </tr>
+    </table>
+    <div class="examination_data_for_details">
+    </div>
+    <a onclick="$(this).closest('form').submit()" class="mg-small-form-btn"><%=t("Submit")%></a>
+
+<%= link_to t('cancel'), :back, {:class=>"mg-small-form-btn cancel-form-dialog"} %>
+    <%end%>
+<%= render  partial: 'application/common_left_close' %>
+
+    <script>
+
+
+    $(document).ready(function () {
+            focusCurrentTab("examination_marks_sheet_detailsAID","examination_marks_sheet_detailsLiID");
+
+
+
+
+dateFormatStr =  getJsDateFormat();
+
+    $('.date_of_marks_entry').datepicker({ changeMonth: true,
+                changeYear: true,yearRange: "-50:+0",maxDate: "0",dateFormat: dateFormatStr});
+
+    $("#evaluation_details_validations").validate({
+
+    rules: {
+    "examination_evaluation_details_data[date_of_evaluation]": {required: true,dateFormat: true},
+    "mg_examination_detail_id": {required: true},
+    "mg_examination_wing_id[]": {required: true},
+    "mg_examination_wing_id[]": {required: true},
+    "mg_subject_id": {required: true}
+
+    }
+    });
+    });
+
+    $(function () {
+    $.validator.addMethod('dateFormat',
+    function (value, element) {
+      dateFormatStr =  getJsDateFormat();
+        if (this.optional(element)) {
+            return true;
+        }
+        var ok = true;
+        try {
+            $.datepicker.parseDate(dateFormatStr, value);
+        }
+        catch (err) {
+            ok = false;
+        }
+        return ok;
+    },
+
+
+      "Please enter a date in the format "+ getDateFormat(dateFormatStr) +".");
+      dateFormatStr =  getJsDateFormat();
+
+    $(".datefield").datepicker({ dateFormat: dateFormatStr, changeYear: true });
+});
+ 
+
+    function examinationDetailData(data)
+{
+  
+var urlLink="/exam_management/examination_details_for_program/"
+$.ajax({ 
+               url: urlLink,  
+               cache: false,
+               data:{"id":data},
+               success: function(data){
+               
+                  $(".demo34567").empty().append(data);
+
+                  //temp.append(data);
+                }
+           });
+
+}
+
+function selectCourseForProgramDataExamination(data,that)
+{
+ // var temp =$(that).parent('.resource-category-td-class').siblings(".resource-type-td-class");
+
+
+var urlLink="/exam_management/examination_details_for_course/"
+$.ajax({ 
+               url: urlLink,  
+               cache: false,
+               data:{"id":data},
+               success: function(data){
+                //$(that).parents('td').siblings(".resource-category-td-class").html(data);
+                  $("#demos4567").empty().append(data);
+                  //temp.append(data);
+                }
+           });
+
+
+}
+
+function selectSubjectForExamination(data){
+ var data12=$("#mg_course_id_").val();
+var value=$("#mg_examination_detail_id").val();
+
+var urlLink="/exam_management/examination_marks_details_for_subject/"
+$.ajax({ 
+               url: urlLink,  
+               cache: false,
+               data:{"s_id":data,"id":data12,"exam_id":value},
+               success: function(data){
+                //$(that).parents('td').siblings(".resource-category-td-class").html(data);
+                  $(".examination_data_for_details").empty().append(data);
+                  //temp.append(data);
+                }
+           });
+
+}
+
+function selectMarksFordataSubjects(data){
+var urlLink="/exam_management/examination_marks_entry_for_subject_marks/"
+
+var value=$("#mg_examination_detail_id").val();
+
+
+$.ajax({ 
+               url: urlLink,  
+               cache: false,
+               data:{"id":data,"exam_id":value},
+               success: function(data){
+                //$(that).parents('td').siblings(".resource-category-td-class").html(data);
+                  $("#subject_marks_in_examination").empty().append(data);
+                  //window.location.reload();
+                  //temp.append(data);
+                }
+           });
+}
+function selectSubjectForExamination_details_data(data){
+var urlLink="/exam_management/examination_marks_entry_for_subject_marks/"
+
+//var value=$("#mg_examination_detail_id").val();
+
+
+$.ajax({ 
+               url: urlLink,  
+               cache: false,
+               data:{"id":data},
+               success: function(data){
+                //$(that).parents('td').siblings(".resource-category-td-class").html(data);
+                  $("#demossubject").empty().append(data);
+                  //window.location.reload();
+                  //temp.append(data);
+                }
+           });
+}
+
+
+//document.on("change","mg_examination_wing_id",function(){
+    </script>

@@ -1,0 +1,158 @@
+<% navigation_add t('subject_specialization_details'), :controller=>'exam_management', :action=>'subject_specialization_details' %>
+<%=render partial: 'exam_management_left'%>
+<h4 class="mg-h4"><%= t('subject_specialization_employee_list') %></h4>
+
+<!-- <button class="new-add-employee-for-specialization-clss mg-btn-bottom-margin mg-custom-form-btn" onclick="window.location.href='/subject_specialization/new'"><%#= t('add_employee')%></button> -->
+
+<div class="mg_pagination">
+<%if @subject_specialization.present?%>
+<table  class="batch-tbl mg-tbl-margin">   <!-- border="2" --> 
+  <tr class="subject-table-header">
+    <th><%= t('name') %></th>
+    <th><%= t('employee_number') %></th>
+    <!-- <th><%#= t('specialization') %></th> -->
+    <th><%= t('subject_name') %></th>
+    <!-- <th><%#= t('description') %></th> -->
+    <th style="width: 92px;"  class="mg-align-center"><%= t('action') %></th>
+  </tr>
+ 
+  <% @subject_specialization.each do |s| %>
+  <%employee=MgEmployee.find_by(:id=>s.mg_employee_id)%>
+  <%subject=MgSubject.find_by(:id=>s.mg_subject_id)%>
+
+    <tr>
+      <td><%= employee.first_name.try(:titleize) %> <%= employee.last_name.try(:titleize) %> </td>
+      <td ><%= employee.try(:employee_number) %></td>
+      <td ><%= subject.try(:subject_name) %></td>
+      <td  class="mg-align-center">
+      	
+      <button title="Show" id="<%=raw s.id %>-showSubjrctSpecializationBTNID" class="show-subjrct-specialization-cls mg-icon-btn"><i class="fa fa-eye"></i></button>
+
+      </td>
+    </tr>
+  <% end %>
+</table>
+<br/>
+ <div class="pagination-align" style="position: relative; bottom: 10px;">
+              <%= will_paginate @subject_specialization, :container => false %>
+           </div>
+<%else%>
+<h5>No data </h5>
+<%end%>
+</div>
+
+<div id="newSubjectSpecializationDIVID"></div>
+<div id="editExamTypeDIVID"></div>
+<div id="showSubjectSpecializationDIVID"></div>
+
+<%= render  partial: 'application/common_left_close' %>
+
+<script>
+$(document).ready(function () {
+	focusCurrentTab("subjectSpecializationDetailsAID","subjectSpecializationDetailsLiID");
+});
+
+
+
+$(document).on("click", ".new-add-employee-for-specialization-cls", function(e){
+        var urlLink = "/subject_specialization/new";
+        $.ajax({
+            url: urlLink ,
+            cache: false,
+            success: function(html){
+                  $('#newSubjectSpecializationDIVID').dialog({
+                    modal: true,
+                    minHeight: 'auto',
+                    title: "New Subject Specialization",
+                    open: function () {
+                        
+                        $(this).html(html);
+                    }
+                }); 
+            }
+        });
+});
+
+$(document).on("click", ".edit-exam-type-btn", function(e){
+        var myID =$(this).attr('id');
+        var Id=myID.split("-");
+
+
+        var urlLink = "/exam_management/"+Id[0]+"/edit/";
+        $.ajax({
+            url: urlLink ,
+            cache: false,
+            success: function(html){
+                  $('#editExamTypeDIVID').dialog({
+                    modal: true,
+                    minHeight: 'auto',
+                    title: "Edit Exam Type",
+                    open: function () {
+                        
+                        $(this).html(html);
+                    }
+                }); 
+               
+            }
+        });
+});
+
+
+$(document).on("click", ".show-subjrct-specialization-cls", function(e){
+        var myID =$(this).attr('id');
+        var Id=myID.split("-");
+        var urlLink = "/exam_management/"+Id[0]+"/show_subject_specialization";
+        $.ajax({
+            url: urlLink ,
+            cache: false,
+            success: function(html){
+                  $('#showSubjectSpecializationDIVID').dialog({
+                    modal: true,
+                    minHeight: 200,
+                    maxHeight: 400,
+                    width: 'auto',
+                    // maxWidth: 600,
+                    title: "Show Subject Specialization",
+                    open: function () {
+                        
+                        $(this).html(html);
+                    }
+                }); 
+               
+            }
+        });
+});
+
+
+$(document).on("click", ".delete-subjrct-specialization-btn", function(e){
+     
+                var myID =$(this).attr('id');
+                    var Id=myID.split("-");
+
+
+                
+                var retVal = confirm("Are you sure to delete?");
+                if(retVal){
+                  //  alert(retVal);
+                     var urlLink = "/exam_management/"+Id[0]+"/delete_subject_specialization";
+
+                      $.ajax({
+                        url: urlLink ,
+                        cache: false,
+                        success: function(data){
+                          console.log(data);
+                          if(data){
+                           window.location.reload();
+                          }else{
+                            alert("deletion cancelled, Please try again");
+                          }
+                        }
+                    });
+
+                }else{
+                   // alert(retVal);     
+                   return false;
+                }
+
+        }); 
+</script>

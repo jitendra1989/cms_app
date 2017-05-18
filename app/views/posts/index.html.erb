@@ -1,0 +1,62 @@
+
+   
+<%#= current_user.posts.build%>
+<body>
+<%=render partial: 'layouts/messages'%>
+
+<div class="main_header clearfix">
+<p><center><font size="4"><%= link_to "Mindcom Forum", {:action=>"index"},:id=>"Color_data55" %></font></center></p>
+<%if session[:user_form_id].present?%>
+<%
+    userdata=User.find(session[:user_form_id])
+%>
+<%= userdata.email%>
+<sapan>
+<%= link_to 'New Post', {:action=>"new"} ,:class=>"mg-small-form-btn123"%>
+</sapan>
+<span></span>
+<span>
+<%= link_to 'Sign Out', {:action=>"destroy_session"},:class=>"mg-small-form-btn123"%>
+</sapan>
+<%else%>
+
+<sapan>
+
+<%#= link_to 'Sign UP', new_user_registration_path ,:class=>"mg-small-form-btn123"%>
+
+<%= link_to 'Sign Up', {:controller=>"posts",:action=>"registration_sign_up"} ,:class=>"mg-small-form-btn123"%>
+<%= link_to 'Sign In', {:controller=>"posts",:action=>"registration_sign_in"} ,:class=>"mg-small-form-btn123"%>
+
+</sapan>
+<sapan>
+
+<%#= link_to 'Sign In', new_user_session_path,:class=>"mg-small-form-btn123"%><br/>
+</sapan>
+<%end%>
+</div><br/>
+<div class="wrapper_class post1">
+<%if @data.present?%>
+<%@data.each do|data|%>
+<p class="post">
+<h4 class="title"><%= link_to data.title, {:action=>"show",:id=>data.id},:id=>"Color_data" %></h4>
+</p>	
+	<p class="date"><%="Published at "%><%=time_ago_in_words(data.created_at)%> by <%=data.user.try(:email)%><br/>
+<%="Comments:"%><%=data.comments.count%>
+	</p>
+
+	<%end%>
+<%else%>
+<%="No Posts Created............"%>
+<%end%>
+	</div>
+</body>
+
+
+
+	<style>
+
+
+
+
+
+	</style>

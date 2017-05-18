@@ -1,0 +1,194 @@
+<% navigation_add t('timetable'), timetable_index_path %>
+<% navigation_add 'Show Semester Wise '+t('timetable'), timetable_show_batch_timetables_path %>
+
+<%= render  partial: 'timetable_left' %>
+
+
+   <%#=text_area_tag 'timeTable',@displayTimeTable, :id=>"timeTableDataId" %>
+<!--  	<div id="timeTableDisplayDivId" class="mg-scroll-bar mg-tbl-border" > 
+ 	</div> -->
+<div class="mg-scroll-bar mg-tbl-border">
+  <%weekdays_hash=Hash.new%>
+
+  <%weekdays_hash[0]="Sunday"
+  weekdays_hash[1]='Monday'
+  weekdays_hash[2]='Tuesday'
+  weekdays_hash[3]='Wednesday'
+  weekdays_hash[4]='Thursday'
+  weekdays_hash[5]='Friday'
+  weekdays_hash[6]='Saturday'
+  %>
+  <%mg_school_id=session[:current_user_school_id]%>
+  <%wings=MgWing.where(:is_deleted=>0, :mg_school_id=>mg_school_id)%>
+  <%#=wings.inspect%>
+<table class="batch-tbl">
+  <%wings.each do |wing|%>
+  <tr>
+  <td class="mg-font-bold"><%=wing.wing_name%></td>
+  </tr>
+  <tr>
+    <td>
+    <%coursess=MgCourse.where(:mg_wing_id=>wing.id, :is_deleted=>0, :mg_school_id=>mg_school_id).pluck(:id)%>
+          <%batchess=MgBatch.where(:mg_course_id=>coursess, :is_deleted=>0, :mg_school_id=>mg_school_id)%>
+          <%if batchess.present?%>
+      <table>
+        <tr>
+          
+          <%weekdays=MgWeekday.where(:is_deleted=>0, :mg_wing_id=>wing.id,:mg_school_id=>mg_school_id)%>
+          <%count=0%>
+          <%weekdays.each do |weekday|%>
+          <td valign="top">
+            <div class="mg-btn-bottom-margin"><%=weekdays_hash[weekday.weekday.to_i]%></div>
+            <table class="mg-tbl-layout">
+            <%class_timeings=MgClassTiming.where(:is_deleted=>0, :mg_wing_id=>wing.id, :mg_weekday_id=>weekday.id,:mg_school_id=>mg_school_id)%>
+
+              <tr>
+                <%if count==0%>
+                <th></th>
+                <%end%>
+                <%class_timeings.where(:is_break=>0).order(:start_time).each do |class_time|%>
+                <th><%=class_time.start_time.strftime("%k:%M%p")%>-<%=class_time.end_time.strftime("%k:%M%p")%></th>
+
+                <%end%>
+
+              </tr>
+              <%courses=MgCourse.where(:mg_wing_id=>wing.id, :is_deleted=>0, :mg_school_id=>mg_school_id).pluck(:id)%>
+              <%batches=MgBatch.where(:mg_course_id=>courses, :is_deleted=>0, :mg_school_id=>mg_school_id)%>
+              <%if batches.length>0 %>
+                    <%batches.each do |batch|%>
+                     <tr>
+                      <%if count==0%>
+                        <td><%=batch.course_batch_code%></td> 
+                      <%end%>
+                      <%class_timeings.where(:is_break=>0).order(:start_time).each do |class_time_inner|%>
+                        <%time_table_entry=MgTimeTableEntry.find_by(:mg_batch_id=>batch.id, :mg_weekday_id=>weekday.id, :mg_class_timings_id=>class_time_inner.id, :is_deleted=>0,:mg_school_id=>mg_school_id)%>
+                      <%if time_table_entry.present?%>
+                      <%@subject=MgSubject.find(time_table_entry.mg_subject_id).subject_name%>
+                      <%else%>
+                      <%@subject=''%>
+
+                      <%end%>
+                      <td style="width: 10em; height: 6em;" class="mg-tbl-bg-color-<%=@subject%>" >
+                      <%if time_table_entry.present?%>
+                      <%subject_name=''%>
+                      <%employee_name=''%>
+                      <%employee=MgEmployee.find(time_table_entry.mg_employee_id)%>
+                      <%subject=MgSubject.find(time_table_entry.mg_subject_id)%>
+                      <%if subject.present? 
+                        subject_name=subject.subject_name  
+                        else 
+                        subject_name='' 
+                        end%>
+                        <%if employee.present? 
+                        employee_name=employee.first_name+" "+employee.last_name+"-("+employee.employee_number+")"  
+                        else 
+                        employee_name='' 
+                        end%>
+                        <%if time_table_entry.try(:mg_elective_group_id).present?%>
+                            
+                           <button id="<%=time_table_entry.try(:mg_elective_group_id)%>-BatchWiseShowTimeTableElectiveGroupBTNID" onclick="showElectiveGroup(<%=time_table_entry.try(:mg_elective_group_id)%>, <%=time_table_entry.try(:mg_batch_id)%>, <%=time_table_entry.try(:mg_class_timings_id)%>)">
+                            <%=t('elective')%><br>
+                            <%=t(MgElectiveGroup.find_by(:id=>time_table_entry.try(:mg_elective_group_id)).try(:name))%>
+                           </button>
+                        <%else%>
+                         <span class="mg-tbl-font-weight"><%=subject_name%></span><br><%=employee_name%><br><%=t('Room No ')%> : <%=time_table_entry.mg_institute_room.try(:room_no)%>
+                        <%end%>
+
+                      <%end%>
+
+                      </td>
+                      
+                      <%end%>
+                  
+                  </tr>
+                  <%end%>
+              <%end%>
+
+
+            </table>
+          </td>
+          <%count=1%>
+          <%end%>
+        </tr>
+          
+      </table>
+      <%end%>
+    </td>
+  </tr>
+  <%end%>
+</table>
+</div> 
+
+
+<div id="showElectiveGroupDIVID"></div>
+<%= render  partial: 'timetable_left_close' %>
+
+<script>
+
+	$(document).ready(function(){
+    	var data=$("#timeTableDataId").val();
+    //	var tabledata=$('#timeTableDisplayDivId').val();
+
+        //if( tabledata == 0) {
+         //$('div.mg-scroll-bar').hide();
+         //   alert('No data for Timetable');
+        //}
+       // else {
+          $("#timeTableDisplayDivId").append(data);
+       // }
+        
+        focusCurrentTab("viewBatchWiseTimeTableAID","viewBatchWiseTimeTableLiID");
+        focusTimeTable();
+	});
+
+	function showElectiveGroup(mg_elective_group_id,mg_batch_id,mg_class_timings_id){
+    console.log("mg_elective_group_id="+mg_elective_group_id+" mg_batch_id="+mg_batch_id+" mg_class_timings_id="+mg_class_timings_id);
+
+    var urlLink = "/timetable/class_timings_for_selected_batch";
+        $.ajax({
+            url: urlLink ,
+            cache: false,
+            data:{
+              mg_elective_group_id: mg_elective_group_id,
+              mg_batch_id: mg_batch_id,
+              mg_class_timings_id: mg_class_timings_id,
+              key_select: "show_elective_group"
+            },
+            success: function(html){
+                  $('#showElectiveGroupDIVID').dialog({
+                    modal: true,
+                    width: 'auto',
+                    title: "Show Elective Group Subjects",
+                    open: function () {
+                       $(this).html(html.str);
+                    }
+                }); 
+               
+            }
+        });
+  }
+
+</script>
+
+<style type="text/css">
+  .mg-scroll-bar{
+      width: 735px;
+      max-height: 800px;
+      overflow: scroll;
+  }
+  #timeTableDataId{
+  	display: none;
+  }
+
+
+.disply-all-timeTable-tbl-div{
+  
+  /*margin-top: 10px;*/
+  width: 100%;
+}
+
+.disply-all-timeTable-tbl-div ,.tbl-td ,.tbl-tr {
+  border: 1px solid #333333;
+}
+
+</style>

@@ -1,0 +1,130 @@
+<%= render  partial: 'exam_management_left' %>
+
+<%# navigation_add 'Vehicles', vehicles_path %>
+<% navigation_add 'Programme Type', exam_management_program_category_data_path %>
+
+
+  <%if flash[:error].present?%>
+  <div class="alert alert-info mg-success-msg">
+
+   <%=flash[:error]%>
+   </div>
+  <%end%>
+
+<h4 class="mg-h4"><label class="mg-label-text-transform-none" for="date_of_birth"><%=t('programme_type_list')%></label></h4>
+
+<button  id="create_exam_management_details_class" class="mg-custom-form-btn">Create Programme Type</button>
+
+
+
+<div id="create_exam_management_dialog_box">
+</div>
+
+<% if @program_category_data.length > 0 %>
+<div class="mg_pagination">
+
+<div id="payment_type_datasShow">
+</div>
+<div id="payment_type_datasEdit">
+</div>
+
+
+    <table class="batch-tbl mg-tbl-margin" cellspacing="0" style="padding:0; border-collapse:collapse;">   <!-- border="2" --> 
+      <tr >
+        <th><%=t('name')%></th>
+
+        <th><%=t('description')%></th>
+        
+        
+        <th align="center"><%=t('actions')%></th>
+       </tr>
+
+    <%@program_category_data.each do |categoey_data| %>
+        <tr>
+          <td><%=categoey_data.name%></td>
+
+          <td><%=truncate categoey_data.description,:length=>20%></td>
+
+        <td class="mg-align-center">
+     
+             <!-- <button title="Show" id='<%#=payment_type.id %>' class="show-payment-type-details-class mg-icon-btn"><i class="fa fa-eye"></i></button> -->
+             <button title="Edit" id='<%=categoey_data.id %>' class='edit-exam-category-type-details-class mg-icon-btn'><i class="fa fa-pencil-square-o"></i></button>           
+            <span class="mg-a-link-pagination-align" style="left: -2px; position: relative; float: right; top: -2px;">
+             <%= link_to "<i class=\"fa fa-trash\"></i>".html_safe ,{ action: "program_category_destroy", id: categoey_data.id },data: { confirm: "Are you sure to delete?" } ,:title=>"Delete" ,:class=>"mg-icon-btn"  %>
+               </span>
+           </td>
+        </tr>
+
+     <% end %>
+  </table>
+ <%#= will_paginate @all_payment_type, :container => false %>
+</div>
+  <% else %>
+    <h5>Please create some records... </h5>
+
+  <% end %>
+
+<%= render  partial: 'application/common_left_close' %>
+
+<script>
+$(document).ready(function () {
+         
+          focusCurrentTab("category_of_programAID","category_of_programLiID");
+          
+
+          
+      });
+
+$(document).on("click", "#create_exam_management_details_class", function(e){
+        
+        //var Id=$(this).attr('id');
+       
+        //alert("urlLink");
+        var urlLink = "/exam_management/program_category_data_new//";
+        $.ajax({
+            url: urlLink ,
+            cache: false,
+            success: function(html){  
+                    $('#create_exam_management_dialog_box').dialog({
+                    modal: true,
+                    title: "Create Programme Type",
+                    minWidth: 300,
+                    minHeight: 250,
+                    // maxHeight: 500,
+                    open: function () {
+                        
+                        $(this).html(html);
+                    }
+                }); 
+               
+            }
+        });
+});
+
+$(document).on("click", ".edit-exam-category-type-details-class", function(e){
+        
+        var Id=$(this).attr('id');
+       
+        //alert("urlLink");
+        var urlLink = "/exam_management/program_category_edit/";
+        $.ajax({
+            url: urlLink ,
+            cache: false,
+            data:{"id":Id},
+            success: function(html){  
+                    $('#payment_type_datasEdit').dialog({
+                    modal: true,
+                    title: "Edit Programme Type",
+                    minWidth: 250,
+                    height: 250,
+                    // maxHeight: 500,
+                    open: function () {
+                        
+                        $(this).html(html);
+                    }
+                }); 
+               
+            }
+        });
+});
+</script>

@@ -1,0 +1,158 @@
+<%#= render partial: 'curriculum/curr_left' %>
+
+<%= render  partial: 'master_settings/master_settings_left.html' %>
+
+<% navigation_add t('nature_of_document'),'/employees/document' %>
+
+<h4 class="mg-h4  mg-label-text-transform-none"><%= t('manage_nature_of_document') %></h4>
+
+<button class="new-add-document mg-btn-bottom-margin mg-custom-form-btn  mg-label-text-transform-none"><%= t('add_nature_of_document')%></button>
+<!-- <%#= button_to 'Add Lab Inventory', {:controller => "laboratory", :action => "unit_new" } ,:class=>"mg-custom-form-btn"%> -->
+<div class="mg_pagination">
+<%if @document.length>0%>
+<table  class="batch-tbl mg-tbl-margin">   <!-- border="2" --> 
+  <tr class="subject-table-header">
+    <!-- <th>Subject Id</th> -->
+    <th><%= t('name') %></th>
+    <th><%= t('description') %></th>
+    <th><%= t('extention') %></th>
+    <th style="width: 92px;"><%= t('actions') %></th>
+  </tr>
+ 
+  <% @document.each do |doc| %>
+    <tr>
+      <td><%= doc.name %></td>
+      <td class="mg-desc-text-justify"><%=truncate(doc.description, length: 25)  %>
+      </td>
+      <td><%= doc.extention %></td>
+
+      <td>
+      	<button title="Show" id="<%=raw doc.id %>-showlabunitBTNID" class="show-emp-doc-btn mg-icon-btn"><i class="fa fa-eye"></i></button>
+
+        <button title="Edit" id="<%=raw doc.id %>-editlabunitBTNID" class="edit-emp-doc-btn mg-icon-btn"><i class="fa fa-pencil-square-o"></i></button>
+
+      <!-- <%#= link_to "<i class=\"fa fa-pencil-square-o\"></i>".html_safe, {:controller => "laboratory", :action => "unit_edit",:id =>lab.id} , :method=>'post' ,:title=>"Edit" ,:class=>"mg-icon-btn"%> -->
+        <button title="Delete" id="<%=raw doc.id %>-editlabinventoryBTNID" class="delete-emp-doc-btn mg-icon-btn"><i class="fa fa-trash"></i></button>
+
+      <!-- <%#= link_to "<i class=\"fa fa-trash\"></i>".html_safe, {:controller => "laboratory", :action => "unit_delete",:id =>lab.id }, :method=>'post' ,:title=>"Delete" ,:class=>"mg-icon-btn",data: { confirm: 'Are you sure to delete?' } %> -->
+
+      </td>
+
+    </tr>
+  <% end %>
+</table>
+<br/>
+ <div class="pagination-align" style="position: relative; bottom: 10px;">
+              <%= will_paginate @document, :container => false %>
+           </div>
+<%else%>
+<h5>No Data is created </h5>
+<%end%>
+</div>
+<div id="showempdocDIVID"></div>
+<div id="addEmpDocumentDIVID"></div>
+<div id="editEmpdocumentDIVID"></div>
+
+
+
+<%= render  partial: 'application/common_left_close' %>
+
+<script>
+$( document ).ready(function() {
+            focusCurrentTab("employeeDocumentFieldsAID","manageEmployeeDocumentiID");
+          //focusStudentHeaderBox();
+});
+
+
+$(document).on("click", ".edit-emp-doc-btn", function(e){
+        var myID =$(this).attr('id');
+        var Id=myID.split("-");
+        var urlLink = "/employees/document_edit/"+Id[0];
+        $.ajax({
+            url: urlLink ,
+            cache: false,
+            success: function(html){
+                  $('#editEmpdocumentDIVID').dialog({
+                    modal: true,
+                    minHeight: 'auto',
+                    minWidth: '350px',
+                    title: "Edit Nature of Document",
+                    open: function () {
+                        
+                        $(this).html(html);
+                    }
+                }); 
+               
+            }
+        });
+});
+
+$(document).on("click", ".show-emp-doc-btn", function(e){
+        var myID =$(this).attr('id');
+        var Id=myID.split("-");
+        var urlLink = "/employees/document_show/"+Id[0];
+        $.ajax({
+            url: urlLink ,
+            cache: false,
+            success: function(html){
+                  $('#showempdocDIVID').dialog({
+                    modal: true,
+                    minHeight: 'auto',
+                    minWidth: 'auto',
+                    title: "Show Nature of Document",
+                    open: function () {
+                        
+                        $(this).html(html);
+                    }
+                }); 
+               
+            }
+        });
+});
+
+
+
+
+$(document).on("click", ".new-add-document", function(e){
+        var urlLink = "/employees/document_new";
+        $.ajax({
+            url: urlLink ,
+            cache: false,
+            success: function(html){
+                  $('#addEmpDocumentDIVID').dialog({
+                    modal: true,
+                    minHeight: 'auto',
+                    minWidth: '350px',
+                    title: "Add Nature of Document",
+                    open: function () {
+                        
+                        $(this).html(html);
+                    }
+                });                
+            }
+        });
+});
+</script>
+<style>
+.table-max-width{
+  border-color: #363131;
+  border-style: solid;
+  border-width: 1px;
+  padding: 12px !important;
+  text-align: center;
+}
+
+.table-batch-tbl {
+   /* font-family: verdana,arial,sans-serif;*/
+    font-size:13px;
+    color:#363131;
+    border-width: 1px;
+    border-color:  #363131;
+    border-collapse: collapse;
+    padding: 12px ;
+    font-size: 0.8em;
+    width: 303px !important;
+    /* margin-left: 2px; */
+}
+</style>
+

@@ -1,0 +1,13 @@
+<%=render partial:"form"%>
+
+<script>
+$( document ).ready(function() {
+    focusCurrentTab("electiveTypeAID","electiveTypeLiID");
+    focusSubject();
+});
+$("#electiveTypeFormID").validate({
+        rules: {        
+        "mg_elective_type[name]": {required: true}
+      }
+ });
+</script>

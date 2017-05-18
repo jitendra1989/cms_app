@@ -1,0 +1,10 @@
+<%if @subject.is_lab==true%>
+	
+	<%@rooms=MgInstituteRoom.where(:id=>@subject.mg_institute_room_id).pluck(:room_no,:id)%>
+	<%@roomid=MgInstituteRoom.where(:id=>@subject.mg_institute_room_id).pluck(:id)%>
+	<%=select_tag 'mandatorys_rooms_ids[]', options_for_select(@rooms,:selected=>@roomid),:class=>"mg-inside-tbl-width",:disabled => true%> 
+	<%=hidden_field_tag 'mandatory_room_id[]',@roomid%>
+<%else%>
+	<%@rooms=MgInstituteRoom.where(:mg_employee_specialization_id=>@subject.mg_employee_specialization_id,:mg_room_type=>"theory").pluck(:room_no,:id)%>
+	<%=select_tag 'mandatory_room_id[]', options_for_select(@rooms),:prompt=>t('select'),:class=>"mg-inside-tbl-width"%> 
+<%end%>

@@ -1,0 +1,115 @@
+<%= render  partial: 'master_settings/master_settings_left' %>
+
+<%navigation_add 'Controller of Examination', exam_management_controller_examiner_show_path %>
+
+<%
+@finance_id=MgExamController.where(:mg_school_id=>session[:current_user_school_id],:is_deleted=>0)
+
+%>
+
+<div id="financeboxcreate" class="mg-pop-up-padding" style="overflow-x: inherit;">
+
+<h4 class="mg-h4"><%=t('examination_controller')%></h4>
+<%if @financial_manager.size>0%>
+
+<button id="<%=raw @financial_manager[0].id%>" title="Edit Examination Controller" class="examination_controller_edit mg-icon-btn mg-btn-bottom-margin"><i class="fa fa-pencil-square-o"></i></button>
+  <button title="Change Password" id="<%=@financial_manager[0].id %>-showlabBTNID" class="show-financial-manager-btn mg-icon-btn"><i class="fa fa-exchange"></i></button>
+<table border="1" class="mg-showdata-bg" cellspacing="1" cellpadding="1">
+
+
+
+<tr>
+<td class="mg-td-width-half" valign="top">
+      
+       <label class="mg-label" for="employee"><%= t ('user_name') %></label>
+      </td>
+      <td class="mg-td-width-half" valign="top">
+      
+         <%=@financial_manager[0].user_name %>
+      </td>
+      
+</tr>
+   
+
+
+
+</table>
+<br/>
+
+
+</table>
+<%else%>
+
+<button  title="Create Exam Controller" class="exam-controller-officer-create mg-icon-btn mg-btn-bottom-margin"><i class="fa fa-pencil-square-o"></i></button>
+<%=" Create  Controller of Examination"%>
+<%end%>
+
+</div>
+
+<%= render  partial: 'application/common_left_close' %>
+
+<script>
+$(document).ready(function(){
+
+  focusCurrentTab("examination_controllerAID","examination_controllerLiID");
+  
+});
+
+$(document).on("click", ".exam-controller-officer-create", function(e){
+       e.preventDefault();
+          
+       
+        var urlLink = "/exam_management/assaign_exam_management_new";
+       
+        $.ajax({
+            url: urlLink ,
+            cache: false,
+        
+           success: function(html){
+
+        $('#financeboxcreate').empty();
+        $('#financeboxcreate').html(html);
+
+               
+            }
+        });
+});
+
+
+$(document).on("click", ".examination_controller_edit", function(e){
+       e.preventDefault();
+       
+
+        var ID =$(this).attr('id');
+         
+       
+        var urlLink = "/exam_management/assaign_exam_management_edit";
+       
+        $.ajax({
+            url: urlLink ,
+            cache: false,
+            data:{"id":ID},
+           success: function(html){
+       
+        $('#financeboxcreate').empty();
+        $('#financeboxcreate').html(html);
+
+               
+            }
+        });
+});
+$(document).on("click", ".show-financial-manager-btn", function(e){
+    var myID =$(this).attr('id');
+    var Id=myID.split("-");
+    var urlLink = "/exam_management/show_hod_login_credentials/"+Id[0];
+    $.ajax({
+        url: urlLink ,
+        cache: false,
+        data: {"change_financial_password":"change_password_by_admins"},
+        success: function(html){
+              $('#financeboxcreate').empty().append(html);
+           
+        }
+    });
+  });
+</script>

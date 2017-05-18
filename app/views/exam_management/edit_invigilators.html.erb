@@ -1,0 +1,257 @@
+<% navigation_add t('assign_invigilators'), :controller=>'exam_management' ,:action=>'invigilators'%>
+<% navigation_add t('edit'), :controller=>'exam_management' ,:action=>'edit_invigilators'%>
+
+<%=render partial: 'exam_management_left'%>
+<h4 class="mg-h4"><%= t('add_invigilators') %></h4>
+
+
+ <%= form_for :invigilators, :url=>update_invigilators_path, method: :patch, :html => {
+                            :id => 'examTypesFormID' } do |f| %>
+
+  <p>
+    <%= f.label :date, t('date') ,:class=>"mg-label "%><span class="required-field"> *</span><br>
+    <%= f.text_field :date,:value=>@invigilators.try(:date).present? ? @invigilators.try(:date).strftime(@school.date_format) : "",:class=>'mg-text-field' %>
+  </p>
+  <p>
+    <%= f.label :time, t('time') ,:class=>"mg-label"%><span class="required-field"> *</span><br>
+    <%= f.text_field :time ,:value=>@invigilators.try(:time).present? ? @invigilators.try(:time).strftime('%I:%M%p') : "",:class=>'mg-text-field'%>
+  </p>
+   <p>
+    <%= f.label :mg_subject_id, t('select_subject') ,:class=>"mg-label"%><span class="required-field"> *</span><br>
+    <%= f.collection_select(:mg_subject_id, MgSubject.where(:is_deleted=>0, :mg_school_id=>session[:current_user_school_id]), :id, :subject_name,{:include_blank => 'Select'} ,:class=>"mg-select-btn" , :onchange=>"selectSectionExamManagement(this, 'mg_examination_category_id');")  %>
+  </p>
+  
+  <p>
+    <%= f.label :description, t('description') ,:class=>"mg-label"%><br>
+    <%= f.text_area :description %>
+  </p>
+  
+
+<table >
+    <tr>
+      	<td class="mg-td-width-one-thirds" valign="top" style="width:50px;">
+	        <label class="mg-label" for="selectDepartment"><%= t('select_department') %><span class="required-field">&nbsp;*</span></label><br/>
+	          <span style="margin-right:50px; vertical-align: top;">
+	        <%
+	        department_data=MgEmployeeDepartment.where(:is_deleted=>0, :mg_school_id=>session[:current_user_school_id]).pluck(:department_name,:id)
+	        %>
+	    	<%=select_tag :notSelected, options_for_select(department_data),:multiple => true,:size =>10, :class=>"mg-add-library-particular"%>
+	    	</span>
+	    </td>
+	    <td style="width:10px;"></td>
+	    <td class="mg-td-width-one-thirds" valign="top" style="width:50px;">
+	    	<br/>
+			<span id="selected_students" style="vertical-align: top;">
+			<%=select_tag :selectedEmployees,options_for_select([]),:multiple => true,:size =>10 ,:class=>"mg-add-library-particular"%>
+			</span>
+		</td>
+		<td style="width:10px;"></td>
+		<td>
+			<br/>
+			<a  id="editaddingemployeedatasInvigilator" class="mg-custom-form-btn mg-add-rem-btn"><%=t('add')%></a></a><br><br>
+			<a  id="editaddingAllemployeedatasInvigilator" class="mg-custom-form-btn mg-add-rem-btn"><%=t('add_all')%></a>  
+		</td>
+		<td style="width:10px;"></td>
+		<td class="mg-td-width-one-thirds" valign="top" style="width:50px;">
+			<br/>
+			<span id="removing_employees" style="display: inline-block;">
+	 
+			<%=select_tag :selected_employees,options_for_select(@employee,:selected=>@seleted),:multiple => true,:size =>10 ,:class=>"mg-add-library-particular"%>
+			</span>
+		</td>
+		<td style="width:10px;"></td>
+		<td>
+				<br/>
+				<a  id="removingdataInvigilater" class="mg-custom-form-btn mg-add-rem-btn"><%=t('remove')%></a><br><br>
+				<a  id="removingAllDataInvigilater" class="mg-custom-form-btn mg-add-rem-btn"><%=t('remove_all')%></a>
+		</td>
+    </tr>
+
+</table>
+<p>
+    <%= f.label :no_of_invigilators, t('no_of_invigilators') ,:class=>"mg-label mg-rm-text-trans"%><span class="required-field"> *</span><br>
+    <%= f.number_field :no_of_invigilators ,:class=>'mg-text-field'  , :readonly=>true%>
+  </p>
+
+
+  <%= f.hidden_field :mg_school_id, :value => session[:current_user_school_id]%>
+
+  <%= f.hidden_field :created_by, :value => session[:user_id]%> 
+  <%= f.hidden_field :updated_by, :value => session[:user_id]%> 
+
+  <%= f.hidden_field :is_deleted, :value => 0%> 
+  <%=f.submit "save", :id=>"invigilatorsBTNID" , :style=>'display:none'%>
+  <p class="mg-p-mgtop">
+    <a onclick="invigilatorsSubmit();" class="mg-small-form-btn"><%=t("save")%></a>
+    <!-- <a class="mg-small-form-btn cancel-form-dialog"><%#=t('cancel')%></a> -->
+    <%= link_to t('cancel'), :back, {:class=>"mg-small-form-btn cancel-form-dialog"} %>
+
+  </p>
+<% end %>
+
+
+
+
+
+<%= render  partial: 'application/common_left_close' %>
+<script>
+$(document).ready(function () {
+var dateFormatStr =  getJsDateFormat();
+$('#invigilators_time').timepicker({ 'scrollDefault': 'now' });
+$( "#invigilators_date" ).datepicker({  minDate: new Date(),changeMonth: true,changeYear: true,yearRange: "-100:+0", dateFormat: dateFormatStr });
+
+	focusCurrentTab("assignInvigilatorsAID","assignInvigilatorsLiID");
+$("#examTypesFormID").validate({
+	rules: {
+		"invigilators[date]": {required: true},
+		"invigilators[time]": {required: true},
+		"invigilators[no_of_invigilators]": {required: true, number: true, min: 0},
+		"invigilators[mg_subject_id]": {required: true},
+		"selected_employees[]": {required: true}
+	}
+});
+});
+
+
+ $(document).on("click","#editaddingemployeedatasInvigilator",function(e){
+ 	var demo=$("#selectedEmployees").val();
+ 	var texts=$("#selectedEmployees :selected").text();
+	var text=texts.split(" ");
+ 	var array=[];
+	$("#selectedEmployees option:selected").remove();
+
+	$("#selected_employees option").each(function() {
+			array.push(this.value);
+		}
+	);0
+
+ 	for(var i=0;i<demo.length;i++)
+ 	{
+		var a =false;
+			for(var j=0;j<array.length;j++){
+				if (demo[i]==array[j]){
+				 	a=true;
+				}
+			}
+		if (a){
+		}else{
+		 	var addselectedOption=$("#selectedEmployees option:selected")
+			var str="<option value="+demo[i]+">"+text[i]+"</option>"
+		  	$("#selected_employees").append(str);
+		 	$("#selected_employees option").prop('selected',true);
+		 	countSelectedEmployee();
+		}
+	}
+ });
+
+ $(document).on("change","#invigilators_date",function(e){
+ 	$("#notSelected").val('');
+ 	$("#selectedEmployees").html('');
+ 	$("#selected_employees").html('');
+ 	// $("#invigilators_no_of_invigilators").val(0);
+ 	countSelectedEmployee();
+ });
+
+
+
+
+$(document).on("click","#removingdataInvigilater",function(e){
+	var selectedOption=$("#selected_employees option:selected").remove();
+	$("#selected_employees option").prop('selected',true);
+	countSelectedEmployee();
+});
+
+
+  $(document).on("click","#editaddingAllemployeedatasInvigilator",function(e){
+  	$("#selectedEmployees option").prop('selected',true);
+ 	var demo=$("#selectedEmployees").val();
+ 	var texts=$("#selectedEmployees :selected").text();
+	var text=texts.split(" ");
+ 	var array=[];
+	$("#selectedEmployees option:selected").remove();
+
+	$("#selected_employees option").each(function() {
+			array.push(this.value);
+		}
+	);0
+
+ 	for(var i=0;i<demo.length;i++)
+ 	{
+		var a =false;
+			for(var j=0;j<array.length;j++){
+				if (demo[i]==array[j]){
+				 	a=true;
+				}
+			}
+		if (a){
+		}else{
+		 	var addselectedOption=$("#selectedEmployees option:selected")
+			var str="<option value="+demo[i]+">"+text[i]+"</option>"
+		  	$("#selected_employees").append(str);
+		 	$("#selected_employees option").prop('selected',true);
+		 	// $("#selectedEmployees option:selected").remove();
+		 	countSelectedEmployee();
+		}
+	}
+ });
+$(document).on("click","#removingAllDataInvigilater",function(e){
+	// var selectedOption=$("#selected_employees option:selected").remove();
+	$("#selected_employees option").prop('selected',true);
+	$("#selected_employees option:selected").remove();
+	$("#selected_employees option").prop('selected',true);
+
+	countSelectedEmployee();
+
+});
+
+
+
+
+
+//  $(document).on("click","#notSelected",function(e){
+//     var dept_values=$("#notSelected").val();
+//     var urlLink = "/exam_management/multi_skilled_worker";
+//  	$.ajax({
+//           url: urlLink ,
+//           cache: false,
+//           data:{ 
+//             selecter: 'department',
+//             id: dept_values
+//           },
+//           success: function(data){
+//               console.log("data   ~>  "+data.main);
+//               $("#selectedEmployees").html(data.main);
+//           }
+//     });
+    
+// });
+
+  $(document).on("click","#notSelected",function(e){
+ 	var invigilators_date=$("#invigilators_date").val();
+    var dept_values=$("#notSelected").val();
+    if(invigilators_date){
+    	var urlLink = "/exam_management/multi_skilled_worker";
+	 	$.ajax({
+	          url: urlLink ,
+	          cache: false,
+	          data:{ 
+	            selecter: 'department',
+	            id: dept_values,
+	            invigilators_date: invigilators_date
+	          },
+	          success: function(data){
+	              console.log("data   ~>  "+data.main);
+	              $("#selectedEmployees").html(data.main);
+	          }
+	    });
+	 }else{
+	 	alert("Please select date");
+	 }
+    
+    
+});
+
+
+ 
+
+</script>

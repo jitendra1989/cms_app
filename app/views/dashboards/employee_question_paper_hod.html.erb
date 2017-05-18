@@ -1,0 +1,183 @@
+<%= render  partial: 'exam_management/exam_management_left' %>
+
+<%# navigation_add 'Vehicles', vehicles_path %>
+<%# navigation_add 'Category of program', exam_management_program_category_data_path %>
+
+<div id="create_exam_questions_dialog_box">
+  <%if flash[:error].present?%>
+  <div class="alert alert-info mg-success-msg">
+
+   <%=flash[:error]%>
+   </div>
+  <%end%>
+
+<h4 class="mg-h4"><label class="mg-label-text-transform-none" for="upload_question_paper"><%=t('uploaded_question_paper_list')%></label></h4>
+
+<button  id="create_exam_question_paper_class" class="mg-custom-form-btn">Upload Question Paper</button>
+
+
+
+
+
+<% if @question_paper_data.length > 0 %>
+<div class="mg_pagination">
+
+<div id="payment_type_datasShow">
+</div>
+<div id="payment_type_datasEdit">
+</div>
+
+
+    <table class="batch-tbl mg-tbl-margin" cellspacing="0" style="padding:0; border-collapse:collapse;">   <!-- border="2" --> 
+      <tr >
+        <th><%=t('academic_year')%></th>
+
+        <th><%=t('programme')%></th>
+        <th><%="Semester"%></th>
+        <th><%="Subject"%></th>
+
+        
+        
+        <th align="center"><%=t('actions')%></th>
+       </tr>
+
+    <%@question_paper_data.each do |data| %>
+        <tr>
+        <%
+
+       time_table_data=MgTimeTable.find_by(:id=>data.mg_time_table_id)
+
+       wing_data=MgWing.find_by(:id=>data.mg_wing_id)
+       course_data=MgCourse.find_by(:id=>data.mg_course_id)
+       subject_data=MgSubject.find_by(:id=>data.mg_subject_id)
+
+        %>
+          <td><%=time_table_data.try(:name)%></td>
+
+          <td><%= wing_data.try(:wing_name)%></td>
+          <td><%= course_data.try(:course_name)%></td>
+          <td><%= subject_data.try(:subject_name)%></td>
+<%
+               document_data=MgDocumentManagement.find_by(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id],:mg_employee_question_paper_id=>data.id)
+%>
+<%puts "sdfgdsfgdfsgfg"%>
+
+<%puts data.id%>
+        <td class="mg-align-center">
+     
+              <div style="float: left;">
+                <button title="Show" id='<%=data.id %>' class="show-question_paper-details-class mg-icon-btn"><i class="fa fa-eye"></i></button> 
+               <%puts document_data.inspect%>
+
+                <%if (document_data.file_status==nil)%>
+               <button title="Edit" id='<%=data.id %>' class='edit-question_paper-details-class mg-icon-btn'><i class="fa fa-pencil-square-o"></i></button>     
+                 <%end%>      
+              </div>
+               <%if (document_data.file_status==nil)%>
+
+               <span class="mg-a-link-pagination-align" style="left: -2px; position: relative; float: right; top: -2px;">
+                <%= link_to "<i class=\"fa fa-trash\"></i>".html_safe ,{ action: "employee_question_paper_delete", id: data.id.to_s+"-demo" },data: { confirm: "Are you sure to delete?" } ,:title=>"Delete" ,:class=>"mg-icon-btn"  %>
+             <%= link_to "<i class=\"fa fa-paper-plane\"></i>
+".html_safe  ,{ :action=> "send_question_paper_to_hod", :id=> data.id.to_s+"-demo" },data: { confirm: "Are you sure to send the selected entry?" } ,:title=>"Send File" ,:class=>"mg-icon-btn"  %>
+               </span>
+
+               <%end%>
+               
+           </td>
+        </tr>
+
+     <% end %>
+  </table>
+ <%#= will_paginate @all_payment_type, :container => false %>
+</div>
+  <% else %>
+    <h5>Please create some records... </h5>
+
+  <% end %>
+</div>
+
+<%= render  partial: 'application/common_left_close' %>
+
+<script>
+$(document).ready(function () {
+         
+          focusCurrentTab("employee_question_paperAID","employee_question_paperLiID");
+          
+
+          
+      });
+
+$(document).on("click", "#create_exam_question_paper_class", function(e){
+        
+        //var Id=$(this).attr('id');
+       
+        //alert("urlLink");
+        var demo="demo"
+        var urlLink = "/dashboards/employee_question_paper_new/";
+        $.ajax({
+            url: urlLink ,
+            cache: false,
+            data:{"data":demo},
+            success: function(html){  
+                    $('#create_exam_questions_dialog_box').empty();
+                    $('#create_exam_questions_dialog_box').append(html);
+
+               
+            }
+        });
+});
+$(document).on("click", ".edit-question_paper-details-class", function(e){
+        
+        var Id=$(this).attr('id');
+        var demo="demo"
+       
+        //alert("urlLink");
+        var urlLink = "/dashboards/employee_question_paper_edit/";
+        $.ajax({
+            url: urlLink ,
+            cache: false,
+            data:{"id":Id,"data":demo},
+            success: function(html){  
+                    $('#payment_type_datasEdit').dialog({
+                    modal: true,
+                    title: "Edit Question Paper",
+                    minWidth: 250,
+                    height: 250,
+                    // maxHeight: 500,
+                    open: function () {
+                        
+                        $(this).html(html);
+                    }
+                }); 
+               
+            }
+        });
+});
+$(document).on("click", ".show-question_paper-details-class", function(e){
+        
+        var Id=$(this).attr('id');
+       
+        //alert("urlLink");
+        var urlLink = "/dashboards/employee_question_paper_show/";
+        $.ajax({
+            url: urlLink ,
+            cache: false,
+            data:{"id":Id},
+            success: function(html){  
+                    $('#payment_type_datasEdit').dialog({
+                    modal: true,
+                    title: "Show Question Paper",
+                    minWidth: 250,
+                    height: 250,
+                    // maxHeight: 500,
+                    open: function () {
+                        
+                        $(this).html(html);
+                    }
+                }); 
+               
+            }
+        });
+});
+
+</script>

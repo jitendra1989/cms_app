@@ -1,0 +1,42 @@
+<% navigation_add t('excel'), exam_excel_path %>
+
+<%=render partial: 'exam_management_left'%>
+<h4 class="mg-h4"><%= t('generate_excel') %></h4>
+
+<p>
+    <label class="mg-label mg-tt-width "><%=t('select_examination') %><span class="required-field"> *</span></label>
+    <%=select_tag :date_time ,options_for_select(MgExaminationDetail.where(:is_deleted=>0, :mg_school_id=>session[:current_user_school_id]).pluck(:name, :id)),:prompt=>t('select'),:onchange=>"studentDetailExcelSheet(this.value)"%><!-- ,:class=>"mg-select-btn" -->
+</p> 
+<div id="generating_excel_sheet_data">
+
+</div>
+
+<%= render  partial: 'application/common_left_close' %>
+
+<script>
+$(document).ready(function () {
+	focusCurrentTab("timeTableExcelAID","timeTableExcelLiID");
+});
+$(document).on("click",".examination_export_excel",function () {
+	if($("#date_time").val()){
+  		window.location.href='/exam_management/generate_excel/'+$("#date_time").val();
+	}
+});
+function studentDetailExcelSheet(data){
+
+var urlLink="/exam_management/student_details_excel_sheet/"
+$.ajax({ 
+               url: urlLink,  
+               cache: false,
+               data:{"id":data},
+               success: function(data){
+               
+                  $("#generating_excel_sheet_data").empty().append(data);
+
+                  //temp.append(data);
+                }
+           });
+
+
+}
+</script>

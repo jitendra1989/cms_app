@@ -1,0 +1,3 @@
+<%=select_tag "mg_course_id[#{params[:index]}]",options_for_select(@course_data),:prompt=>"Select",:onchange=>"selectSubjectForExamination_details_data(this.value,this)"%>
+
+<%#selectSubjectForExamination(this.value,this)%>

@@ -1,0 +1,137 @@
+<%= render  partial: 'exam_management_left' %>
+<% navigation_add 'Examination Evaluation List', exam_management_Examination_evaluation_data_path %>
+
+<h4 class="mg-h4"><%=t('examination_evaluation_details')%></h4>
+
+<table border="1" class="mg-tbl-layout mg-showdata-bg mg-show-tbl-width" cellspacing="1" cellpadding="1">
+<%
+examination_detail=MgExaminationDetail.find_by(:id=>@evaluation_data.mg_examination_detail_id)
+      # batch_detail=MgBatch.find_by(:id=>@data.mg_batch_id)
+      # course_details=MgCourse.find_by(:id=>batch_detail.mg_course_id)
+      # wing_details=MgWing.find_by(:id=>@data.mg_wing_id)
+%>
+   <tr>
+     <td class="mg-td-width-half" valign="top">
+     <label class="mg-label"> <%= t('exam')%></label>
+     </td>
+
+     <td class="mg-td-width-half mg-label-inner-form" valign="top">
+     
+     
+     <%=examination_detail.try(:name)%>
+     
+     </td>
+ </tr>
+ <tr>
+     <td class="mg-td-width-half" valign="top">
+     <label class="mg-label mg-label-text-transform-none"> <%= t('evaluation_date')%></label>
+     </td>
+     <td class="mg-td-width-half mg-label-inner-form" valign="top">
+     <% @timeformat=MgSchool.find(session[:current_user_school_id])%>
+     
+      <%= @evaluation_data.date_of_evaluation.strftime(@timeformat.date_format) %>
+    
+     </td>
+ </tr>
+  
+ 
+ 
+ 
+ </table><br>
+ 
+ 
+ <div class="mg-scroll-employee-bar">
+<table border="1" class="mg-table-nowrap mg-showdata-bg mg-show-tbl-width" cellspacing="1" cellpadding="1">
+ 
+<tr>
+<th><label class="mg-label"> <%= t('examiner_name')%></label> </th>
+<th> <label class="mg-label"> <%= t('programme')%></label>
+<th><label class="mg-label"> <%= t('semester')%></label> </th>
+<th> <label class="mg-label"> <%= t('subject')%></label>
+</th>
+<th><label class="mg-label"> <%= t('college_name')%></label> </th>
+<th><label class="mg-label"> <%= t('copies')%></label> </th>
+
+</tr>
+<%@examination_evaluation_data.each do |info|%>
+<tr>
+    <td class="mg-td-width-half" valign="top">
+
+   
+  <%= info.try(:examiner_name)%>
+     
+    </td>
+
+    <td class="mg-td-width-half" valign="top">
+
+    <%
+    wing_data=MgWing.find_by(:id=>info.mg_wing_id)
+   
+   %>
+  <%= wing_data.try(:wing_name)%>
+     
+    </td>
+     <td class="mg-td-width-half" valign="top">
+    
+    <%
+    wing_data=MgWing.find_by(:id=>info.mg_wing_id)
+   
+    course_details=MgCourse.find_by(:id=>info.mg_course_id)
+
+    subject_data=MgSubject.find_by(:id=>info.mg_subject_id)
+    %>
+     <%="#{course_details.try(:course_name)}"%>
+     
+     </td>
+     
+     <td class="mg-td-width-half" valign="top">
+
+     <%= subject_data.try(:subject_name)%>
+
+   </td>
+
+   </td>
+     
+     <td class="mg-td-width-half" valign="top">
+
+     <%= info.try(:college_name_data)%>
+
+   </td>
+
+    <td class="mg-td-width-half" valign="top">
+
+     <%= info.try(:copies)%>
+
+   </td>
+ </tr>
+
+
+
+ <%end%>
+
+</table>
+</div>
+<p class="mg-p-mgtop">
+       <%= link_to t('cancel'), :back, {:class=>"mg-small-form-btn cancel-form-dialog"}%>
+</p>
+<%= render  partial: 'application/common_left_close' %>
+
+<style>
+/*.mg-show-tbl-width {
+    width: 64% !important; 
+}*/
+.table.batch-tbl th {
+    border-color: #363131;
+    border-style: solid;
+    border-width: 1px;
+    padding: 3px;
+    text-align: center;
+}
+</style>
+
+<script>
+$(document).ready(function(){
+
+            focusCurrentTab("examination_evaluationAID","examination_evaluationLiID");
+});
+</script>

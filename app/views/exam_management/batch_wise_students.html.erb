@@ -1,0 +1,67 @@
+<% if @mg_student.present? %>
+  <h4 class="mg-h4"><%=t('student_list')%></h4>
+  <div class="mg-scroll-employee-bar mg-btn-bottom-margin">
+    <table class="batch-tbl table-batchs-tbl">
+      <tr class="subject-table-header">
+        <th><%= t('student_id') %></th>
+        <th><%= t('name') %></th>
+        <th class="mg-rm-text-trans"><%= t('dateofbirth') %></th>          
+        <th></label> <a id="checkAllCheckBoxFormgStudent" class="mg-pop-link">All</a>
+        <a id="unCheckAllCheckBoxFormgStudent" class="mg-pop-link">None</a>
+        </th>
+
+        <th><%= t('actions') %></th>      
+      </tr>  
+        <% @mg_student.each do |f| %>  
+          <tr>
+            <% @mg_id=params[:mg_course_id] %>
+            <td><%= f.try(:admission_number) %></td>
+            <td><%= f.try(:first_name) %>&nbsp;<%= f.try(:middle_name) %>&nbsp;<%= f.try(:last_name) %></td>
+            <% @dateFormat = MgSchool.find_by(:id=>session[:current_user_school_id]).date_format %>
+            <td><%= f.try(:date_of_birth).try(:strftime,@dateFormat) %></td>
+            <td class="mg-align-center">
+              <%= check_box_tag("mg_student_ids[]",name=f.id, false, :onclick=>"",:class=>"checked-checkbox-for-mgstudent")%>      
+            </td>          
+            <td>            
+              <!-- <button title="View Hall Ticket" id="<%#= raw f.id %>-viewHallBTNID" class="viewHallTCKT mg-icon-btn"><i class="fa fa-eye"></i></button> -->
+
+              <%#= link_to "<i class=\"fa fa-eye\"></i>".html_safe, {controller: "exam_management", action: "mg_student_show" ,:id=>f.id } ,:title=>"Show" ,:class=>"mg-icon-btn" %>
+              <button type="button"  onclick="window.location.href='/exam_management/mg_student_show/<%=f.id%>'" class="mg-icon-btn"  title="Show"><i class="fa fa-eye"></i></button>
+              <button type="button" onclick="window.open('/exam_management/hall_ticket_pdf/<%=f.id%>?format=pdf&mg_examination_detail_id=<%=params[:mg_examination_detail_id]%>')" class="mg-icon-btn"  title="pdf" formtarget="_blank"><i class="fa fa-file-pdf-o pdf-width" ></i></button>
+
+             <!--  <span style="font-size: 14px;">
+                <%#= link_to "<i class=\"fa fa-file-pdf-o pdf-width\" style=\"width: 5px;\"></i>".html_safe, {:controller => "exam_management", :action =>"hall_ticket_pdf",:id=>f.id,:format=>"pdf"} ,:title=>"Generate pdf", :target=>"_blank",:class=>"mg-custom-form-btn mg-prof-btn"%>
+              </span>  -->                
+            </td>          
+          </tr>                 
+        <% end %>       
+    </table> 
+    </div>
+    <!-- <p class="mg-p-mgtop">   
+      <a class="mg-small-form-btn submit-student-hall-ticket-btn"><%#=t('send_hall_ticket')%></a>  
+      <%#= link_to t('cancel'), :back, {:class=>"mg-small-form-btn cancel-form-dialog"} %>     
+    </p>   -->
+
+  </div>
+<% else %>
+    <h5 class="mg-custom-labels"></h5>
+<% end %>
+
+
+<script>
+  $(document).ready(function() {
+     focusCurrentTab("ExaminationHallTicketLAID","ExaminationHallTicketLiID");
+    //focusExaminationHeaderBox();
+   });
+
+  
+  $("#checkAllCheckBoxFormgStudent").on("click", function(e){
+    $(".checked-checkbox-for-mgstudent").prop('checked', true);
+    e.preventDefault();        
+  });
+
+  $("#unCheckAllCheckBoxFormgStudent").on("click", function(e){
+    $(".checked-checkbox-for-mgstudent").prop('checked', false);
+    e.preventDefault();
+  });  
+</script>

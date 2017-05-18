@@ -1,0 +1,155 @@
+<%= render  partial: 'master_settings/master_settings_left' %>
+
+<% navigation_add 'Institute Rooms','/schools/room' %>
+
+<h4 class="mg-h4"><%= t('room_list') %></h4>
+<button class="new-add-room mg-btn-bottom-margin mg-custom-form-btn"><%= t('add_room')%></button>
+<div class="mg_pagination">
+<%if @room.length>0%>
+<table  class="batch-tbl mg-tbl-margin">   <!-- border="2" --> 
+  <tr class="subject-table-header">
+    <!-- <th>Subject Id</th> -->
+    <th><%= t('room_no/_name') %></th>
+    <th><%= t('specialization') %></th>
+    <th><%= t('room_type') %></th>
+    <th><%= t('capacity') %></th>
+    <th style="width: 69px;"><%= t('actions') %></th>
+  </tr>
+ 
+  <% @room.each do |room| %>
+    <tr>
+      <td><%= room.try(:room_no) %></td>
+      <%specialization=MgEmployeeSpecialization.find_by(:id=>room.mg_employee_specialization_id)%>
+      <td><%= specialization.try(:name) %></td>
+      <td class="mg-capitalize-text"><%=room.try(:mg_room_type)%></td>
+      <td><%= room.try(:capacity) %></td>
+
+      <td>
+     <!--  	<button title="Show" id="<%#=raw lab.id %>-showlabunitBTNID" class="show-lab-unit-btn mg-icon-btn"><i class="fa fa-eye"></i></button> -->
+
+        <button title="Edit" id="<%=raw room.id %>-editlabunitBTNID" class="edit-school-room-btn mg-icon-btn"><i class="fa fa-pencil-square-o"></i></button>
+
+      <!-- <%#= link_to "<i class=\"fa fa-pencil-square-o\"></i>".html_safe, {:controller => "laboratory", :action => "unit_edit",:id =>lab.id} , :method=>'post' ,:title=>"Edit" ,:class=>"mg-icon-btn"%> -->
+        <button title="Delete" id="<%=raw room.id %>-editlabinventoryBTNID" class="delete-school-room-btn mg-icon-btn"><i class="fa fa-trash"></i></button>
+
+      <!-- <%#= link_to "<i class=\"fa fa-trash\"></i>".html_safe, {:controller => "laboratory", :action => "unit_delete",:id =>lab.id }, :method=>'post' ,:title=>"Delete" ,:class=>"mg-icon-btn",data: { confirm: 'Are you sure to delete?' } %> -->
+
+      </td>
+
+    </tr>
+  <% end %>
+</table>
+<br/>
+ <div class="pagination-align" style="position: relative; bottom: 10px;">
+              <%= will_paginate @room, :container => false %>
+           </div>
+<%else%>
+<h5>No Room is created </h5>
+<%end%>
+</div>
+<div id="showCurrGradeDIVID"></div>
+<div id="addSchoolRoomDIVID"></div>
+<div id="editSchoolRoomDIVID"></div>
+
+
+
+<%= render  partial: 'application/common_left_close' %>
+
+<script>
+$( document ).ready(function() {
+            focusCurrentTab("manageroomID","schoolroomLiID");
+          focusMasterSettings();
+});
+
+
+
+
+
+
+$(document).on("click", ".edit-school-room-btn", function(e){
+        var myID =$(this).attr('id');
+        var Id=myID.split("-");
+        var urlLink = "/schools/room_edit/"+Id[0];
+        $.ajax({
+            url: urlLink ,
+            cache: false,
+            success: function(html){
+                  $('#editSchoolRoomDIVID').dialog({
+                    modal: true,
+                    minHeight: 'auto',
+                    width: '290px',
+                    title: "Edit Room",
+                    open: function () {
+                        $(this).html(html);
+                    }
+                }); 
+               
+            }
+        });
+});
+
+// $(document).on("click", ".show-lab-unit-btn", function(e){
+//         var myID =$(this).attr('id');
+//         var Id=myID.split("-");
+//         var urlLink = "/curriculum/grade_show/"+Id[0];
+//         $.ajax({
+//             url: urlLink ,
+//             cache: false,
+//             success: function(html){
+//                   $('#showCurrGradeDIVID').dialog({
+//                     modal: true,
+//                     minHeight: 'auto',
+//                     minWidth: 'auto',
+//                     title: "Show Grade",
+//                     open: function () {
+                        
+//                         $(this).html(html);
+//                     }
+//                 }); 
+               
+//             }
+//         });
+// });
+$(document).on("click", ".new-add-room", function(e){
+        var urlLink = "/schools/room_new";
+        $.ajax({
+            url: urlLink ,
+            cache: false,
+            success: function(html){
+                  $('#addSchoolRoomDIVID').dialog({
+                    modal: true,
+                    minHeight: 'auto',
+                    width: '290px',
+                    title: "Add Room",
+                    open: function () {
+                        
+                        $(this).html(html);
+                    }
+                });                
+            }
+        });
+});
+</script>
+<style>
+.table-max-width{
+  border-color: #363131;
+  border-style: solid;
+  border-width: 1px;
+  padding: 12px !important;
+  text-align: center;
+}
+
+.table-batch-tbl {
+   /* font-family: verdana,arial,sans-serif;*/
+    font-size:13px;
+    color:#363131;
+    border-width: 1px;
+    border-color:  #363131;
+    border-collapse: collapse;
+    padding: 12px ;
+    font-size: 0.8em;
+    width: 303px !important;
+    /* margin-left: 2px; */
+}
+</style>
+

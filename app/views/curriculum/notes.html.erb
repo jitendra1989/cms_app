@@ -1,0 +1,81 @@
+<%= render partial: 'curriculum/curr_left' %>
+
+<h4 class="mg-h4"><%= t('notes_list') %></h4>
+<div>
+<%= button_to 'Add Notes', {:controller => "curriculum", :action => "notes_new" } ,:class=>"mg-custom-form-btn"%>
+
+<div class="mg_pagination">
+<%if @curriculum.length>0%>
+<table  class="batch-tbl mg-tbl-margin">   <!-- border="2" --> 
+  <tr class="subject-table-header">
+    <th><%=t('chapter_name')%></th>
+    <th><%=t('topic_name')%></th>
+    <th><%=t('is_shareable')%></th>
+    <th><%=t('shared_until')%></th>
+     <th><%=t('actions')%></th>
+  </tr>
+ 
+  <% @curriculum.each do |curr| %>
+    <tr>
+      <td> <%if curr.mg_unit_id.present?
+            unit=MgUnit.find_by(:id=>curr.mg_unit_id)%>
+            <%=unit.try(:unit_name)%>
+            <%end%>
+        
+      </td>
+      <td><% if curr.mg_topic_id.present?
+      topic=MgTopic.find_by(:id=>curr.mg_topic_id) 
+      %>
+      <%=topic.try(:topic_name)%>
+      <%end%>
+      </td>
+
+      <td><% if curr.is_sharable.present? 
+      %>
+      <%=(curr.is_sharable) ? "Yes" : "No"%>
+      <%end%>
+      </td>
+
+       <% @timeformat=MgSchool.find_by_id(curr.mg_school_id)%>
+       <% if @timeformat.present?%>
+          <td class="table-padding-mod">
+          <% if curr.until_date.present?%>
+            <%= curr.until_date.strftime(@timeformat.date_format) %>
+            <%end%>
+          </td>
+          <%else%>
+          <td></td>
+        <%end %>
+      
+     
+
+      <td>
+      <%= link_to "<i class=\"fa fa-eye\"></i>".html_safe, {:controller => "curriculum", :action => "notes_show",:id =>curr.id } , :method=>'post' ,:title=>"Show" ,:class=>"mg-icon-btn"%>
+      <%= link_to "<i class=\"fa fa-pencil-square-o\"></i>".html_safe, {:controller => "curriculum", :action => "notes_edit",:id =>curr.id } , :method=>'post' ,:title=>"Edit" ,:class=>"mg-icon-btn"%>
+      <%= link_to "<i class=\"fa fa-trash\"></i>".html_safe, {:controller => "curriculum", :action => "notes_delete",:id =>curr.id } , :method=>'post' ,:title=>"Delete" ,:class=>"mg-icon-btn" ,data: { confirm: 'Are you sure to delete?' }%>
+      </td>
+
+    </tr>
+  <% end %>
+</table>
+<br/>
+ <div class="pagination-align" style="position: relative; bottom: 10px;">
+              <%= will_paginate @curriculum, :container => false %>
+           </div>
+<%else%>
+<h5>No notes is created </h5>
+<%end%>
+</div>
+</div>
+<%= render  partial: 'application/common_left_close' %>
+
+<script>
+$(document).ready(function () {
+
+focusCurrentTab("viewCurriculumDocumentNote","viewEmployeecurriculumNotesLiID");
+
+
+        //focusCurriculum();
+      });
+</script>
+

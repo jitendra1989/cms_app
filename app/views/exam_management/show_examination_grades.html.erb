@@ -1,0 +1,52 @@
+<table border="1" class="mg-showdata-bg " cellspacing="1" cellpadding="1">
+   <tr>
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"> <%= t('grades')%></label>
+     </td>
+     <%#data=MgAlumniPolling.%>
+     <td class="mg-td-width-half" valign="top">
+      <%= @grades.try(:name) %>
+     </td>
+ </tr>
+
+ <tr>
+    <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"><%=t('description')%></label>
+    </td>
+    <td class="mg-td-width-half" valign="top">
+      <div class="text-scroll-for-log-text-cls comments-space">
+        <%= @grades.try(:description) %>
+      </div>
+    </td>
+ </tr>
+
+<tr>
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"> <%= t('min_score')%></label>
+     </td>
+     <td class="mg-td-width-half" valign="top">
+      <%= @grades.try(:min_score)%>
+     </td>
+ </tr>
+
+<tr>
+  <td class="mg-td-width-half" valign="top">
+    <label class="mg-label"> <%= t('credit_points')%></label>
+  </td>
+  <td class="mg-td-width-half" valign="top">
+    <%= @grades.try(:credit_points) %>
+  </td>
+</tr>
+
+   
+</table>
+ <p class="mg-p-mgtop">
+     <a class="mg-small-form-btn cancel-form-dialog"><%=t('cancel')%></a>
+  </p>
+
+<script>
+  $(document).ready(function () {
+    textSeeMoreLess();
+  });
+
+</script>

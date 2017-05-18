@@ -1,0 +1,172 @@
+
+
+ <% navigation_add t('examination_creation'), :controller=>'exam_management', :action=>'examination' %>
+ <% navigation_add t('edit'), :controller=>'exam_management', :action=>'edit_examination', :id=> @examination.id%>
+ <%=render partial: 'exam_management_left'%>
+ <%#= form_for :examination, :url=>create_examination_path, method: :post, :html => {
+                            :id => 'examTypesFormID' } do |f| %>
+                             <h4 class="mg-h4"><label class="mg-label-text-transform-none" for="date_of_birth"><%=t('edit_examination_schedule')%></label></h4>
+ <%= form_for :examination, :url=>update_examination_path(@examination.id), method: :patch, :html => {
+                            :id => 'examTypesFormID' } do |f| %>
+  <p>
+    <%= f.label :name, t('name') ,:class=>"mg-label"%><span class="required-field"> *</span><br>
+    <%= f.text_field :name  ,:class=>"mg-select-btn" %>
+  </p>
+  <p>
+    <%= f.label :start_date, t('start_date') ,:class=>"mg-label"%><span class="required-field"> *</span><br>
+    <%= f.text_field :start_date,:class=>"mg-select-btn"  , :value=>@examination.start_date.present? ? @examination.start_date.strftime(@school.date_format) : ""%>
+  </p>
+  <p>
+    <%= f.label :end_date, t('end_date') ,:class=>"mg-label"%><span class="required-field"> *</span><br>
+    <%= f.text_field :end_date ,:class=>"mg-select-btn" , :value=>@examination.end_date.present? ? @examination.end_date.strftime(@school.date_format) : ""  %>
+  </p>
+  <p>
+    <%= f.label :description, t('description') ,:class=>"mg-label"%><br>
+    <%= f.text_area :description,:class="mg-select-btn"%>
+  </p>
+   <p>
+    <%= f.label :mg_time_table_id, t('select_academic_year') ,:class=>"mg-label"%><span class="required-field"> *</span><br>
+    <%= f.collection_select(:mg_time_table_id, MgTimeTable.where("start_date < \"#{Date.today}\" && \"#{Date.today}\" < end_date").where(:is_deleted=>0, :mg_school_id=>session[:current_user_school_id]), :id, :name,{:include_blank => 'Select'} ,:class=>"mg-select-btn" , :onchange=>"selectSectionExamManagement(this, 'mg_time_table_id');")  %>
+  </p>
+
+  <p>
+    <%= f.label :mg_exam_type_id, t('select_exam_type') ,:class=>"mg-label"%><span class="required-field"> *</span><br>
+    <%= f.collection_select(:mg_exam_type_id, MgExamType.where(:is_deleted=>0, :mg_school_id=>session[:current_user_school_id]), :id, :name,{:include_blank => 'Select'} ,:class=>"mg-select-btn " , :onchange=>"selectSectionExamManagement(this, 'mg_exam_type_id');")  %>
+  </p>
+   <p>
+    <%= f.label :mg_examination_category_id, t('select_examination_category') ,:class=>"mg-label"%><span class="required-field"> *</span><br>
+    <%= f.collection_select(:mg_examination_category_id, MgExaminationCategory.where(:is_deleted=>0, :mg_school_id=>session[:current_user_school_id]), :id, :name,{:include_blank => 'Select'} ,:class=>"mg-select-btn" , :onchange=>"selectSectionExamManagement(this, 'mg_examination_category_id');")  %>
+  </p>
+
+  <p>
+    <%= f.label :mg_examination_program_category_id, t('select_programme_type') ,:class=>"mg-label"%><span class="required-field"> *</span><br>
+    <%= f.collection_select(:mg_examination_program_category_id, MgExaminationProgramCategory.where(:is_deleted=>0, :mg_school_id=>session[:current_user_school_id]), :id, :name,{:include_blank => 'Select'} ,:class=>"mg-select-btn" , :onchange=>"selectSectionExamManagement(this, 'mg_examination_program_category_id');") %>
+  </p>
+   <!--  <p>
+    <%#= f.label :mg_wing_id, t('select_wing') ,:class=>"mg-label"%><span class="required-field"> *</span><br>
+    <%#= f.collection_select(:mg_wing_id, MgWing.where(:is_deleted=>0, :mg_school_id=>session[:current_user_school_id]), :id, :wing_name,{:include_blank => 'Select'} ,:class=>"mg-select-btn", :onchange=>"selectSectionExamManagement(this, 'mg_wing_id');" )  %>
+  </p>
+  <p>
+    <%#= f.label :mg_course_id, t('select_class') ,:class=>"mg-label"%><span class="required-field"> *</span><br>
+   
+       <%#= f.collection_select(:mg_course_id, @course, :id, :course_name,{:include_blank => 'Select'} ,:class=>"mg-select-btn" , :onchange=>"selectSectionExamManagement(this, 'mg_course_id');")  %>
+  </p> -->
+
+ <!--   <p>
+    <%#= f.label :mg_batch_id, t('select_semester') ,:class=>"mg-label"%><span class="required-field"> *</span><br>
+    <%#= f.collection_select(:mg_batch_id, @batch,:id,:name,{:include_blank => 'Select'} ,:class=>"mg-select-btn", :onchange=>"selectSectionExamManagement(this, 'mg_batch_id');")  %>
+  </p> -->
+  <%= f.hidden_field :mg_school_id, :value => session[:current_user_school_id]%>
+  <%= f.hidden_field :created_by, :value => session[:user_id]%> 
+  <%= f.hidden_field :updated_by, :value => session[:user_id]%> 
+  <%= f.hidden_field :is_deleted, :value => 0%> 
+
+  <p class="mg-p-mgtop">
+    <a onclick="$(this).closest('form').submit()" class="mg-small-form-btn"><%=t("save")%></a>
+    <%= link_to t('cancel'), :back, {:class=>"mg-small-form-btn cancel-form-dialog"} %>
+  </p>
+<% end %>
+
+<%= render  partial: 'application/common_left_close' %>
+
+<script>
+$(document).ready(function () {
+ focusCurrentTab("viewExaminationCreationAID","viewExaminationCreationLiID");
+ var dateFormatStr =  getJsDateFormat();
+  $( "#examination_start_date" ).datepicker({   minDate: new Date(),changeMonth: true,changeYear: true,yearRange: "-100:+0", dateFormat: dateFormatStr});
+  $( "#examination_end_date" ).datepicker({ minDate: new Date(),changeMonth: true,changeYear: true,yearRange: "-100:+0", dateFormat: dateFormatStr});
+  $(function () {
+    $.validator.addMethod('dateFormat',
+    function (value, element) {
+      dateFormatStr =  getJsDateFormat();
+        if (this.optional(element)) {
+            return true;
+        }
+        var ok = true;
+        try {
+            $.datepicker.parseDate(dateFormatStr, value);
+        }
+        catch (err) {
+            ok = false;
+        }
+        return ok;
+    },
+      "Please enter a date in the format "+ getDateFormat(dateFormatStr) +".");
+      dateFormatStr =  getJsDateFormat();
+
+    $(".datefield").datepicker({ dateFormat: dateFormatStr, changeYear: true });
+  });
+$("#examTypesFormID").validate({
+
+rules: {
+"examination[name]": {required: true},
+"examination[mg_time_table_id]": {required: true},
+"examination[mg_exam_type_id]": {required: true},
+"examination[mg_examination_category_id]": {required: true},
+"examination[mg_examination_program_category_id]": {required: true},
+"examination[mg_wing_id]": {required: true},
+"examination[mg_course_id]": {required: true},
+"examination[mg_batch_id]": {required: true},
+"examination[start_date]": {required: true, dateFormat: true},
+"examination[end_date]": {required: true, dateFormat: true}
+
+
+
+}
+});
+});
+
+function selectSectionExamManagement(that, str_select){
+
+  console.log(that.value+"   ~>  "+str_select);
+  var urlLink = "/exam_management/multi_skilled_worker";
+  var json_object={mg_wing_id: "examination_mg_course_id", mg_course_id: "examination_mg_batch_id"};
+
+   if("mg_wing_id"==str_select || "mg_course_id"==str_select){
+          $.ajax({
+              url: urlLink ,
+              cache: false,
+              data:{ 
+                selecter: str_select,
+                id: that.value
+              },
+              success: function(data){
+                  console.log("data   ~>  "+data.main);
+                  $("#"+json_object[str_select]).html(data.main);
+              }
+          });
+   }
+
+  
+}
+
+$(document).on("change","#examination_start_date",function(){
+    var dateFormatStr =  getJsDateFormat();
+    var end_date=$("#examination_end_date").val();
+    var start_date=$(this).val();
+    console.log("Strat_date="+start_date);
+    console.log("end_date="+end_date);
+    if(start_date && end_date){
+      if(!(compareDate(start_date,end_date,dateFormatStr))){
+        alert("Start date should be less than end date");
+        document.getElementById('examination_start_date').value="";
+      }
+    }
+  });
+
+
+$(document).on("change","#examination_end_date",function(){
+    var dateFormatStr =  getJsDateFormat();
+    var start_date=$("#examination_start_date").val();
+    var end_date=$(this).val();
+    console.log("Strat_date="+start_date);
+    console.log("end_date="+end_date);
+    if(start_date && end_date){
+      if(!(compareDate(start_date,end_date,dateFormatStr))){
+        alert("End date should be greater than start date");
+        document.getElementById('examination_end_date').value="";
+      }
+    }
+  });
+</script>
+

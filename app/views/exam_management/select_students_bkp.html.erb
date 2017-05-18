@@ -1,0 +1,114 @@
+
+<%#="Select Students:"%>
+<table>
+<tr>
+<td class="mg-td-width-one-thirds" valign="top" style="width:50px;">
+<label class="mg-label" for="selectDepartment"><%= t('select_students') %><span class="required-field">&nbsp;*</span></label><br/>
+              <span id="selected_students" style="margin-right:50px; vertical-align: top;">
+ <!-- <span id="selected_students"> -->
+
+    <%=select_tag :selectedStudentsId, options_for_select(@student_hash),:multiple => true,:size =>10 ,:class=>"mg-add-library-particular"%>
+</span>
+
+   <!--  <a  id="AddTransportFees" class="mg-custom-form-btn mg-add-rem-btn">Add</a> <br/>
+    <a  id="editaddingAllStudents" class="mg-custom-form-btn mg-add-rem-btn"><%#=t('add_all')%></a> --> 
+</td>
+<td style="width:10px;"></td>
+<td>
+ <a  id="AddTransportFees" class="mg-custom-form-btn mg-add-student-rem-btn">Add</a> <br/><br/>
+    <a  id="editaddingAllStudents" class="mg-custom-form-btn mg-add-student-rem-btn"><%=t('add_all')%></a>
+</td>
+<td style="width:10px;"></td>
+        <td class="mg-td-width-one-thirds" valign="top" style="width:50px;">
+<br/>
+<span id="removing_employees" style="display: inline-block;">
+   <!--  <span id="removing_employees"> -->
+
+<%=select_tag :ExaminationSelectedStudents,options_for_select([]),:multiple => true,:size =>10 ,:class=>"mg-add-library-particular"%>
+</span>
+</td>
+<td style="width:10px;"></td>
+<td>
+<a  id="RemoveTransportFees" class="mg-custom-form-btn mg-add-student-rem-btn">Remove</a><br/><br/>
+<a  id="removingAllDataStudents" class="mg-custom-form-btn mg-add-student-rem-btn"><%=t('remove_all')%></a>
+</td>
+</tr>
+</table><br/>
+<script>
+$(document).on("click","#AddTransportFees",function(e){
+
+
+
+ var selectedOptions=$("#selectedStudentsId option:selected").remove();
+
+
+$("#ExaminationSelectedStudents").append(selectedOptions);
+
+
+  });
+$(document).on("click","#RemoveTransportFees",function(e){
+
+var selectedOption=$("#ExaminationSelectedStudents option:selected").remove();
+
+//$("#selectedStudentsId").append(selectedOption);
+
+  });
+$(document).on("click","#editaddingAllStudents",function(e){
+    $("#selectedStudentsId option").prop('selected',true);
+    var demo=$("#selectedStudentsId").val();
+    var texts=$("#selectedStudentsId :selected").text();
+  
+    var text=texts.split(" ");
+   
+    var array=[];
+    $("#selectedStudentsId option:selected").remove();
+
+    $("#ExaminationSelectedStudents option").each(function() {
+            array.push(this.value);
+        }
+    );0
+
+    for(var i=0;i<demo.length;i++)
+    {
+        var a =false;
+            for(var j=0;j<array.length;j++){
+                if (demo[i]==array[j]){
+                    a=true;
+                }
+            }
+        if (a){
+        }else{
+            var addselectedOption=$("#selectedStudentsId option:selected")
+            var str="<option value="+demo[i]+">"+text[i]+"</option>"
+            $("#ExaminationSelectedStudents").append(str);
+            $("#ExaminationSelectedStudents option").prop('selected',true);
+            // $("#selectedEmployees option:selected").remove();
+            countSelectedEmployee();
+        }
+    }
+ });
+$(document).on("click","#removingAllDataStudents",function(e){
+    // var selectedOption=$("#selected_employees option:selected").remove();
+    $("#ExaminationSelectedStudents option").prop('selected',true);
+    $("#ExaminationSelectedStudents option:selected").remove();
+    $("#ExaminationSelectedStudents option").prop('selected',true);
+
+    countSelectedEmployee();
+
+});
+
+</script>
+
+<style>
+
+.mg-add-rem-btn {
+    position: relative;
+    top: -7em;
+    margin-right: 5px;
+}
+.mg-add-student-rem-btn {
+    margin-right: 5px;
+    position: top;
+    top: -7em;
+}
+</style>

@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  category_name: MyString
+  is_deleted: false
+  created_by: 1
+  updated_by: 1
+  mg_school_id: 1
+
+two:
+  category_name: MyString
+  is_deleted: false
+  created_by: 1
+  updated_by: 1
+  mg_school_id: 1

@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  mg_faq_category_id: 1
+  mg_faq_sub_category_id: 1
+  question: MyText
+  answer: MyText
+
+two:
+  mg_faq_category_id: 1
+  mg_faq_sub_category_id: 1
+  question: MyText
+  answer: MyText

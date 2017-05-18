@@ -1,0 +1,69 @@
+<!-- Sec --> 
+
+ 
+<table border="1" class="mg-showdata-bg mg-tbl-layout mg-btn-bottom-margin" cellspacing="1" cellpadding="1">
+  <tr>
+      <td class="mg-td-width-half" valign="top">
+        <label class="mg-label">Category </label>
+      </td>
+      <td class="mg-td-width-half" valign="top">
+        <%@feeCategory=MgFeeCategory.select(:name).find_by_id(@fee_particular.fee_category)%>
+        <%= @feeCategory.name %>
+      </td>
+  </tr>
+
+  <tr>
+      <td class="mg-td-width-half" valign="top">
+        <label class="mg-label">Fee Particular </label>
+      </td>
+      <td class="mg-td-width-half mg-capitalize-text" valign="top">
+        <%@feeParticular=MgParticularType.find_by(:id=>@fee_particular.mg_particular_type_id)%>
+        <%= @feeParticular.particular_name %>
+      </td>
+  </tr>
+
+ <tr>
+    <td class="mg-td-width-half" valign="top">
+      <label class="mg-label">Account </label>
+    </td>
+    <% if @fee_particular.mg_account_id.present?%>
+      <%account=MgAccount.find_by(:id=> @fee_particular.mg_account_id,:is_deleted=>0,:mg_school_id=>session[:current_user_school_id])%>
+      <td class="mg-td-width-half" valign="top">
+        <%= account.try(:mg_account_name) %>
+      </td>
+    <%elsif @fee_particular.is_to_central.present?%>
+      <td class="mg-td-width-half" valign="top">
+        <%= "Central" %>
+      </td>
+    <%else%>
+      <td></td>
+    <%end%>
+  </tr>
+
+ <tr>
+    <td class="mg-td-width-half" valign="top">
+      <label class="mg-label">Amount </label>
+	</td>
+    <td class="mg-td-width-half" valign="top">
+      <%= @fee_particular.amount %>
+    </td>
+  </tr>
+
+  <tr>
+    <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"><%= t('semester') %></label>
+    </td>
+    <td class="mg-td-width-half" valign="top">
+      <%@mgBatch=MgBatch.select(:name, :mg_course_id).find_by_id(@fee_particular.mg_batch_id)%>
+      <%if@mgBatch!=nil%>
+  
+        <%@course=MgCourse.select(:course_name).find_by_id(@mgBatch.mg_course_id)%>
+            <%if@course!=nil%>
+              <%= @course.course_name %> - <%= @mgBatch.name %>
+            <%end%>
+      <%end%>
+    </td>
+  </tr>
+</table>
+ 
+<a class="mg-small-form-btn cancel-form-dialog"><%=t("cancel")%></a>

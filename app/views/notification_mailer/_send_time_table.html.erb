@@ -1,0 +1,158 @@
+
+
+<%puts "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+puts @time_table.inspect
+%>
+
+<%puts "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"%>
+
+<%
+@school=MgSchool.find(@time_table['mg_school_id'])
+@examination_detail = MgExaminationDetail.find(@time_table['mg_examination_detail_id'])
+@time_table_obj=MgExaminationTimeTable.where(:mg_examination_detail_id=>@time_table['mg_examination_detail_id'], :is_deleted=>0, :mg_school_id=>@time_table['mg_school_id'], :mg_course_id=>@time_table['mg_course_id']).order(:date, :start_time)
+count=0
+puts 'IN SIDE STUDENT LOOP----------------> TEMPLATE START'
+
+# @course_id=@time_table['mg_examination_detail_id'].present? ? @time_table['mg_examination_detail_id'] : "NOT present"
+puts 'IN SIDE STUDENT LOOP----------------> TEMPLATE END'
+# puts @course_id
+%>
+
+<h4 class="mg-h4"><%= t('examination_details') %></h4>
+<label class="mg-label mg-tt-width "><%=t('name')%></label> : <%= @examination_detail.name%><br>
+<label class="mg-label mg-tt-width "><%=t('description')%></label> : <%= @examination_detail.description%><br>
+<label class="mg-label mg-tt-width "><%=t('start_date')%></label> : <%= @examination_detail.start_date.present? ? @examination_detail.try(:start_date).strftime(@school.date_format) : "" %><br>
+<label class="mg-label mg-tt-width "><%=t('end_date')%></label> : <%= @examination_detail.end_date.present? ? @examination_detail.try(:end_date).strftime(@school.date_format) : "" %><br>
+ <label class="mg-label mg-tt-width "><%=t('programme')%></label> :  <%=MgWing.find_by(:id=>MgCourse.find_by(:id=>@time_table['mg_course_id']).try(:mg_wing_id)).try(:wing_name)%><br> 
+<%#
+puts "--------------------------odfjihhjjgfgfjfsgfdg-fg-----------------------------"
+puts MgCourse.find_by(:id=>@time_table['mg_course_id'].to_i).try(:mg_wing_id)
+puts "--------------------------odfjihhjjgfgfjfsgfdg-fg-----------------------------"
+
+%>
+<%#=@course_id%>
+
+
+
+ <!-- <%#= MgWing.find_by(:id=>1).try(:wing_name)%><br>  -->
+
+<label class="mg-label mg-tt-width "><%=t('semester')%></label> : <%= MgCourse.find_by(:id=>@time_table['mg_course_id']).try(:course_name)%><br> 
+
+<table border="1" class="mg-showdata-bg " cellspacing="1" cellpadding="1">
+   <tr>
+      <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"> <%= t('sr')%>.<%=t('no')%></label>
+     </td> 
+      <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"> <%= t('subject_name')%></label>
+     </td> 
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"> <%= t('date')%></label>
+     </td>
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"> <%= t('start_time')%></label>
+     </td>
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"> <%= t('end_time')%></label>
+     </td>
+   <!--   <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"> <%#= t('max_marks')%></label>
+     </td>
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"> <%#= t('pass_marks')%></label>
+     </td> -->
+ </tr>
+ <%@time_table_obj.each do |c|%>
+  <tr>
+    <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"> <%= count+=1%></label>
+     </td> 
+
+      <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"> <%= MgSubject.find_by(:id=>c.try(:mg_subject_id)).subject_name%></label>
+     </td> 
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"> <%= c.date.present? ? c.try(:date).strftime(@school.date_format) : "" %></label>
+     </td>
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"> <%= c.start_time.present? ?  c.try(:start_time).strftime('%I:%M%p') : ""%></label>
+     </td>
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"> <%= c.end_time.present? ?  c.try(:start_time).strftime('%I:%M%p') : ""%></label>
+     </td>
+    <!--  <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"> <%#= c.max_marks%></label>
+     </td>
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"> <%#= c.pass_marks%></label>
+     </td> -->
+ </tr>
+ <%end%>
+
+</table>
+<%=puts 'IN SIDE STUDENT LOOP----------------> TEMPLATE END'%>
+
+<style type="text/css">
+  .mg-showdata-bg {
+   /* font-family: verdana,arial,sans-serif;*/
+    font-size:13px;
+    color:#363131;
+    border-width: 1px;
+    border-color: #b2b2b2;
+    border-collapse: collapse;
+    font-size: 1em;
+    line-height: 1.8;
+}
+.mg-showdata-bg tr:nth-child(even) {
+    background: #E6E6E6;
+}
+
+ .mg-showdata-bg th {
+    padding: 5px 10px;
+    border: 1px solid #b2b2b2;
+ }
+
+.mg-showdata-bg tr td {
+    padding: 0px 10px;
+    border-color: #b2b2b2;
+}
+.mg-showdata-bg th {
+    padding: 3px 10px;
+    border-color: #b2b2b2;
+}
+.mg-td-width-half {
+    width: 50%;
+}
+.mg-label-width {
+    width: 11em;
+    margin-bottom: 1em;
+}
+.mg-label-top-margin {
+    margin-top: 5px;
+}
+.mg-h4{
+        /*background: linear-gradient(to bottom, #BCBBBA, #FFFFFF) repeat scroll 0 0 rgba(0, 0, 0, 0);*/
+        background:#479D1E;
+        font-size: 0.9em;
+        font-weight: bold;
+        padding: 12px;
+        text-transform: capitalize;
+     
+       /*  border-bottom: 0.1em solid #6592B2;
+        border-top: 0.1em solid #6592B2;
+        border-left: 0.1em solid #6592B2;  *= require fullcalendar_engine/application
+*/
+        color: #FEFFFF;
+        margin-top: 0px;
+        max-width: 100%;
+    }
+.mg-tt-width {
+    width: 13em;
+    margin-bottom: 1em;
+}
+.mg-label{
+      color: #363131;
+      font-size: 0.8em;
+      text-transform: capitalize;
+    }
+</style>

@@ -1,0 +1,206 @@
+ 
+<%=render partial: 'exam_management_left'%>
+<h4 class="mg-h4"><%= t('subject_specialization') %></h4>
+
+ <%= form_for :subject_specialization, :url=>create_subject_specialization_path, method: :post, :html => {
+                            :id => 'examTypesFormID' } do |f| %>
+
+ 
+  <p>
+   <label class="mg-label mg-tt-width "><%=t('select_exam') %><span class="required-field"> *</span></label>
+    <%= f.collection_select(:mg_examination_detail_id, MgExaminationDetail.where(:is_deleted=>0, :mg_school_id=>session[:current_user_school_id]), :id, :name,{:include_blank => 'Select'} ,:class=>"mg-select-btn" , :onchange=>"selectExamShowSubject(this.value, 'mg_examination_detail_id');")  %>
+  </p>
+
+ <!--  <p>
+   <label class="mg-label mg-tt-width "><%#=t('start_date') %></label>
+   <%#=text_field_tag :start_date ,nil,:class=>"mg-select-btn", :readonly=>true%><br>
+   <label class="mg-label mg-tt-width "><%#=t('end_date') %></label>
+   <%#=text_field_tag :end_date ,nil,:class=>"mg-select-btn", :readonly=>true%>
+  </p>
+
+
+  <p>
+   <label class="mg-label mg-tt-width "><%#=t('select_academic_year') %></label>
+   <%#=select_tag :mg_time_table_id ,options_for_select(@acadimic_year),:prompt=>t('select'),:class=>"mg-select-btn"%>
+  </p>
+   <p>
+   <label class="mg-label mg-tt-width "><%#=t('select_exam_type') %></label>
+   <%#=select_tag :mg_exam_type_id ,options_for_select(@exam_types),:prompt=>t('select'),:class=>"mg-select-btn"%>
+  </p>
+
+  <p>
+   <label class="mg-label mg-tt-width "><%#=t('select_examination_category') %></label>
+   <%#=select_tag :mg_examination_category_id ,options_for_select(@examination_category),:prompt=>t('select'),:class=>"mg-select-btn"%>
+  </p>
+
+  <p>
+   <label class="mg-label mg-tt-width "><%#=t('select_program_category') %></label>
+   <%#=select_tag :mg_examination_program_category_id ,options_for_select(@examination_program_category),:prompt=>t('select'),:class=>"mg-select-btn"%>
+  </p>
+ -->
+  
+<p>
+   <label class="mg-label mg-tt-width "><%=t('select_subject') %></label>
+   <%= f.collection_select(:mg_subject_id,[], :id, :subject_name,{:include_blank => 'Select'} ,:class=>"mg-select-btn" , :onchange=>"select_employee_for_subject(this.value);")%>
+</p>
+<p>
+   <label class="mg-label mg-tt-width "><%=t('select_employee') %></label>
+   <%= f.collection_select(:mg_employee_id,[], :id, :name,{:include_blank => 'Select'} ,:class=>"mg-select-btn" , :onchange=>"subject_list(this.value);")%>
+</p>
+
+
+  <%= f.hidden_field :mg_school_id, :value => session[:current_user_school_id]%>
+
+  <%= f.hidden_field :created_by, :value => session[:user_id]%> 
+  <%= f.hidden_field :updated_by, :value => session[:user_id]%> 
+
+  <%= f.hidden_field :is_deleted, :value => 0%> 
+
+  <p class="mg-p-mgtop">
+    <a onclick="$(this).closest('form').submit()" class="mg-small-form-btn"><%=t("save")%></a>
+     <%= link_to t('cancel'), :back, {:class=>"mg-small-form-btn cancel-form-dialog"} %>
+  </p>
+<% end %>
+<%= render  partial: 'application/common_left_close' %>
+
+<script>
+$(document).ready(function () {
+focusCurrentTab("subjectSpecializationAID","subjectSpecializationLiID");
+$("#mg_time_table_id").attr("disabled", true);
+  $("#mg_exam_type_id").attr("disabled", true);
+  $("#mg_examination_category_id").attr("disabled", true);
+  $("#mg_examination_program_category_id").attr("disabled", true);
+
+$("#examTypesFormID").validate({
+
+rules: {
+"subject_specialization[mg_examination_detail_id]": {required: true},
+"subject_specialization[mg_subject_id]": {required: true},
+"subject_specialization[mg_employee_id]": {required: true},
+
+}
+});
+});
+
+function selectExamShowSubject(value, mg_examination_detail_id){
+    console.log("val-----> "+value);
+    var c=["mg_time_table_id","mg_exam_type_id", "mg_examination_category_id","mg_wing_id", "mg_course_id","mg_examination_program_category_id","time_table_mg_wing_id", "time_table_mg_course_id"]
+     var urlLink = "/exam_management/multi_skilled_worker";
+     $("#subjectListDIVID").html('');
+     $("#time_table_mg_wing_id").val('');
+     $("#time_table_mg_course_id").val('');
+    
+     if(value==''){
+        for(var i in c){
+            $("#"+c[i]).val("");
+        }
+        $("#subjectListDIVID").html('');
+     }else{
+        $.ajax({
+            url: urlLink ,
+            cache: false,
+            data: {
+                selecter: "mg_examination_detail_id_subject_specialization",
+                id: value
+            },
+            success: function(data){
+                console.log(data.main.exam);
+                $("#subject_specialization_mg_subject_id").html(data.main.wings);
+            }
+        });
+     }
+        
+
+}
+
+function select_examination_details_course_employee(mg_wing_id){
+  var mg_examination_detail_id=$("#subject_specialization_mg_examination_detail_id").val();
+  var mg_examination_time_table_id=$("#date_time").val();
+  if(mg_examination_detail_id){
+    // if(mg_examination_time_table_id){
+       var urlLink = "/exam_management/multi_skilled_worker";
+      $.ajax({
+          url: urlLink ,
+          cache: false,
+          data:{ 
+            selecter: "mg_wing_id_for_subject_specialization",
+            id: mg_examination_detail_id,
+            mg_wing_id: mg_wing_id, 
+
+          },
+          success: function(data){
+              $("#subject_specialization_mg_batch_id").html(data.main);
+          }
+      });
+    // }else{
+    //   alert("Please select time");
+    // }
+  }else{
+    alert("Please select examination");
+  }
+ 
+   
+
+}
+
+function date_list(mg_batch_id){
+  var mg_examination_detail_id=$("#subject_specialization_mg_examination_detail_id").val();
+  var urlLink = "/exam_management/multi_skilled_worker";
+      $.ajax({
+          url: urlLink ,
+          cache: false,
+          data:{ 
+            selecter: "mg_batch_id_for_subject_specialization",
+            mg_examination_detail_id: mg_examination_detail_id,
+            mg_batch_id: mg_batch_id, 
+
+          },
+          success: function(data){
+            console.log(data);
+              $("#subject_specialization_date").html(data.main);
+          }
+      });
+}
+
+function subject_list_for_splcilization(mg_examination_time_table_id){
+   var mg_examination_detail_id=$("#subject_specialization_mg_examination_detail_id").val();
+   // var mg_examination_detail_id=$("#subject_specialization_mg_examination_detail_id").val();
+
+  var urlLink = "/exam_management/multi_skilled_worker";
+      $.ajax({
+          url: urlLink ,
+          cache: false,
+          data:{ 
+            selecter: "mg_examination_time_table_id_for_subject_specialization",
+            mg_examination_time_table_id: mg_examination_detail_id,
+            mg_examination_detail_id: mg_examination_detail_id, 
+
+          },
+          success: function(data){
+            console.log(data);
+              $("#subject_specialization_date").html(data.main);
+          }
+      });
+
+}
+
+function select_employee_for_subject(mg_subject_id){
+ var mg_examination_detail_id=$("#subject_specialization_mg_examination_detail_id").val();
+ var urlLink = "/exam_management/multi_skilled_worker";
+      $.ajax({
+          url: urlLink ,
+          cache: false,
+          data:{ 
+            selecter: "mg_employee_id_for_subject_specialization",
+            mg_subject_id: mg_subject_id,
+            mg_examination_detail_id: mg_examination_detail_id
+
+          },
+          success: function(data){
+            console.log(data);
+              $("#subject_specialization_mg_employee_id").html(data.main);
+          }
+      });
+}
+
+</script>

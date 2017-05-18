@@ -1,0 +1,93 @@
+<% navigation_add t('timetable'), timetable_index_path %>
+<%= render  partial: 'timetable_left' %>
+
+<%= form_for :createtimetableasso,url: teacher_for_subject_save_path, :html=>{:id => "timetableFormId",:multipart=>true} do |f| %>
+	<h4 class="mg-h4"><%=t('timetable')%> Association</h4>
+	<div class="select-div-cls">
+		<label class="mg-label mg-tt-width mg-tbl-margin">Select Academic Year</label>
+		<%=select_tag :mg_time_table_id,options_for_select(@academic_name),:prompt=>"Select",:onchange=>"batchIdForAcademicYear(this.value)"%><br>
+		
+		<div id="batchyearDivID" class="batch-year-cls"></div>
+		<%#=select_tag :batch,options_from_collection_for_select(@batch,"id","course_batch_name"),:prompt=>t('select'),:onchange=>"classTimingsForBatch(this.value)"%>
+		
+		<div id="selectTimeDivId" class="select-time-cls" style="width: 740px; line-height: 24px;"></div>
+		<div id="batchwiseWeekdayTableID"></div>
+		<p class="mg-p-mgtop">
+			<%#=f.submit t('submit') ,:class=>"mg-small-form-btn"%>
+			<a onclick="$(this).closest('form').submit()" class="mg-small-form-btn"><%=t("save")%></a>
+			<%= link_to t('cancel'), :back, {:class=>"mg-small-form-btn cancel-form-dialog"} %>
+		</p><br>
+	</div>
+<%end%>
+<%= render  partial: 'timetable_left_close' %>
+
+<script>
+	$(document).ready(function () {
+	        focusCurrentTab("timeTableAssociateAID","timeTableAssociateLiID");
+	        focusTimeTable();
+	    });
+
+
+	function classTimingsForBatch(batchId,mg_time_table_id){
+		//var mg_time_table_id=$("#mg_time_table_id").val();
+		//alert("batchId= "+batchId);
+		if(batchId=="")
+		{
+			$("#selectTimeDivId").empty();
+			$.ajax({
+				url:'/timetable/batch_wise_select_class_timings_name'
+			});
+		}else{
+			$.ajax({
+				url:'/timetable/batch_wise_select_class_timings_name',
+				data:{"batch_id":batchId, mg_time_table_id: mg_time_table_id},
+				type:"GET",
+				success:function(html){
+					$("#selectTimeDivId").html(html);
+				},
+				error:function(){
+					alert("inside error");
+				}
+			});
+		}
+	}
+
+	function weekDayForBatch(className){
+		$.ajax({
+			url:'/timetable/batch_wise_week_day_time_table',
+			data:{"name":className},
+			type:"GET",
+			success:function(html){
+				$("#batchwiseWeekdayTableID").html(html);
+			},
+			error:function(){
+				alert("inside error");
+			}
+		});
+	}
+
+	function batchIdForAcademicYear(academic_year_id){    
+		$("#selectTimeDivId").empty();
+		$("#batchyearDivID").children(".batch_year_div").empty();	
+
+		if(academic_year_id!="")
+		{    
+			$.ajax({
+				url:'/timetable/batch_list',
+				data: {"academic_year_id":academic_year_id},
+				type:"GET",
+				success:function(data){
+					$("#batchyearDivID").html(data);
+				}
+			});
+		}
+	}
+  
+  $("#timetableFormId").validate({
+  	rules: {     
+          "mg_time_table_id": {required: true},
+          "batch": {required: true}          
+    }
+  });
+
+</script>

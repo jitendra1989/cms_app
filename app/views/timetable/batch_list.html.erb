@@ -1,0 +1,9 @@
+<label class="mg-label mg-tt-width mg-tbl-margin"><%=t('select_semester')%> </label>
+<%=select_tag :batch,options_from_collection_for_select(@batch_name,"id","course_batch_name"),:prompt=>t('select'),:onchange=>"classTimingsForBatch(this.value,#{@academic_year_id})" ,:class=>"batch_year_div"%>
+
+
+
+
+<script>
+  
+</script>

@@ -1,0 +1,572 @@
+<% navigation_add 'Topic', :controller => 'curriculum', :action => 'topic_show' %>
+<% navigation_add 'Edit Topic', :controller => 'curriculum', :action => 'topic_edit' %>
+
+<%= render partial: 'curriculum/curr_left' %>
+           <%@@temp_var=0%>              
+ <h4 class="mg-h4"><%= t('edit_documents') %></h4>
+ <div>
+<%= form_for :curriculum, url: curriculum_document_update_path(@curriculum.id), :html => {
+                            :id => 'topicEditCurriculumManagementsID',:multipart => true }, id: @curriculum.id, method: :patch do |f| %>
+
+
+
+<%= f.hidden_field :is_deleted, :value => 0 %>
+<%= f.hidden_field :mg_school_id, :value => session[:current_user_school_id] %>
+<%#= f.hidden_field :created_by, :value => session[:user_id] %>
+<%= f.hidden_field :updated_by, :value => session[:user_id] %>
+
+<p>
+      <label class="mg-label mg-tt-width" style="width:185px"><%= t('select_academic_year') %><span class="required-field">&nbsp;*</span></label>
+      <%#= f.label :select_subject ,:class=>"mg-label"%><!-- <span class="required-field"> *</span><br> -->
+      <%= f.collection_select(:mg_timetable_id,MgTimeTable.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id]), :id, :name,{:include_blank => t("select")},:class => "wing-details-as-per-academic-class mg-select-btn")%>
+</p>
+
+<p>
+      <label class="mg-label mg-tt-width" style="width:185px"><%= t('select_programme') %><span class="required-field">&nbsp;*</span></label>
+      <%#= f.label :select_subject ,:class=>"mg-label"%><!-- <span class="required-field"> *</span><br> -->
+      <%#= f.collection_select(:mg_wing_id,MgWing.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id]), :id, :wing_name,{:include_blank => t("select")},:class => "semester-details-as-per-pragramme-class mg-select-btn")%>
+
+      <%wing_id_data=MgSyllabus.where(:mg_timetable_id=>@curriculum.mg_timetable_id,:is_deleted=>0,:mg_school_id=>session[:current_user_school_id]).pluck(:mg_wing_id).uniq%>
+
+      <%wing_list=MgWing.where("is_deleted=? and mg_school_id=? and id IN (?)",0,session[:current_user_school_id],wing_id_data).pluck(:wing_name,:id)%>
+
+      <%=select_tag :mg_wing_id,options_for_select(wing_list,:selected=>@curriculum.mg_wing_id), :prompt=>"Select", :class=>"semester-details-as-per-pragramme-class mg-select-btn"%>
+</p>
+
+
+<p>
+      <label class="mg-label mg-tt-width" style="width:185px"><%= t('select_semester') %><span class="required-field">&nbsp;*</span></label>
+      <%#= f.label :select_room ,:class=>"mg-label"%><!-- <span class="required-field"> *</span><br> -->
+      <%#= f.select :mg_course_id, [ ], {:include_blank => t('Select')} ,:class=>"subject-details-as-per-course-class mg-select-btn" %>
+      <!-- ====================================================================================================== -->
+
+<%course_list=MgCourse.where(:mg_wing_id=>@curriculum.mg_wing_id,:is_deleted=>0,:mg_school_id=>session[:current_user_school_id]).pluck(:course_name,:id)%>
+
+<%=select_tag :mg_course_id,options_for_select(course_list,:selected=>@curriculum.mg_course_id), :prompt=>"Select", :class=>"subject-details-as-per-course-class mg-select-btn"%>
+      <!-- ======================================================================================================== -->
+</p>
+
+<p>
+      <label class="mg-label mg-tt-width" style="width:185px"><%= t('select_subject') %><span class="required-field">&nbsp;*</span></label>
+      <%#= f.label :select_room ,:class=>"mg-label"%><!-- <span class="required-field"> *</span><br> -->
+      <%#= f.select :mg_subject_id, [ ], {:include_blank => t('Select')} ,:class=>"mg-select-btn" %>
+<!-- ====================================================================================================== -->
+<%subject_list=MgSubject.where(:mg_course_id=>@curriculum.mg_course_id,:is_deleted=>0,:mg_school_id=>session[:current_user_school_id]).pluck(:subject_name,:id)%>
+
+<%=select_tag :mg_subject_id,options_for_select(subject_list,:selected=>@curriculum.mg_subject_id), :prompt=>"Select", :class=>"paper-details-as-per-subject-class mg-select-btn"%>
+      <!-- ======================================================================================================== -->
+</p>
+
+
+<p>
+      <label class="mg-label mg-tt-width" style="width:185px"><%= t('select_grading') %><span class="required-field">&nbsp;*</span></label>
+      <%#= f.label :select_subject ,:class=>"mg-label"%><!-- <span class="required-field"> *</span><br> -->
+      <%= f.collection_select(:mg_curriculum_grade_id,MgCurriculumGrade.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id]), :id, :grade_name,{:include_blank => t("select")},:class => "mg-select-btn")%>
+</p>
+<p>
+      <label class="mg-label mg-tt-width" style="width:185px"><%= t('select_paper') %><span class="required-field">&nbsp;*</span></label>
+      <%#= f.label :select_subject ,:class=>"mg-label"%><!-- <span class="required-field"> *</span><br> -->
+
+      <!-- ====================================================================================================== -->
+<%syllabus_list=MgSyllabus.where(:mg_subject_id=>@curriculum.mg_subject_id,:is_deleted=>0,:mg_school_id=>session[:current_user_school_id]).pluck(:name,:id)%>
+
+<%=select_tag :mg_syllabus_id,options_for_select(syllabus_list,:selected=>@curriculum.mg_syllabus_id), :prompt=>"Select", :class=>"chapter-details-as-per-paper-class mg-select-btn"%>
+      <!-- ======================================================================================================== -->
+      <%#= f.collection_select(:mg_syllabus_id,MgSyllabus.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id]), :id, :name,{:include_blank => t("select")},:class => "unit-syllabus-id-class")%>
+</p>
+
+<!-- ========================================================================================= -->
+<p>
+<label class="mg-label" style="width:185px"><%= t('select_chapter') %><span class="required-field">&nbsp;*</span></label>
+    <%unit_list=MgUnit.where(:mg_syllabus_id=>@curriculum.mg_syllabus_id,:is_deleted=>0,:mg_school_id=>session[:current_user_school_id]).pluck(:unit_name,:id)%>
+
+<%=select_tag :mg_unit_id,options_for_select(unit_list,:selected=>@curriculum.mg_unit_id), :prompt=>"Select", :class=>"topic-details-as-per-chapter-class mg-select-btn"%>
+
+
+
+		<%#= f.collection_select(:mg_unit_id,MgUnit.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id]), :id, :unit_name,{:include_blank => t("select")},:class => "unit-subject-id-class")%>
+</p>
+
+
+
+<p>
+<label class="mg-label" style="width:185px"><%= t('select_topic') %><span class="required-field">&nbsp;*</span></label>
+    <%topic_list=MgTopic.where(:mg_unit_id=>@curriculum.mg_unit_id,:is_deleted=>0,:mg_school_id=>session[:current_user_school_id]).pluck(:topic_name,:id)%>
+
+<%=select_tag :mg_topic_id,options_for_select(topic_list,:selected=>@curriculum.mg_topic_id), :prompt=>"Select", :class=>"mg-select-btn"%>
+
+</p>
+
+<p>
+      <label class="mg-label mg-tt-width mg-label-text-transform-none" style="width:185px"><%= t('select_nature_of_document') %><span class="required-field">&nbsp;*</span></label>
+      <%#= f.label :select_subject ,:class=>"mg-label"%><!-- <span class="required-field"> *</span><br> -->
+      <%= f.collection_select(:mg_nature_of_document_id,MgNatureOfDocument.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id]), :id, :name,{:include_blank => t("select")},:class => "mg-select-btn")%>
+</p>
+
+
+<p>
+    <label class="mg-label mg-label-text-transform-none" style="width:185px"><%= t('until_date') %><span class="required-field">&nbsp;*</span></label>
+   <%= f.text_field :until_date ,:class=>"mg-text-field" %>
+ </p>
+
+ <p>
+    <label class="mg-label" style="width:185px"><%= t('sharable') %><span class="required-field">&nbsp;</span></label>
+   <%= f.check_box :is_sharable ,:class=>"mg-text-fieldds" %>
+ </p>
+
+ <p class="formfield">
+    <label class="mg-label" style="width:185px"><%= t('keywords') %><span class="required-field">&nbsp;<%= tooltip '<i class="fa fa-question"></i>'.html_safe, { :tooltip => 'Keywords should be comma seprated for eg. pdf,doc ' }, :class => 'mytooltip mg-icon-btn' ,:style=>"font-size: 0.85em;"%></span></label>
+   <%= f.text_area :keywords ,:class=>"mg-text-field" %>
+
+ </p>
+
+
+ <!-- ============================================================================================ -->
+
+<p>
+<%@document=MgCurriculumDocumentation.where(:mg_curriculum_document_id=>@curriculum.id,:user_type=>"employee",:is_deleted=>0,:mg_school_id=>session[:current_user_school_id])
+
+        if @document.length>0
+%>
+
+<label class="mg-label" style="width:140px"><%= t('attached_documents') %><span class="required-field">&nbsp;</span></label><br/>
+
+<%html_icon='<span title="Download" class="mg-icon-btn"><i class="fa fa-download"></i></span>'
+
+@document.each do |doc|%>
+<p>
+    <%= link_to_if doc.file.url, html_icon.html_safe, doc.file.url , :target=>"_blank"%>
+    <%=doc.file_file_name%>
+
+           <%@@temp_var=@@temp_var+1%>              
+
+<button title="Delete" id="<%=raw doc.id %>-deleteBTNID" class="delete-attachment-document-btn mg-icon-btn employeefile-upload mg-custom-form-btn mg-icon-btn" style="color: #297ACC; font-size:0.8em; float: right; position: relative; right: 449px; margin-top: 3px;"><i class="fa fa-trash " ></i></button>
+</p>
+<%end
+end%>
+</p>
+
+
+
+
+
+
+
+ <!-- ====================================================================================================== -->
+
+ <p>
+<label class="mg-label mg-rm-text-trans" for="upload_file" ><%= t('add_document') %><span id="error_for_validation" class="error"></span></label>
+<div>
+   <div class="teacher_file_file_div" id="dueFineDivId" style="float: left; width: 100%;">
+   <span style="float: left;">
+ <%= file_field_tag 'file[]',:onchange =>"validateFiles(this);"%>
+</span>
+  <!-- <a class="employeefile-upload mg-custom-form-btn mg-icon-btn" style="color: #297ACC; font-size:0.8em; float: left; position: relative; right: 0px; margin-top: 3px;"><i class="fa fa-trash"></i></a> -->
+ </div>
+<!--  <a id="add_document_employee_uploads" class="mg-label-inner-form mg-custom-form-btn mg-icon-btn" style="color: #297ACC; font-size:0.8em;" ><i class="fa fa-plus">&nbsp;Add File</i></a>  --><br/>
+  </div>
+
+</p>
+
+  
+  <p>
+
+    <a class="document_edit_save_button mg-small-form-btn"><%=t("save")%></a>
+    <%#= button t('save'),:class=>"" %>
+    <a onclick="$(this).closest('form').submit()" class="curriculum-managements-save-form-btn mg-small-form-btn" style="display:none"><%=t("save") %></a>
+    <%= link_to t('cancel'), :back, {:class=>"btn btn-delete cancel-form-dialog"} %>
+  </p>
+<% end %>
+</div>
+<%= render partial: 'application/emp_section_close' %>
+
+<script>
+$(document).ready(function () {
+
+focusCurrentTab("viewCurriculumDocument","viewEmployeecurriculumDocumentLiID");
+
+
+ dateFormatStr =  getJsDateFormat();
+$('#curriculum_until_date').datepicker({ changeMonth: true,
+                changeYear: true,yearRange: "-50:+50",minDate: "0",dateFormat: dateFormatStr});
+        //focusCurriculum();
+         var dates =  $.datepicker.formatDate(dateFormatStr,new Date($('#curriculum_until_date').val()));
+$('#curriculum_until_date').val(dates);
+
+$("#topicEditCurriculumManagementsID").validate({
+
+rules: {
+"curriculum[mg_timetable_id]": {required: true},
+"curriculum[mg_wing_id]": {required: true},
+"curriculum[mg_course_id]": {required: true},
+"curriculum[mg_subject_id]": {required: true},
+"curriculum[mg_curriculum_grade_id]": {required: true},
+"curriculum[mg_syllabus_id]": {required: true},
+"curriculum[until_date]": {required: true},
+"curriculum[mg_unit_id]": {required: true},
+"curriculum[mg_topic_id]": {required: true},
+"curriculum[mg_nature_of_document_id]": {required: true}
+}
+});
+});
+
+
+
+
+
+    $(".document_edit_save_button").click(function(){
+    var file_validation = <%=@@temp_var%>;
+    var tem=$("#file_").val();
+    if (file_validation == 0 && (tem=="") )
+                {
+                    $("#error_for_validation").empty();
+                    $("#error_for_validation").append("<span style='margin-left:10px;'>No document selected</span>");
+                    $("#error_for_validation").addClass("error");
+                }
+                else
+                {
+                    $(".curriculum-managements-save-form-btn").click();
+                }
+    });
+
+
+
+ $("#file_").click(function(){
+   $("#error_for_validation").empty();                 
+    });
+
+
+
+
+
+
+
+
+// =================================================================================================================
+
+$(".wing-details-as-per-academic-class").change(function(){
+      var programmeID = $( ".wing-details-as-per-academic-class" ).val();
+      var apdStr = '<option value="">Choose Academic Year</option>';
+      $("#mg_wing_id").empty().append(apdStr);
+      if(programmeID > 0) {
+           var urlLink = "/curriculum/wing_list/"+programmeID;
+           $.ajax({ 
+               url: urlLink,
+               cache: false,
+               success: function(data){
+                 // console.log();
+                  if(data.length > 0){
+                      var apdStr = '<option value="select">Select</option>';
+                     for(key in data){
+                        apdStr += '<option value="'+data[key].id+'">'+data[key].wing_name+'</option>'
+                      }
+                      $("#mg_wing_id").empty().append(apdStr);
+                  }
+
+               }
+                  
+           });
+
+    }else{
+      var apdStr = '<option value="">Choose Academic Year</option>';
+      $("#mg_wing_id").empty().append(apdStr);
+      // alert("Please select category");
+    }
+  });
+// =============================================================================================
+
+
+
+
+
+$(document).on("click", "#add_document_employee_uploads", function(e){
+    var lastRepeatingGroup = $('.teacher_file_file_div').last();
+    var cloned = lastRepeatingGroup.clone();
+    cloned.find('input').val('');
+    cloned.insertAfter( lastRepeatingGroup );
+    return false;
+}); 
+
+
+$(document).on("click", ".employeefile-upload", function(e){
+   var total = $('.employeefile-upload').length
+   if(total!=1)
+   {
+        $(this).parent('div').remove();
+    }
+  
+});
+
+
+// ==========================================================================================
+
+$(document).on("click", ".delete-attachment-document-btn", function(e){
+     e.preventDefault();
+                var myID =$(this).attr('id');
+            var Id=myID.split("-");
+                var retVal = confirm("Are you sure to delete?");
+                if(retVal){
+                  //  alert(retVal);
+                     var urlLink = "/curriculum/attachment_document_delete/"+Id[0];
+
+                      $.ajax({
+                        url: urlLink ,
+                        cache: false,
+                        success: function(html){
+                          //alert("success");
+                            //window.location=window.location;
+                            
+                            window.location = self.location;
+                            // window.location.href = "/curriculum/document_edit/"+Id[0];
+                            // window.location.reload(true);
+                            //window.location.href  = window.location.pathname           
+                        }
+                    });
+
+                }else{
+                   // alert(retVal);     
+                   return false;
+                }
+
+        });
+
+// ==================================CURRICULUM CHANGES==========================================
+$(".semester-details-as-per-pragramme-class").change(function(){
+      var programmeID = $( ".semester-details-as-per-pragramme-class" ).val();
+      var apdStr = '<option value="">Choose Programme</option>';
+      $("#mg_course_id").empty().append(apdStr);
+      if(programmeID > 0) {
+           var urlLink = "/curriculum/semester_list/"+programmeID;
+           $.ajax({ 
+               url: urlLink,
+               cache: false,
+               success: function(data){
+                 // console.log();
+                  if(data.length > 0){
+                      var apdStr = '<option value="select">Select</option>';
+                     for(key in data){
+                        apdStr += '<option value="'+data[key].id+'">'+data[key].course_name+'</option>'
+                      }
+                      $("#mg_course_id").empty().append(apdStr);
+                  }
+
+               }
+                  
+           });
+
+    }else{
+      var apdStr = '<option value="">Choose Programme</option>';
+      $("#mg_course_id").empty().append(apdStr);
+      // alert("Please select category");
+    }
+  });
+
+// ============================================
+
+
+$(".subject-details-as-per-course-class").change(function(){
+      var semesterID = $( ".subject-details-as-per-course-class" ).val();
+      var apdStr = '<option value="">Choose Semester</option>';
+      $("#mg_subject_id").empty().append(apdStr);
+      if(semesterID > 0) {
+           var urlLink = "/curriculum/subject_list/"+semesterID;
+           $.ajax({ 
+               url: urlLink,
+               cache: false,
+               success: function(data){
+                 // console.log();
+                  if(data.length > 0){
+                      var apdStr = '<option value="select">Select</option>';
+                     for(key in data){
+                        apdStr += '<option value="'+data[key].id+'">'+data[key].subject_name+'</option>'
+                      }
+                      $("#mg_subject_id").empty().append(apdStr);
+                  }
+
+               }
+                  
+           });
+
+    }else{
+      var apdStr = '<option value="">Choose Semester</option>';
+      $("#mg_subject_id").empty().append(apdStr);
+      // alert("Please select category");
+    }
+  });
+
+// ----------------------------------------------------------
+
+$(".paper-details-as-per-subject-class").change(function(){
+      var semesterID = $( ".paper-details-as-per-subject-class" ).val();
+      var apdStr = '<option value="">Choose Subject</option>';
+      $("#mg_syllabus_id").empty().append(apdStr);
+      if(semesterID > 0) {
+           var urlLink = "/curriculum/syllabus_list/"+semesterID;
+           $.ajax({ 
+               url: urlLink,
+               cache: false,
+               success: function(data){
+                 // console.log();
+                  if(data.length > 0){
+                      var apdStr = '<option value="select">Select</option>';
+                     for(key in data){
+                        apdStr += '<option value="'+data[key].id+'">'+data[key].name+'</option>'
+                      }
+                      $("#mg_syllabus_id").empty().append(apdStr);
+                  }
+
+               }
+                  
+           });
+
+    }else{
+      var apdStr = '<option value="">Choose Subject</option>';
+      $("#mg_syllabus_id").empty().append(apdStr);
+      // alert("Please select category");
+    }
+  });
+
+// ----------------------------------------------------------
+
+$(".chapter-details-as-per-paper-class").change(function(){
+      var syllabusId = $( ".chapter-details-as-per-paper-class" ).val();
+      var apdStr = '<option value="">Choose Paper</option>';
+      $("#mg_unit_id").empty().append(apdStr);
+      if(syllabusId > 0) {
+           var urlLink = "/curriculum/unit_list/"+syllabusId;
+           $.ajax({ 
+               url: urlLink,
+               cache: false,
+               success: function(data){
+                 // console.log();
+                  if(data.length > 0){
+                      var apdStr = '<option value="select">Select</option>';
+                     for(key in data){
+                        apdStr += '<option value="'+data[key].id+'">'+data[key].unit_name+'</option>'
+                      }
+                      $("#mg_unit_id").empty().append(apdStr);
+                  }
+
+               }
+                  
+           });
+
+    }else{
+      var apdStr = '<option value="">Choose Paper</option>';
+      $("#mg_unit_id").empty().append(apdStr);
+      // alert("Please select category");
+    }
+  });
+
+
+
+// ----------------------------------------------------------
+
+$(".topic-details-as-per-chapter-class").change(function(){
+      var syllabusId = $( ".topic-details-as-per-chapter-class" ).val();
+      var apdStr = '<option value="">Choose Chapter</option>';
+      $("#mg_topic_id").empty().append(apdStr);
+      if(syllabusId > 0) {
+           var urlLink = "/curriculum/topic_list/"+syllabusId;
+           $.ajax({ 
+               url: urlLink,
+               cache: false,
+               success: function(data){
+                 // console.log();
+                  if(data.length > 0){
+                      var apdStr = '<option value="select">Select</option>';
+                     for(key in data){
+                        apdStr += '<option value="'+data[key].id+'">'+data[key].topic_name+'</option>'
+                      }
+                      $("#mg_topic_id").empty().append(apdStr);
+                  }
+
+               }
+                  
+           });
+
+    }else{
+      var apdStr = '<option value="">Choose Chapter</option>';
+      $("#mg_topic_id").empty().append(apdStr);
+      // alert("Please select category");
+    }
+  });
+
+
+// ===============================================================================================
+
+function validateFiles(inputFile) {
+  var natureOfDocument=$("#curriculum_mg_nature_of_document_id").val();
+  var extentionlist=""
+  if (natureOfDocument>0)
+  {
+
+    var urlLink = "/curriculum/extention_list/"+natureOfDocument;
+           $.ajax({ 
+               url: urlLink,
+               cache: false,
+               success: function(data){
+                 // console.log();
+                  if(data.length > 0){
+                      extentionlist=data[0].extention
+                      // =========================AJAX GOT DATA STARTS=================================
+
+                        // =========================VALIDATION STARTS=================================
+                        
+                            var allowedExtension=extentionlist.split(",");
+                            var maxExceededMessage = "This file exceeds the maximum allowed file size (5 MB)";
+                             var extErrorMessage = "Only file with extension: "+extentionlist+" is allowed";
+                            // var allowedExtension = ["jpg", "jpeg", "gif", "png"];
+                            //var allowedExtension = [];
+
+                            
+                            var extName;
+                            var maxFileSize = $(inputFile).data('max-file-size');
+                            var sizeExceeded = false;
+                            var extError = false;
+                            
+                            $.each(inputFile.files, function() {
+                              if (this.size && maxFileSize && this.size > parseInt(maxFileSize)) {sizeExceeded=true;};
+                              extName = this.name.split('.').pop();
+                              if ($.inArray(extName, allowedExtension) == -1) {extError=true;};
+                            });
+                            if (sizeExceeded) {
+                              window.alert(maxExceededMessage);
+                              $(inputFile).val('');
+                            };
+                            
+                            if (extError) {
+                              window.alert(extErrorMessage);
+                              $(inputFile).val('');
+                            };
+
+
+
+                        //======================VALIDATION ENDS==================================
+                      // ==========================AJAX GOT DATA ENDS================================
+                  }
+
+               }
+                  
+           });
+  }
+  else
+  {
+    alert("Please select the nature of document");
+    $(inputFile).val('');
+  }
+  
+}
+
+// =============================================================================================
+</script>
+
+<!-- Partial Section close-->
+
+<style>
+.formfield * {
+    vertical-align: middle;
+}
+</style>
+
+

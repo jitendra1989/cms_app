@@ -1,0 +1,38 @@
+<table border="1" class="mg-showdata-bg" cellspacing="1" cellpadding="1">
+   <tr>
+     <td class="mg-td-width-half" valign="top">
+   		<label class="mg-label"> <%= t('name')%></label>
+   	 </td>
+   	 <td class="mg-td-width-half" valign="top">
+  		<%if @library.name.present?%>
+     <%=@library.name%>
+     <%else%>
+     <%="No Data"%>
+     <%end%>
+  	 </td>
+ </tr>
+ <tr>
+     <td class="mg-td-width-half" valign="top">
+   		<label class="mg-label"> <%= t('description')%></label>
+   	 </td>
+   	 <td class="mg-td-width-half" valign="top">
+  		<%if @library.description.present?%>
+
+      <div class="text-scroll-for-log-text-cls comments-space"> 
+        <%=@library.description%>
+      </div>
+      <%else%>
+        <%="No Data"%>
+     <%end%>
+  	 </td>
+ </tr>
+
+</table>
+</br>
+<%= link_to 'Cancel', :back ,:style=>"font-size: 0.8em; color: #297ACC; text-decoration: none;" ,:class=>"mg-custom-form-btn"%>
+
+<script>
+  $(document).ready(function(){
+    textSeeMoreLess();
+  });
+</script>

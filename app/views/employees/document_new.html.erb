@@ -1,0 +1,47 @@
+<div class="mg-custom-labels">
+<%= form_for :document, url: employees_document_create_path, :html => {
+                            :id => 'documentCreateID' } do |f| %>
+<%= f.hidden_field :is_deleted, :value => 0 %>
+<%= f.hidden_field :mg_school_id, :value => session[:current_user_school_id] %>
+<%= f.hidden_field :created_by, :value => session[:user_id] %>
+<%= f.hidden_field :updated_by, :value => session[:user_id] %>
+<p>
+    <label class="mg-label" style="width:190px"><%= t('name') %><span class="required-field">&nbsp;*</span></label>
+    <br/>
+   <%= f.text_field :name,:class=>"mg-text-field" %>
+</p>
+<p>
+    <label class="mg-label" style="width:190px"><%= t('description') %><span class="required-field">&nbsp;</span></label>
+    <br/>
+   <%= f.text_area :description,:class=>"mg-text-field" %>
+</p>
+
+
+<p>
+    <label class="mg-label" style="width:190px"><%= t('extention') %><span class="required-field">&nbsp;*</span>&nbsp;&nbsp;&nbsp;<%= tooltip '<i class="fa fa-question"></i>'.html_safe, { :tooltip => 'Extention should be comma seprated for eg : jpeg ,gif ,png. ' }, :class => 'mytooltip mg-icon-btn' ,:style=>"font-size: 0.85em;"%></label>
+    <br/>
+   <%= f.text_area :extention,:class=>"mg-text-field" %>
+</p>
+
+
+
+<p class="mg-p-mgtop">
+    <a onclick="$(this).closest('form').submit()" class="mg-small-form-btn"><%=t("save")%></a>
+    <!-- <%#= f.submit t('save') ,:class=>"mg-small-form-btn"%> -->
+<a class="mg-small-form-btn cancel-form-dialog"><%=t("cancel")%></a>
+
+    <%#= link_to t('cancel'), :back, {:class=>"mg-small-form-btn cancel-form-dialog"} %>
+</p>
+<% end %>
+</div>
+<!-- <%#= render  partial: 'application/common_left_close' %> -->
+<script>
+
+$("#documentCreateID").validate({
+        rules: {        
+        "document[name]": {required: true},
+        "document[extention]": {required: true}
+     //   "laboratory[description]": {required: true}
+      }
+    });
+</script>

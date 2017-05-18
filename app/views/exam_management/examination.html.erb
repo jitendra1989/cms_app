@@ -1,0 +1,55 @@
+<% navigation_add t('examination_schedule'), :controller=>'exam_management', :action=>'examination' %>
+<%=render partial: 'exam_management_left'%>
+<h4 class="mg-h4"><%= t('exam_list') %></h4>
+
+<button class=" mg-btn-bottom-margin mg-custom-form-btn" onclick="window.location.href='/exam_management/new_examination'"><%= t('create_exam')%></button>
+
+<div class="mg_pagination">
+<%if @examination.present?%>
+<table  class="batch-tbl mg-tbl-margin">   <!-- border="2" --> 
+  <tr class="subject-table-header">
+    <th><%= t('name') %></th>
+    <th><%= t('description') %></th>
+    <th><%= t('start_date') %></th>
+    <th><%= t('end_date') %></th>
+    <th style="width: 92px;"><%= t('actions') %></th>
+  </tr>
+ 
+  <% @examination.each do |s| %>
+    <tr>
+      <td><%= s.name %></td>
+      <td class="mg-desc-text-justify">
+        <%= truncate(s.description.to_s, :length => 25, :separator => ' ') %>
+      </td>
+      <td><%= s.start_date.strftime(date_format(session[:current_user_school_id]))%></td>
+      <td><%= s.end_date.strftime(date_format(session[:current_user_school_id]))%></td>
+      <td>
+        <button title="Show" id="<%=raw s.id %>-showExaminationBTNID" class="show-show-examination-btn mg-icon-btn"><i class="fa fa-eye"></i></button>
+
+        <button title="Edit" id="" class=" mg-icon-btn" onclick="window.location.href='/exam_management/<%=s.id%>/edit_examination'"><i class="fa fa-pencil-square-o" ></i></button>
+
+        <button title="Delete" id="<%=raw s.id %>-deleteExamExaminationBTNID" class="delete-delete-examination-btn mg-icon-btn" ><i class="fa fa-trash"></i></button>
+      </td>
+    </tr>
+  <% end %>
+</table>
+<br/>
+ <div class="pagination-align" style="position: relative; bottom: 10px;">
+              <%= will_paginate @examination, :container => false %>
+           </div>
+<%else%>
+<h5>No exam is created </h5>
+<%end%>
+</div>
+
+<div id="examinationShowDIVID"></div>
+
+
+
+<%= render  partial: 'application/common_left_close' %>
+
+<script>
+$(document).ready(function () {
+	focusCurrentTab("viewExaminationCreationAID","viewExaminationCreationLiID");
+});
+</script>

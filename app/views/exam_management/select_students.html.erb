@@ -1,0 +1,251 @@
+
+<%#="Select Students:"%>
+<!-- <table> -->
+<!-- <tr>
+ --><!-- <td class="mg-td-width-one-thirds" valign="top" style="width:50px;"> -->
+<!-- <label class="mg-label" for="selectDepartment"><%#= t('select_students') %><span class="required-field">&nbsp;*</span></label><br/>
+              <span id="selected_students" style="margin-right:50px; vertical-align: top;">
+ 
+    <%#=select_tag :selectedStudentsId, options_for_select(@student_hash),:prompt=>"Select",:class=>"mg-add-library-particular"%> -->
+<!-- </span> -->
+<!-- </td> -->
+<!-- </tr> -->
+<!-- </table><br/> -->
+<h4 class="mg-h4"><%= t('examination')%></h4> 
+<div class="mg-w50 mg-button-align mg-margin-right-14">
+ <a id="examination_form_for_data" class="mg-label-inner-form mg-custom-form-btn" style="color: #297ACC; font-size:0.8em; position: relative;" >Add </a> <br/>
+ <div class="mg-examination-scroll-width-bar mg-tbl-margin">   
+
+<table class="mg-show-tbl-width mg-table-nowrap batch-tbl mg-adjust-padding">  
+  <th><%=t("sr_no.")%></th>
+  <th><%=t("particulars")%><span class="required-field">&nbsp;*</span></th>
+  <th><%=t("amount")%><span class="required-field">&nbsp;*</span></th>
+  <th><%=t('action')%></th>
+  <tr class="demo-div">
+
+    <div id="finalDueFineDivId">
+      <div class="due-fine-div" id="dueFineDivId">
+        <td><span class="required-incremented-field">1</span></td>
+         <td class="three mg-align-center cost-td-class">
+          <%= text_field_tag 'particular[0]' ,nil,:class=>"mg-text-field-particular demo1 required-field"%>
+        </td>
+        <td class="teo mg-align-center cost-td-class">
+          <%= text_field_tag 'amount[0]' ,nil,:id=>"List_of_data",:class=>"mg-text-field-particular demo2 cost-auto-class required-field",:onchange=>"amountFunctionData(this.value)"%>
+        </td>
+        
+       
+        <td class="one mg-align-center">
+          <a title="Remove" class="examination_remove-form-details mg-icon-btn" style="color: #297ACC; font-size:0.8em;"> <i class="fa fa-trash"></i></a>
+        </td>   
+      </div>
+    </div>
+  </tr>
+</table>
+
+<table>
+    <tr>
+
+<td></td>
+<td class="mg-td-width-one-thirds" valign="top">
+<label class="mg-label" for="selectDepartment"><%= t('total_amount') %><span class="required-field">&nbsp;*</span></label>
+              <span id="selected_students" style="margin-right:50px; vertical-align: top;">
+ 
+    <%=text_field_tag :total_amount,nil,:class=>"mg-text-field",:readonly=>true%>
+</span>
+</td>
+</tr>
+
+
+</table>
+</div>
+</div>
+<div class="mg-w50 mg-button-align mg-margin-right-14">
+ <label class="mg-label">Select Student: </label>
+ <div class="mg-examination-scroll-width-bar mg-tbl-margin">   
+
+<table class="mg-show-tbl-width mg-table-nowrap batch-tbl mg-adjust-padding"> 
+  <tr>
+  <th>Student Name</th>
+  <th>Form No</th>
+  <th class="mg-align-center"><label class="mg-label"><%=t('select')%></label><br/><a  id="seescheckAllCheckBoxInFeeParticularId" class="mg-pop-link">All</a>
+    <a  id="seesunCheckAllCheckBoxInFeeParticularId" class="mg-pop-link">None</a>
+  </tr>
+<%@student_hash_list.each do |data1|%>
+<tr>
+<td><%="#{data1.first_name} #{data1.last_name}"%></td>
+<td><%=text_field_tag "form_field_data[#{data1.id}]"%></td>
+<td><%=check_box_tag "tag_data[]",data1.id,false,:class=>"demo12134"%></td>
+</tr>
+<%end%>
+</table>
+</div>
+</div>
+<script>
+$(document).on("click", "#seescheckAllCheckBoxInFeeParticularId", function(e){
+
+        $(".demo12134").prop('checked', true);
+        e.preventDefault();
+        
+  });
+
+  $(document).on("click", "#seesunCheckAllCheckBoxInFeeParticularId", function(e){
+
+        $(".demo12134").prop('checked', false);
+        e.preventDefault();
+  });
+function amountFunctionData(data){
+var value=$("#particular_").val();
+
+var a=0
+$('.cost-auto-class').each(function () {
+    if(this.value!=""){
+    a=parseInt((this.value)) + a;
+}
+});
+$("#total_amount").val(a);
+    
+}
+$(document).on("click","#AddTransportFees",function(e){
+
+
+
+ var selectedOptions=$("#selectedStudentsId option:selected").remove();
+
+
+$("#ExaminationSelectedStudents").append(selectedOptions);
+
+
+  });
+$(document).on("click","#RemoveTransportFees",function(e){
+
+var selectedOption=$("#ExaminationSelectedStudents option:selected").remove();
+
+//$("#selectedStudentsId").append(selectedOption);
+
+  });
+$(document).on("click","#editaddingAllStudents",function(e){
+    $("#selectedStudentsId option").prop('selected',true);
+    var demo=$("#selectedStudentsId").val();
+    var texts=$("#selectedStudentsId :selected").text();
+  
+    var text=texts.split(" ");
+   
+    var array=[];
+    $("#selectedStudentsId option:selected").remove();
+
+    $("#ExaminationSelectedStudents option").each(function() {
+            array.push(this.value);
+        }
+    );0
+
+    for(var i=0;i<demo.length;i++)
+    {
+        var a =false;
+            for(var j=0;j<array.length;j++){
+                if (demo[i]==array[j]){
+                    a=true;
+                }
+            }
+        if (a){
+        }else{
+            var addselectedOption=$("#selectedStudentsId option:selected")
+            var str="<option value="+demo[i]+">"+text[i]+"</option>"
+            $("#ExaminationSelectedStudents").append(str);
+            $("#ExaminationSelectedStudents option").prop('selected',true);
+            // $("#selectedEmployees option:selected").remove();
+            countSelectedEmployee();
+        }
+    }
+ });
+$(document).on("click","#removingAllDataStudents",function(e){
+    // var selectedOption=$("#selected_employees option:selected").remove();
+    $("#ExaminationSelectedStudents option").prop('selected',true);
+    $("#ExaminationSelectedStudents option:selected").remove();
+    $("#ExaminationSelectedStudents option").prop('selected',true);
+
+    countSelectedEmployee();
+
+});
+$(document).on("click", "#examination_form_for_data", function(e){
+    var lastRepeatingGroup = $('.demo-div').last();
+    //alert(lastRepeatingGroup);
+    var cloned = lastRepeatingGroup.clone();
+    //console.log(cloned);
+    cloned.find('input').val('');
+    cloned.find('select').val('');
+
+
+    //console.log(cloned.find('input').val(''));
+    
+
+    cloned.insertAfter( lastRepeatingGroup );
+    //console.log($("#parent").next())
+//$(marksObj).parent().next().children()[0].value=data.gradeLevel;
+    //alert(temp);
+    // $('.required-incremented-field').last().text(temp);
+    // temp++;
+      $(".required-incremented-field:visible").each(function(index,element){
+          $(this).text(index+1);
+ 
+
+ cloned.find('.demo1').attr('id',   "particular[" +  index+"]");
+ cloned.find('.demo2').attr('id',   "amount[" +  index+"]");
+  cloned.find('.demo2').attr('name',   "amount[" +  index+"]");
+  cloned.find('.demo1').attr('name',   "particular[" +  index+"]");
+
+
+    //   cloned.find('.demo1').val($(this).val()).rules("add", {
+    //       min: 0
+    //   });
+    //    cloned.find('.demo2').val($(this).val()).rules("add", {
+    //       min: 0
+    //   });
+
+    });
+
+    
+    //add_validation_for_forms();
+    return false;
+
+}); 
+    
+
+
+$(document).on("click", ".examination_remove-form-details", function(e){
+   var total = $('.examination_remove-form-details').length
+   var last_count = $('.examination_remove-form-details').text();
+   //console.log(last_count);
+ //alert(last_count); 
+   if(total!=1)
+   {
+    $(this).parent('td').parent().remove();   
+    }
+   var a=0
+$('.cost-auto-class').each(function () {
+    if(this.value!=""){
+     
+    a=parseInt((this.value)) + a;
+}
+});
+$("#total_amount").val(a);
+    //temp==$('.remove-library-details').length;
+    //temp=temp-1;
+  $(".required-incremented-field:visible").each(function(index,element){
+          $(this).text(index+1);
+    });
+});
+</script>
+
+<style>
+
+.mg-add-rem-btn {
+    position: relative;
+    top: -7em;
+    margin-right: 5px;
+}
+.mg-add-student-rem-btn {
+    margin-right: 5px;
+    position: top;
+    top: -7em;
+}
+</style>

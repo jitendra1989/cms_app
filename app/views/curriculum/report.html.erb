@@ -1,0 +1,30 @@
+<%= render partial: 'curriculum/curr_left' %>
+<h4 class="mg-h4"><%= t('report') %></h4>
+
+<div id="classWiseReportAppendDivID">
+<%= render  partial: 'application/common_left_close' %>
+
+ <script>
+$(document).ready(function () {
+            focusCurrentTab("viewEmployeeReportCurriculum","viewEmployeecurriculumReportLiID");
+
+// ===========================================================================================
+
+     var urlLink = "/curriculum/report_data/";
+           $.ajax({ 
+               url: urlLink,
+               cache: false,
+            //    data:
+            // {
+            //      "academic_year":academic_year , "prog_id":prog_id , "batch_id":batch_id ,"subject_id":subject_id
+            //  },
+               success: function(html){
+                  $("#classWiseReportAppendDivID").empty();
+                  $("#classWiseReportAppendDivID").append(html);
+               }  
+           });
+ 
+});
+
+</script>
+

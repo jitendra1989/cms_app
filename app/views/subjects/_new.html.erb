@@ -1,0 +1,274 @@
+
+
+<!-- Sec --> 
+ <%= form_for @subjects, url: subjects_path, :html => {
+                            :id => 'newSubjectID', :class => 'elm_class',
+                            :style => 'elm_style' } do |f| %>
+
+ <% if @subjects.errors.any? %>
+  <div id="error_explanation">
+    <h2><%= pluralize(@subjects.errors.count, "error") %>
+      </h2>
+    <ul>
+    <% @subjects.errors.full_messages.each do |msg| %>
+      <li><%= msg %></li>
+    <% end %>
+    </ul>
+  </div>
+  <% end %>
+<%= f.hidden_field :mg_school_id,:value => session[:current_user_school_id] %>
+
+
+<h4 class="mg-h4"><%= t('newsubject') %></h4>
+  <div>
+  <!-- ==============================Curriculum starts===================================== -->
+    <p>
+    <label class="mg-label " for="subject_name"><%= t('select_programme')%><span class="required-field">&nbsp;*</span></label><br>
+    <%=f.collection_select(:mg_wing_id,MgWing.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id]),:id ,:wing_name,{:include_blank=>t("select")},:class => "subject-wing-new-class mg-select-btn")%>
+  </p>
+
+  <p>
+    <label class="mg-label " for="subject_name"><%= t('select_specialization')%><span class="required-field">&nbsp;*</span></label><br>
+    <%=f.collection_select(:mg_employee_specialization_id,MgEmployeeSpecialization.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id]),:id ,:name,{:include_blank=>t("select")},:class => "mg-select-btn")%>
+  </p>
+
+  <p>
+    <label class="mg-label " for="subject_name"><%= t('select')%> <%= t('subject_type')%><span class="required-field">&nbsp;*</span></label><br>
+    <%=f.collection_select(:mg_subject_type_id,MgSubjectType.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id]),:id ,:name,{:include_blank=>t("select")},:class => "subject-wing-new-class mg-select-btn",:onchange=>"subject_type_Changes(this.value)")%>
+  </p>
+
+  <p>
+    <label class="mg-label " for="elective_type"><%= t('select')%> <%= t('elective_group')%><span class="required-field">&nbsp;*</span></label><br>
+    <%=f.collection_select(:mg_elective_group_id,MgElectiveGroup.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id]),:id ,:name,{:include_blank=>t("select")},:class => "subject-wing-new-class mg-select-btn",:disabled => "disabled")%><br>
+  </p>
+
+  <p>
+    <label class="mg-label mg-rm-text-trans" for="eletive_type"><%= t('elective_type') %></label><br>
+    <%= text_field_tag "elective_type",nil,class: "mg-text-field",disabled: true%>
+  </p>
+
+  <p>
+      <label class="mg-label " for="subject_name"><%= t('select_semester') %><span class="required-field">&nbsp;*</span></label><br>
+      <%#= f.label :select_room ,:class=>"mg-label"%><!-- <span class="required-field"> *</span><br> -->
+      <%= f.select :mg_course_id, [ ], {:include_blank => t('Select')} ,:class=>"call-purpose-class laboratory-category-room-new-class mg-select-btn" %>
+</p>
+
+
+
+  <!-- ==============================Curriculum ends===================================== -->
+ <!--  <p>
+    <label class="mg-label " for="subject_name"><%#= t('select') %> <%#= t('course') %><span class="required-field">&nbsp;*</span></label><br>
+    <%#= f.select :mg_course_id,options_for_select(@class),:prompt=>t('select') %>
+  </p> -->
+
+ <p>
+    <label class="mg-label " for="subject_name"><%= t('subjectname') %><span class="required-field">&nbsp;*</span></label><br>
+    <%= f.text_field :subject_name ,:class=>"mg-text-field"%>
+  </p>
+ 
+  <p>
+    <label class="mg-label " for="subject_code"><%= t('subjectcode') %><span class="required-field">&nbsp;*</span></label><br>
+    <%= f.text_field :subject_code ,:class=>"mg-text-field" %>
+  </p>
+  
+ <p>
+    <label class="mg-label " for="max_weekly_class"><%= t('maxweeklyclass') %><span class="required-field">&nbsp;*</span></label><br>
+    <%= f.text_field :max_weekly_class ,:class=>"mg-text-field", :onkeyup=>"checkMaxWeeklyClass(this,event);" %>
+  </p>
+
+  <p>
+    <label class="mg-label " for="is_core_subject"><%= t('is_core_subject') %><span class="required-field">&nbsp;</span></label>
+    <%= f.check_box :is_core  %>
+  </p>
+
+  <p>
+    <label class="mg-label " for="is_lab"><%= t('is_lab') %><span class="required-field">&nbsp;</span></label>
+    <%= f.check_box :is_lab,:onClick=>"fnEnableNoOfClassText(this);"  %>
+  </p>
+
+  <p id="room_change">
+    <label class="mg-label" for="room"><%= t('select_room') %><span class="required-field">&nbsp;*</span></label><br>
+    <%=f.select :mg_institute_room_id,options_for_select([]),{:include_blank=>t("select")},{:disabled => true} %>
+  </p>
+
+  <p>
+    <label class="mg-label mg-rm-text-trans" for="no_of_classes">No of Classes <span class="required-field">&nbsp;*</span></label><br>
+    <%= f.text_field :no_of_classes, :id=>'noOfClassesTextId', :class=>"mg-text-field", :disabled=>true %>
+  </p>
+  <p>
+    <label class="mg-label mg-rm-text-trans" for="no_of_students_opted"><%= t('no_of_students_opted') %></label><br>
+    <%=f.text_field :no_of_students_opted,:class=>"mg-text-field",:disabled=>true%>
+  </p>
+
+
+
+<%=f.hidden_field :mg_school_id, :value=>session[:current_user_school_id]%>
+<div style="display:none;">
+<p>
+  <label class="mg-label " for="status"><%= t('status') %></label><br>
+    <%= f.label :is_deleted, t("active") ,:class=>"mg-label-inner-form" %>
+    <%= f.radio_button :is_deleted, false , :checked => true%>
+    <%= f.label :is_deleted, t("inactive"),:class=>"mg-label-inner-form" %>
+    <%= f.radio_button :is_deleted, true %>
+</p>
+</div>
+  <p class="mg-p-mgtop">
+    <%#= f.submit t('save'),:class=>"mg-small-form-btn"%>
+    <a onclick="$(this).closest('form').submit()" class="mg-small-form-btn"><%=t("save")%></a>
+     <%= link_to t('cancel'), :back, {:class=>"mg-small-form-btn cancel-form-dialog"} %>
+  </p>
+<% end %>
+
+<script>
+$(document).ready(function () {
+  $("#newSubjectID").validate({
+
+    rules: {
+    "mg_subject[subject_name]": {required: true},
+    "mg_subject[subject_code]": {required: true},
+    "mg_subject[mg_course_id]": {required: true},
+    "mg_subject[max_weekly_class]": {required: true, number: true,min: 0, max: 54},
+    "mg_subject[no_of_classes]": {required: true,number: true, min: 1},
+    "mg_subject[mg_subject_type_id]": {required: true},
+    "mg_subject[mg_wing_id]": {required: true},
+    "mg_subject[mg_employee_specialization_id]": {required: true},
+    "mg_subject[mg_institute_room_id]": {required: true},
+    // "mg_subject[mg_elective_group_id]": {required: true},
+    "mg_subject[mg_elective_group_id]": {required: true}
+    }
+  });
+});
+function checkMaxWeeklyClass(that, e){
+
+  if( ( (e.keyCode>=48 && e.keyCode<=57 ) || (e.keyCode>=96 && e.keyCode<=105) ) && parseInt( $(that).val() )>6 ){
+
+    alert("Same subject will be taught more than once in a day.");
+  }
+}
+
+function room_detail(){
+  var specilization=$("#mg_subject_mg_employee_specialization_id").val();
+  $.ajax({
+      url:"/subjects/rooms_for_specialization",
+      data:{"specialization_id":specilization},
+      success:function(html){
+        // $("#room_change").show();
+        $("#mg_subject_mg_institute_room_id").removeAttr('disabled');
+        $("#mg_subject_mg_institute_room_id").html(html);
+      }
+  });
+}
+function fnEnableNoOfClassText(that){
+  var lb_checkboxValue=$(that).is(':checked');
+  $("#noOfClassesTextId").prop('disabled', true);
+  if(lb_checkboxValue) {
+    $("#noOfClassesTextId").prop('disabled', false);
+    room_detail();
+  }
+  else{
+    // $("#room").val('');
+    $("#mg_subject_mg_institute_room_id").val('');
+    $("#mg_subject_mg_institute_room_id").html('<option value="">Select</option>');
+
+    // $("#room").attr('disabled','disabled');
+    $("#mg_subject_mg_institute_room_id").attr('disabled','disabled');
+  }
+}
+
+
+$(".subject-wing-new-class").change(function(){
+      var ProgrammeId = $( ".subject-wing-new-class" ).val();
+      var apdStr = '<option value="">Choose Programme</option>';
+      $("#mg_subject_mg_course_id").empty().append(apdStr);
+      if(ProgrammeId > 0) {
+           var urlLink = "/subjects/course_list/"+ProgrammeId;
+           $.ajax({ 
+               url: urlLink,
+               cache: false,
+               success: function(data){
+                 // console.log();
+                  if(data.length > 0){
+                      var apdStr = '<option value="select">Select</option>';
+                     for(key in data){
+                        apdStr += '<option value="'+data[key].id+'">'+data[key].course_name+'</option>'
+                      }
+                    // console.log(apdStr);
+                      $("#mg_subject_mg_course_id").empty().append(apdStr);
+
+                  }
+
+               }
+                  
+           });
+
+    }else{
+      var apdStr = '<option value="">Choose Programme</option>';
+      $("#mg_subject_mg_course_id").empty().append(apdStr);
+      // alert("Please select category");
+    }
+  });
+
+
+
+
+
+
+
+$("#mg_subject_mg_elective_group_id").change(function(){
+      var elective_group_id = $( "#mg_subject_mg_elective_group_id" ).val();
+      if(elective_group_id > 0) {
+           var urlLink = "/subjects/elective_group_list/"+elective_group_id;
+           $.ajax({ 
+               url: urlLink,
+               cache: false,
+               success: function(data){
+                  if(data[0].max_weekly_class > 0){
+                     $("#mg_subject_max_weekly_class").val(data[0].max_weekly_class);
+                      $("#mg_subject_max_weekly_class").attr('readonly','readonly');
+                  }
+                  else
+                  {
+                    $("#mg_subject_max_weekly_class").val("");
+                      $("#mg_subject_max_weekly_class").attr('readonly','readonly');
+                  }
+
+               }
+                  
+           });
+
+    }
+    else if(elective_group_id==0)
+    {
+      $("#mg_subject_max_weekly_class").val(0);
+      $("#mg_subject_max_weekly_class").attr('readonly','readonly');
+    }
+    else {
+      $("#mg_subject_max_weekly_class").val("");
+          
+          $("#mg_subject_max_weekly_class").attr('readonly',false);
+      // ----------------------------------------------
+    }
+  });
+
+
+
+$("#mg_subject_mg_subject_type_id").change(function(){
+    var group_id = $( "#mg_subject_mg_subject_type_id" ).val();
+    if (group_id==2)
+    {
+      $("#mg_subject_max_weekly_class").val("");
+       $("#mg_subject_max_weekly_class").attr('readonly','readonly');
+    }
+    else{
+      $("#mg_subject_max_weekly_class").val("");
+       $("#mg_subject_max_weekly_class").attr('readonly',false);
+    }
+  
+  });
+
+
+
+
+
+
+</script>

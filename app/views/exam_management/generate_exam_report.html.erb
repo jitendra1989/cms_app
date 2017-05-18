@@ -1,0 +1,147 @@
+<%=render partial:'exam_management_left'%>
+<% navigation_add 'Examination Report', exam_management_generate_exam_report_path %>
+
+<h4 class="mg-h4"><%= t('Generate Report') %></h4>
+
+<%=form_for :generating_report,:ul=>{:action=>'generate_exam_report_for_student'},:html=>{:id=>'generate_report_validation'} do |f|%>
+<table class="mg-tbl-margin mg-show-tbl-width">
+
+ <tr>
+      <td class="mg-td-width-one-third">
+      <label class="mg-label"><%= t ('select_exam') %><span class="required-field">&nbsp;*</span></label><br/>
+      <%detail_data=MgExaminationDetail.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id]).pluck(:name,:id)%>
+      <p>
+      <%= select_tag :mg_exam_detail_id,options_for_select(detail_data),:prompt=>"Select",:class=>"mg-text-field"%>
+      </p>
+      </td>
+    </tr>
+<!-- <tr>
+      <td class="mg-td-width-one-third">
+      <label class="mg-label"><%#= t ('select_exam_type') %><span class="required-field">&nbsp;*</span></label><br/>
+      <%#detail_data=MgExamType.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id]).pluck(:name,:id)%>
+      <p>
+      <%#= select_tag :mg_exam_type_id,options_for_select(detail_data),:prompt=>"Select",:class=>"mg-text-field"%>
+      </p>
+      </td>
+    </tr>
+ -->
+    <tr>
+      <td class="mg-td-width-one-third">
+      <label class="mg-label"><%= t ('select_examination_category') %><span class="required-field">&nbsp;*</span></label><br/>
+      <%detail_data=MgExaminationCategory.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id]).pluck(:name,:id)%>
+      <p>
+      <%= select_tag :mg_examination_category_id,options_for_select(detail_data),:prompt=>"Select",:class=>"mg-text-field"%>
+      </p>
+      </td>
+    </tr>
+<tr>
+      <td class="mg-td-width-one-third">
+      <label class="mg-label"><%= t ('select_programme') %><span class="required-field">&nbsp;*</span></label><br/>
+      <%detail_data=MgWing.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id]).pluck(:wing_name,:id)%>
+      <p>
+      <%= select_tag :mg_wing_id,options_for_select(detail_data),:prompt=>"Select",:class=>"mg-text-field",:onchange=>"selectreportProgramDataExamination(this.value,this)"%>
+      </p>
+      </td>
+</tr>
+<tr>
+      <td class="mg-td-width-one-third">
+      <label class="mg-label mg-rm-text-trans"><%= t ('select_programme_type') %><span class="required-field">&nbsp;*</span></label><br/>
+      <%detail_data=MgExaminationProgramCategory.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id]).pluck(:name,:id)%>
+      <p>
+      <%= select_tag :mg_examination_program_category_id,options_for_select(detail_data),:prompt=>"Select",:class=>"mg-text-field"%>
+      </p>
+      </td>
+</tr>
+<tr>
+      <td class="mg-td-width-one-third">
+      <label class="mg-label"><%= t ('select_semester') %><span class="required-field">&nbsp;*</span></label><br/>
+      <%
+      @school_id =  session[:current_user_school_id]
+     @batches = MgBatch.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id])
+     %>
+      <p id="course_report_data_for_examination">
+      <%=select_tag :mg_batch_id,options_from_collection_for_select(@batches,"id","course_name_data"),:prompt=>"Select",:onchange=>"selectStudentforGenerateReport(this.value)"%>
+
+      </p>
+      </td>
+</tr>
+<tr>
+      <td class="mg-td-width-one-third">
+      <label class="mg-label"><%= t ('select_student') %><span class="required-field">&nbsp;*</span></label><br/>
+      <p id="examination_report_for_details">
+      <%=select_tag :mg_student_id,options_for_select([]),:prompt=>"Select"%>
+
+      </p>
+      </td>
+</tr>
+</table>
+<%end%>
+<button id="button_for_data_submission" class="mg-custom-form-btn">Generate Report</button><br/><br/>
+
+<div id="data_for_generating_report">
+
+</div>
+<%=render  partial: 'application/common_left_close' %>
+
+<script>
+$( document ).ready(function() {
+            focusCurrentTab("generate_exam_reportAID","generate_exam_reportLiID");
+          //focusStudentHeaderBox();
+});
+function selectStudentforGenerateReport(data){
+                  $("#data_for_generating_report").empty();
+
+var urlLink="/exam_management/select_student_for_report/"
+$.ajax({ 
+               url: urlLink,  
+               cache: false,
+               data:{"id":data},
+               success: function(data){
+                //$(that).parents('td').siblings(".resource-category-td-class").html(data);
+                  $("#examination_report_for_details").empty().append(data);
+                  //temp.append(data);
+                }
+           });
+}
+
+
+
+function selectreportProgramDataExamination(data,that)
+{
+ // var temp =$(that).parent('.resource-category-td-class').siblings(".resource-type-td-class");
+
+
+var urlLink = "/exam_management/select_class_based_on_wing/";
+
+    $.ajax({
+        url:urlLink,
+        cache:false,
+        data:{"id":data,"report":"data123"},
+        success: function(html){
+            
+            $('#course_report_data_for_examination').empty().append(html);
+
+
+        }
+
+
+    });
+
+}
+$(document).on("change","#mg_student_id",function(){
+       $("#data_for_generating_report").empty();
+
+});
+$(document).on("change","#mg_exam_detail_id",function(){
+       $("#data_for_generating_report").empty();
+
+});
+$(document).on("change","#mg_examination_category_id",function(){
+       $("#data_for_generating_report").empty();
+
+});
+$(document).on("change","#mg_examination_program_category_id",function(){
+       $("#data_for_generating_report").empty();
+
+});
+</script>

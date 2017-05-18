@@ -1,0 +1,185 @@
+<!-- com-->
+<section id="userBodyContentBox" style="margin: 0 auto;">
+    <table width=100% border="0" cellspacing="0" cellpadding="0"  style="margin-bottom: 0px;">
+        <tr>
+            <td valign="top" class="userBodyContentBox1">
+                <aside class="userMenuBoxLeft" style="width: 210px;">
+                    <ul class="menuListHome">
+                        <li class="myAccountMenu"><%= t('curriculum__management') %></li>
+                        <!-- =================================================================================== -->
+                        <%if session[:user_type]=="admin" || session[:user_type]=="principal"%>
+                        <li class="actives" id="syllabusGradingSystemLiID">
+                            <a class="menuItemsActivities" href="/curriculum/grade" id="view_curriculum_graddingAID">
+                                <div class="setMenu"><i class="fa fa-bars">&nbsp;&nbsp;</i><%= t('grading_system') %><!-- <i class="fa fa-caret-left" style="color:#d5d8d9; position: absolute; right: 0px; transform: translateY(33%);"></i> -->
+                                </div>
+                            </a>
+                        </li>
+
+                        <!-- ====================================================================================== -->
+                        <!-- =================================================================================== -->
+
+                        <li class="actives" id="syllabusCourseTypeSystemLiID">
+                            <a class="menuItemsActivities" href="/curriculum/course" id="view_curriculum_course_typeAID">
+                                <div class="setMenu"><i class="fa fa-book">&nbsp;&nbsp;</i><%= t('course_type') %><!-- <i class="fa fa-caret-left" style="color:#d5d8d9; position: absolute; right: 0px; transform: translateY(33%);"></i> -->
+                                </div>
+                            </a>
+                        </li>
+
+                        <!-- ====================================================================================== -->
+                        <li class="actives" id="syllabusLiID">
+                            <a class="menuItemsActivities" href="/curriculum/class_show" id="view_curriculum_syllabusAID">
+                                <div class="setMenu"><i class="fa fa-newspaper-o">&nbsp;&nbsp;</i><%= t('paper') %><!-- <i class="fa fa-caret-left" style="color:#d5d8d9; position: absolute; right: 0px; transform: translateY(33%);"></i> -->
+                                </div>
+                            </a>
+                        </li>
+                        <%end%>
+
+                        <%
+                        @@category=1
+                        employee=MgEmployee.find_by(:mg_user_id=>session[:user_id])
+                        category=MgEmployeeCategory.find_by(:id=>employee.mg_employee_category_id)
+                        if category.category_name=="Teaching Staff"
+                            @@category=1
+                        else
+                            @@category=2
+                        end
+                        %>
+
+
+                        <%if session[:user_type]=="employee" && @@category==1%>
+                        <li id="unitLiID">
+                            <a class="menuItemsActivities" href="/curriculum/unit_show" id="unitCurriculamManagementsAID" >
+                                <div class="setMenu"><i class="fa fa-book">&nbsp;&nbsp;</i><%= t('chapter') %><!-- <i class="fa fa-caret-left" style="color:#d5d8d9; position: absolute; right: 0px; transform: translateY(33%);"></i> -->
+                                </div>
+                            </a>
+                        </li>
+                        <li id="topicLiID">
+                            <a class="menuItemsActivities" href="/curriculum/topic_show" id="topicCurriculamManagementsId" >
+                                <div class="setMenu"><i class="fa fa-indent">&nbsp;&nbsp;</i><%= t('topic') %><!-- <i class="fa fa-caret-left" style="color:#d5d8d9; position: absolute; right: 0px; transform: translateY(33%);"></i> -->
+                                </div>
+                            </a>
+                        </li>
+
+
+                        <li id="viewEmployeecurriculumLiID">
+                            <a class="Employee-Syllabus-Tracker" href="/curriculum/employee_curriculum/" id="viewEmployeeCurriculum">
+                                <div class="setMenu"><i class="fa fa-cogs">&nbsp;&nbsp;</i><%=t("curriculum")%><!-- <i class="fa fa-caret-left" style="color:#d5d8d9; position: absolute; right: 0px; transform: translateY(33%);"></i> -->
+                                </div>
+                            </a>
+                        </li>
+
+
+                        <li id="viewEmployeecurriculumDocumentLiID">
+                            <a class="Employee-Curriculum-Document" href="/curriculum/document/" id="viewCurriculumDocument">
+                                <div class="setMenu"><i class="fa fa-file-video-o">&nbsp;&nbsp;</i><%=t("documents")%><!-- <i class="fa fa-caret-left" style="color:#d5d8d9; position: absolute; right: 0px; transform: translateY(33%);"></i> -->
+                                </div>
+                            </a>
+                        </li>
+
+
+                        <li id="viewEmployeecurriculumNotesLiID">
+                            <a class="Employee-Curriculum-Notes" href="/curriculum/notes/" id="viewCurriculumDocumentNote">
+                                <div class="setMenu"><i class="fa fa-file-text">&nbsp;&nbsp;</i><%=t("notes")%><!-- <i class="fa fa-caret-left" style="color:#d5d8d9; position: absolute; right: 0px; transform: translateY(33%);"></i> -->
+                                </div>
+                            </a>
+                        </li>
+
+                        <li id="viewEmployeecurriculumSearchLiID">
+                            <a class="Employee-Curriculum-Search" href="/curriculum/search/" id="viewCurriculumDocumentSearch">
+                                <div class="setMenu"><i class="fa fa-search">&nbsp;&nbsp;</i><%=t("search")%><!-- <i class="fa fa-caret-left" style="color:#d5d8d9; position: absolute; right: 0px; transform: translateY(33%);"></i> -->
+                                </div>
+                            </a>
+                        </li>
+
+
+   
+
+                        <li id="viewEmployeesyllabusLiID">
+                            <a class="Employee-Syllabus-Tracker" href="/employees/syllabus_tracker_show/" id="viewEmployeeSyllabus">
+                                <div class="setMenu"><i class="fa fa-sort-numeric-asc">&nbsp;&nbsp;</i><%=t("curriculum_progress")%><!-- <i class="fa fa-caret-left" style="color:#d5d8d9; position: absolute; right: 0px; transform: translateY(33%);"></i> -->
+                                </div>
+                            </a>
+                        </li>
+
+                        <li id="viewEmployeecurriculumReportLiID">
+                            <a class="Syllabus-Tracker-Report" href="/curriculum/report/" id="viewEmployeeReportCurriculum">
+                                <div class="setMenu"><i class="fa fa-certificate">&nbsp;&nbsp;</i><%=t("report")%><!-- <i class="fa fa-caret-left" style="color:#d5d8d9; position: absolute; right: 0px; transform: translateY(33%);"></i> -->
+                                </div>
+                            </a>
+                        </li>
+                        <%end%>
+
+
+
+ <!-- ===============================DEAN REVIEW PURPOSE================================= -->
+                        <%empl_count=MgEmployee.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id],:mg_user_id=>session[:user_id],:is_dean=>true).count%>
+                        <%if empl_count>0%>
+                        <li id="viewDeanEmployeecurriculumLiID">
+                            <a class="Employee-Dean-Syllabus-Tracker" href="/curriculum/review_curriculum/" id="viewEmployeeDeanCurriculum">
+                                <div class="setMenu"><i class="fa fa-tachometer">&nbsp;&nbsp;</i><%=t("review_curriculum")%><!-- <i class="fa fa-caret-left" style="color:#d5d8d9; position: absolute; right: 0px; transform: translateY(33%);"></i> -->
+                                </div>
+                            </a>
+                        </li>
+
+                        <li id="viewDeanEmployeecurriculumSubjectWiseReportLiID">
+                            <a class="Employee-Dean-Syllabus-Tracker-Subject-Report" href="/curriculum/subject_wise_report/" id="viewEmployeeDeanCurriculum">
+                                <div class="setMenu"><i class="fa fa-cubes">&nbsp;&nbsp;</i><%=t("subject_wise_report")%><!-- <i class="fa fa-caret-left" style="color:#d5d8d9; position: absolute; right: 0px; transform: translateY(33%);"></i> -->
+                                </div>
+                            </a>
+                        </li>
+
+                        <%end%>
+<!-- ================================================================================================= -->
+                        <%if session[:user_type]=="employee" && @@category==1%>
+<!-- ===============================HOD Report PURPOSE================================= -->
+                        <%empl_hod_count=MgEmployee.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id],:mg_user_id=>session[:user_id],:is_hod=>true).count%>
+                        <%if empl_hod_count>0%>
+                        <li id="viewHODEmployeecurriculumDepartmentWiseReportLiID">
+                            <a class="Employee-HOD-Syllabus-Tracker-Department-Report" href="/curriculum/department_wise_report/" id="viewEmployeeHODCurriculum">
+                                <div class="setMenu"><i class="fa fa-cube">&nbsp;&nbsp;</i><%=t("department_wise_report")%><!-- <i class="fa fa-caret-left" style="color:#d5d8d9; position: absolute; right: 0px; transform: translateY(33%);"></i> -->
+                                </div>
+                            </a>
+                        </li>
+                        <%end%>
+<!-- ================================================================================================= -->
+
+
+
+
+                        <%end%>
+                        <!--  <li id="BatchSyllabusLiID">
+                            <a class="menuItemsActivities" href="/curriculum/batch_syllabus_show" id="batchSyllabusCurriculamManagementsId" >
+                                <div class="setMenu"><i class="fa fa-link">&nbsp;&nbsp;</i><%#= t('section_syllabus_association') %><<i class="fa fa-caret-left" style="color:#d5d8d9; position: absolute; right: 0px; transform: translateY(33%);"></i> 
+                                </div>
+                            </a>
+                        </li> -->
+                        <!-- <li id="BatchSyllabusCurriculumLiID">
+                            <a class="menuItemsActivities" href="/curriculum/curriculum_index" id="batchSyllabusCurriculamId" >
+                                <div class="setMenu"><i class="fa fa-plus-square-o">&nbsp;&nbsp;</i><%#= t('curriculum') %>
+                                </div>
+                            </a>
+                        </li> -->
+                        <!-- <li id="EmployeeSubjectLiID">
+                            <a class="menuItemsActivities" href="/curriculum_managements/employee_subject_index" id="employeeSubjectCurriculamManagementsId" >
+                                <div class="setMenu"><i class="fa fa-plus-square-o">&nbsp;&nbsp;</i><#%= t('employee_subject_association') %> <i class="fa fa-caret-left" style="color:#d5d8d9; position: absolute; right: 0px; transform: translateY(33%);"></i> 
+                                </div>
+                            </a>
+                        </li> -->
+
+
+                    </ul>    
+
+                </aside>
+            </td>
+            <td  valign="top" class="mg-table-td-main-2">
+                <div id="curriculamForm">
+<%= render partial: 'layouts/messages' %>
+
+                       
+
+<script>
+$( document ).ready(function() {
+    
+    focusCurriculum();
+});
+</script>

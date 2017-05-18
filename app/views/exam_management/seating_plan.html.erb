@@ -1,0 +1,61 @@
+<% navigation_add t('seating_plan'), :controller=>'exam_management' , :action=>'seating_plan'%>
+<%=render partial: 'exam_management_left'%>
+<h4 class="mg-h4"><%= t('seating_plan_list') %></h4>
+
+<button class="mg-btn-bottom-margin mg-custom-form-btn" onclick="window.location.href='/seating_plan/new'"><%= t('new_seating_plan')%></button>
+
+<div class="mg_pagination">
+<%if @seating_plan.present?%>
+<table  class="batch-tbl mg-tbl-margin">   <!-- border="2" --> 
+  <tr class="subject-table-header">
+    <th><%= t('room_number') %></th>
+    <th><%= t('date') %></th>
+    <th><%= t('time') %></th>
+    <th><%= t('examination') %></th>
+    <th><%= t('specialization') %></th>
+    <th><%= t('total_seats') %></th>
+    <th><%= t('seat_available') %></th>
+    <th style="width: 92px;"><%= t('actions') %></th>
+  </tr>
+ 
+  <% @seating_plan.each do |s| %>
+    <tr id="ahhh">
+      <td><%= MgInstituteRoom.find_by(:id=>s.try(:mg_institute_room_id)).try(:room_no) %></td>
+      <td style="width=100px"><%= s.try(:date).present? ? s.try(:date).strftime(@school.date_format) : ""%><br></td>
+
+       <td style="width=100px"><%= s.try(:start_time).present? ? s.try(:start_time).strftime('%I:%M%p') : ""%> to <%= s.try(:end_time).present? ? s.try(:end_time).strftime('%I:%M%p') : ""%></td>
+      <td><%= MgExaminationDetail.find_by(:id=>s.try(:mg_examination_detail_id)).try(:name) %></td>
+      <td><%= MgEmployeeSpecialization.find_by(:id=>s.try(:mg_employee_specialization_id)).try(:name) %></td>
+      <td><%= s.try(:total_seats) %></td>
+      <td><%= s.try(:seat_available) %></td>
+      <td id="kjhkjhk">
+      <button title="Show" id="<%=raw s.id %>-showSeatingPlanBTNID" class="show-seating-plan-cls mg-icon-btn" ><i class="fa fa-eye"></i></button>
+
+        <button title="Edit" id="<%=raw s.id %>-editSeatingPlanBTNID" class=" mg-icon-btn" onclick="window.location.href='/seating_plan/<%=s.id%>/edit'"><i class="fa fa-pencil-square-o"></i></button>
+
+        <button title="Delete" id="<%=raw s.id %>-deleteSeatingPlanBTNID" class="delete-seating-plan-cls mg-icon-btn"><i class="fa fa-trash"></i></button>
+
+      </td>
+    </tr>
+  <% end %>
+</table>
+<br/>
+
+ <div class="pagination-align" style="position: relative; bottom: 10px;">
+              <%= will_paginate @seating_plan, :container => false %>
+           </div>
+<%else%>
+<h5>No data </h5>
+<%end%>
+</div>
+<div id="seatingPlanShowDIVID"></div>
+
+
+<%= render  partial: 'application/common_left_close' %>
+<script type="text/javascript">
+$(document).ready(function () {
+  focusCurrentTab("timeTableSeatingPlanAID","timeTableSeatingPlanLiID");
+});
+
+
+</script>

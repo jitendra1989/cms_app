@@ -1,0 +1,52 @@
+<%if @payment_count>0 || @central_payment_count>0%>
+  <p>
+    <h5>  Amount is already transfered.</h5> 
+  </p>
+  <p>
+     <a class="mg-small-form-btn cancel-form-dialog"><%=t("cancel")%></a>
+  </p>
+  <%else%>
+  <%= form_for :payment, :url=>{:controller=>'payslips',:action=>'payment_updates',:id=>@payment.id},:html => {:id => 'payslipspaymentID' } do |f| %>
+
+  <!-- ===================Account Changes============================= -->
+  <p>
+      <label class="mg-label" for="vendorName"><%= t ('select_account') %><span class="required-field">&nbsp;*</span></label><br/>
+      <!-- Bindhu Added For Accounts Starts -->
+      <%account=Array.new
+          account.push("Central","central")
+          accounts=MgAccount.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id]).pluck(:mg_account_name,:id)
+          accounts.insert(0,account)
+       %>
+      <%=select_tag :mg_account_id, options_for_select(accounts),:prompt=>"Select",:class=>"mg-text-field"%>
+  </p>
+  
+  <p>
+          <label class="mg-label" for="vendorName"><%= t ('amount') %><span class="required-field">&nbsp;*</span></label><br/>
+        <%#if @inventory.amount.present?%>
+          <%#=text_field_tag :amount, @inventory.amount,:prompt=>"Select",:class=>"mg-text-field"%>
+        <%#else%>
+          <%=text_field_tag :amount, @payment.try(:total_net_amount),:prompt=>"Select",:class=>"mg-text-field"%>
+        <%#end%>
+  </p>
+
+      <!-- ======================================================================================= -->
+
+  <p class="mg-p-mgtop">
+      <a onclick="$(this).closest('form').submit()" class="mg-small-form-btn"><%=t("save")%></a>
+      <a class="mg-small-form-btn cancel-form-dialog"><%=t("cancel")%></a>
+  </p>
+  <%end%>
+<%end%>
+
+<script>
+
+$("#payslipspaymentID").validate({
+        rules: {
+        "mg_account_id": {required: true}
+      }
+    });
+
+$(document).ready(function () {
+    $("#amount").attr("disabled", true);
+});
+</script>

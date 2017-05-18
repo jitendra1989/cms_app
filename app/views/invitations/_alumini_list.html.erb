@@ -1,0 +1,36 @@
+
+<%#=@alumni_programme_list.inspect%>
+<div class="mg-scroll-employee-bar1">
+  <table class="batch-tbl">
+  <th><%=t('batch')%></th>
+  <th><%=t('actions')%>
+  <div class="mg-text-margin">
+        <a class="select-all-alumini-for-galbum mg-pop-link"><%=t('all')%></a>&nbsp;<a class="select-none-alumini-for-galbum mg-pop-link"><%=t('none')%></a>
+      </div></th>
+	  <%@alumni_programme_list.each do |wing|%>
+		  	<tr>
+		  		<td><%=wing.wing_name%> - <%=wing.time_table_year%></td>
+		  		<td class="mg-align-center">
+		  			<%if @alumin_list.find_by(:mg_wing_id=>wing.mg_wing_id,:time_table_year=>wing.time_table_year).present?%>
+		  			<%= check_box_tag 'alumni_mg_wing_id_time_table_year[]', "#{wing.mg_wing_id}-#{wing.time_table_year}", true ,{:class=>"class-albumb-alumini-committee-class-event"}%>
+		  			<%else%>
+		  			<%= check_box_tag 'alumni_mg_wing_id_time_table_year[]', "#{wing.mg_wing_id}-#{wing.time_table_year}", false ,{:class=>"class-albumb-alumini-committee-class-event"}%>
+		  			<%end%>
+		  		</td>
+		  	</tr> 
+	  <%end%>
+  </table>
+  </div>
+  
+<script>
+	 $(document).on("click", ".select-all-alumini-for-galbum", function(e){
+	 	e.preventDefault();
+    $(".class-albumb-alumini-committee-class-event").prop('checked', true);
+        
+  });
+   $(document).on("click", ".select-none-alumini-for-galbum", function(e){
+   	e.preventDefault();
+    $(".class-albumb-alumini-committee-class-event").prop('checked', false);
+        
+  });
+</script>

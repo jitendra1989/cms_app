@@ -1,0 +1,57 @@
+<% navigation_add t('paper'), curriculum_class_show_path %>
+<!-- Sec --> 
+<%@curriculum=MgSyllabus.where(:is_deleted => '0',:mg_school_id=>session[:current_user_school_id]).paginate(page: params[:page], per_page: 10)%>
+
+
+<h4 class="mg-h4"><%= t('paper_list') %></h4>
+<div>
+<%= button_to 'Add Paper', {:controller => "curriculum", :action => "syllabus_index" },:class=>"mg-custom-form-btn" %>
+
+<div class="mg_pagination">
+<%if @curriculum.length>0%>
+
+<table  class="batch-tbl mg-tbl-margin">   <!-- border="2" --> 
+  <tr class="subject-table-header">
+  	<!-- <th>Subject Id</th> -->
+    <th><%= t('subject_name') %></th>
+    <th><%= t('paper_name') %></th>
+    <th class="mg-desc-text-justify"><%= t('description') %></th>
+    <th><%= t('actions') %></th>
+  </tr>
+ 
+  <% @curriculum.each do |curr| %>
+    <tr>
+
+      <!-- <td><#%= curr.mg_subject_id %></td> -->
+      <td><%subject=MgSubject.where(:id=>curr.mg_subject_id)%>
+          <%=subject[0].try(:subject_name)%></td>
+      <td><%= curr.try(:name) %></td>
+      <td class="mg-desc-text-justify"><%= truncate(curr.description,length: 25) %></td>
+      
+      <td>
+      <%= link_to "<i class=\"fa fa-eye\"></i>".html_safe, {:controller => "curriculum", :action => "subject_show",:id =>curr.id} , :method=>'post' ,:title=>"Show" ,:class=>"mg-icon-btn"%>
+
+      <%= link_to "<i class=\"fa fa-pencil-square-o\"></i>".html_safe, {:controller => "curriculum", :action => "subject_edit",:id =>curr.id} , :method=>'post' ,:title=>"Edit" ,:class=>"mg-icon-btn"%>
+      <%= link_to "<i class=\"fa fa-trash\"></i>".html_safe, {:controller => "curriculum", :action => "subject_delete",:id =>curr.id }, :method=>'post' ,:title=>"Delete" ,:class=>"mg-icon-btn" ,data: { confirm: 'Are you sure to delete?' } %>
+
+      </td>
+
+    </tr>
+  <% end %>
+</table>
+<br/>
+ <div class="pagination-align" style="position: relative; bottom: 10px;">
+              <%= will_paginate @curriculum, :container => false %>
+           </div>
+<%else%>
+<h5>No paper is created </h5>
+<%end%>
+</div>
+</div>
+<script>
+$(document).ready(function () {
+ 
+ focusCurrentTab("view_curriculum_syllabusAID","syllabusLiID");
+        //focusCurriculum();
+});
+ </script>

@@ -1,0 +1,37 @@
+<!-- Sec --> 
+<!-- Partial left content -->
+<%#= render partial: 'employees/emp_left' %>
+<% navigation_add t('manage_employee_grade'), mg_employee_grades_path %>
+
+<%= render  partial: '/master_settings/master_settings_left' %>
+<!-- Partial Index -->
+<%= render partial: 'index' %>
+<!-- Partial Section close-->
+<%= render partial: 'application/emp_section_close' %>
+
+
+<script type="text/javascript">
+     $(document).ready(function(){
+            // $("li").removeClass( "active" );
+            // $("a").removeClass( "activeMenu" );
+
+            // $("#createManGradLiID").addClass("active");
+            // $("#manageEmployeeGrade").addClass("activeMenu");
+
+        focusCurrentTab("manageEmployeeGrade","createManGradLiID");   
+         focusMasterSettings();
+
+   // setTimeout(function(){
+   //  $(".alert.alert-info").fadeTo(500,0,function(){
+   //      $(this).remove()
+   //      })
+   //  },5000)
+ 
+    });
+</script>
+
+
+
+
+
+

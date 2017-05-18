@@ -1,0 +1,96 @@
+<table border="1" class="mg-showdata-bg " cellspacing="1" cellpadding="1">
+   <tr>
+     <td class="mg-td-width-half" valign="top">
+   		<label class="mg-label"> <%= t('name')%></label>
+   	 </td>
+   	 <td class="mg-td-width-half" valign="top">
+  		<%= @examination.try(:name) %>
+  	 </td>
+ </tr>
+
+ <tr>
+     <td class="mg-td-width-half" valign="top">
+  		<label class="mg-label"><%=t('description')%></label>
+  	 </td>
+  	 <td class="mg-td-width-half" valign="top">
+      <div class="text-scroll-for-log-text-cls comments-space">
+  		<%= @examination.try(:description) %>
+      </div>
+  	 </td>
+ </tr>
+
+   <tr>
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"><%=t('academic_year')%></label>
+     </td>
+     <td class="mg-td-width-half" valign="top">
+      <%= MgTimeTable.find_by(:id=>@examination.try(:mg_time_table_id)).try(:name) %>
+     </td>
+ </tr>
+
+
+  <tr>
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"><%=t('exam_type')%></label>
+     </td>
+     <td class="mg-td-width-half" valign="top">
+      <%= MgExamType.find_by(:id=>@examination.try(:mg_exam_type_id)).try(:name) %>
+     </td>
+ </tr>
+ <tr>
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"><%=t('examination_category')%></label>
+     </td>
+     <td class="mg-td-width-half" valign="top">
+      <%= MgExaminationCategory.find_by(:id=>@examination.try(:mg_examination_category_id)).try(:name) %>
+     </td>
+ </tr>
+<tr>
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"><%=t('examination_programme_type')%></label>
+     </td>
+     <td class="mg-td-width-half" valign="top">
+      <%= MgExaminationProgramCategory.find_by(:id=>@examination.try(:mg_examination_program_category_id)).try(:name) %>
+     </td>
+ </tr>
+
+<!--  <tr>
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"><%#=t('programme')%></label>
+     </td>
+     <td class="mg-td-width-half" valign="top">
+      <%#= MgWing.find_by(:id=>@examination.try(:mg_wing_id)).try(:wing_name) %>
+     </td>
+ </tr>
+
+
+ 
+<tr>
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"><%#=t('class')%></label>
+     </td>
+     <td class="mg-td-width-half" valign="top">
+      <%#= MgCourse.find_by(:id=>@examination.try(:mg_course_id)).try(:course_name) %>
+     </td>
+ </tr> -->
+<!--  <tr>
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"><%#=t('semester')%></label>
+     </td>
+     <td class="mg-td-width-half" valign="top">
+      <%#= MgBatch.find_by(:id=>@examination.try(:mg_batch_id)).try(:name) %>
+     </td>
+ </tr> -->
+ 
+
+</table>
+ <p class="mg-p-mgtop">
+     <a class="mg-small-form-btn cancel-form-dialog"><%=t('cancel')%></a>
+
+  </p>
+ <script>
+  $(document).ready(function () {
+    textSeeMoreLess();
+  });
+
+</script>

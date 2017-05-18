@@ -1,0 +1,144 @@
+<%= render  partial: 'master_settings/master_settings_left' %>
+<% navigation_add 'HOD Login',exam_management_index_hod_login_path %>
+
+<h4 class="mg-h4"><%= t('assign_hod') %></h4>
+
+<button class="assign_hod_manager mg-btn-bottom-margin mg-custom-form-btn"><%= t('add_hod')%></button>
+
+
+<div class="mg_pagination">
+
+<%if @hod_login.length>0%>
+<table  class="batch-tbl mg-tbl-margin">
+  <tr class="subject-table-header">
+    <th><%= t('specialization') %></th>
+    <th><%= t('employee') %></th>
+    <th><%= t('user_name') %></th>
+    <th><%= t('actions') %></th>
+  </tr>
+ 
+  <% @hod_login.each do |f| %>
+    <tr>
+    
+      <%
+        hod_login=MgExaminationHodLogin.find_by(:mg_user_id=>f.id)
+        if hod_login.present?
+          specialization_data=MgEmployeeSpecialization.find_by(:id=>hod_login.mg_employee_specialization_id)
+        end
+      %>
+      <td>
+        <%= specialization_data.try(:name) %>
+      </td>
+      <%employee_data=MgEmployee.find_by(:id=>hod_login.mg_employee_id,:is_deleted=>0,:mg_school_id=>session[:current_user_school_id])%>
+      <td><%= employee_data.try(:first_name) %></td>
+
+      <td><%= f.user_name %></td>
+      
+      <td>
+        <button title="Change Password" id="<%=raw f.id %>-showlabBTNID" class="show-store-manager-btn mg-icon-btn"><i class="fa fa-exchange"></i></button>
+
+        <button title="Edit" id="<%=raw f.id %>-editlabBTNID" class="edit-hod-manager-btn mg-icon-btn"><i class="fa fa-pencil-square-o"></i></button>
+
+        <button title="Delete" id="<%=raw f.id %>-deletelabBTNID" class="delete-store-manager-btn mg-icon-btn"><i class="fa fa-trash"></i></button>
+      </td>
+
+    </tr>
+  <% end %>
+</table>
+<br/>
+ <div class="pagination-align" style="position: relative; bottom: 10px;">
+    <%= will_paginate @hod_login, :container => false %>
+  </div>
+<%else%>
+<h5>No Hod Login is created </h5>
+<%end%>
+</div>
+
+<div id="showstoreManagerkDIVID"></div>
+<div id="newAddstoreManagerDIVID"></div>
+<div id="editStoreManagerDIVID"></div>
+
+<%= render  partial: 'application/common_left_close' %>
+
+
+<script>
+$( document ).ready(function() {
+  focusCurrentTab("index_hod_loginAID","index_hod_loginLiID");
+});
+
+$(document).on("click", ".assign_hod_manager", function(e){
+  var urlLink = "/exam_management/new_hod_login";
+  $.ajax({
+      url: urlLink ,
+      cache: false,
+      success: function(html){
+        $('#newAddstoreManagerDIVID').dialog({
+          modal: true,
+          title: "Add HOD",
+          open: function () {
+            $(this).html(html);
+          }
+        }); 
+      }
+  });
+});
+
+$(document).on("click", ".edit-hod-manager-btn", function(e){
+  var myID =$(this).attr('id');
+  var Id=myID.split("-");
+  var urlLink = "/exam_management/edit_hod_login/";
+  $.ajax({
+      url: urlLink ,
+      cache: false,
+      data: {"id":Id[0],"change_store_username":"change_username_by_admin"},
+      success: function(html){
+        $('#editStoreManagerDIVID').dialog({
+          modal: true,
+          title: "Edit HOD Login",
+          open: function () {
+              $(this).html(html);
+          }
+        }); 
+      }
+  });
+});
+
+
+
+
+$(document).on("click", ".show-store-manager-btn", function(e){
+  var myID =$(this).attr('id');
+  var Id=myID.split("-");
+  var urlLink = "/exam_management/show_hod_login/"+Id[0];
+  $.ajax({
+      url: urlLink ,
+      cache: false,
+      data: {"change_store_password":"change_password_by_admin"},
+      success: function(html){
+            $('#showstoreManagerkDIVID').dialog({
+              modal: true,
+               minHeight: 'auto',
+              width: 'auto',
+              title: "Change Password",
+              open: function () {
+                  
+                  $(this).html(html);
+              }
+          }); 
+         
+      }
+  });
+});
+
+
+
+
+</script>
+
+<style>
+
+</style>
+
+
+
+

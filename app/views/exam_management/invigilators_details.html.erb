@@ -1,0 +1,84 @@
+<% navigation_add t('invigilators_details'), invigilators_details_path %>
+
+<%= render partial: 'dashboards/employee_left' %>
+
+<h4 class="mg-h4"><%= t('invigilation_duty_details') %></h4>
+<%= form_for :sort_payslip, :html => {
+                            :id => 'indexPayslipApprovalCreateFormID' } do |f| %>
+<%#=@invigilator_details.inspect%><label class="mg-label mg-tt-width mg-tbl-margin"><%=t('select_date')%></label>
+<%=text_field_tag :date, params[:date].present? ? params[:date] : Date.today.strftime(@school.date_format), :class=>'mg-text-field', :onchange=>"$(this).closest('form').submit()"%>
+
+<%end%>
+<div class="mg_pagination">
+<%if @invigilator_details.present?%>
+<table  class="batch-tbl mg-tbl-margin">   <!-- border="2" --> 
+  <tr class="subject-table-header">
+  	<th><%=t('sr_no')%></th>
+    <th><%= t('date') %></th>
+    <th><%= t('time') %></th>
+    <th><%=t('description')%></th>
+    <th ><%= t('action') %></th>
+  </tr>
+ <%sr_no=0%>
+  <% @invigilator_details.each do |s| %>
+  <%object=s.mg_invigilator%>
+    <tr>
+      <td><%=sr_no +=1 %></td>
+      <td><%= object.try(:date).present? ? object.try(:date).strftime(@school.date_format) : "" %></td>
+      <td><%= object.try(:time).present? ? object.try(:time).strftime('%I:%M%p') : "" %></td>
+      <td class="mg-desc-text-justify"><%= truncate(object.description.to_s, :length => 25, :separator => ' ') %></td>
+      <td class="mg-align-center">
+      	
+      <button title="Show" id="<%=raw object.id %>-showExamTypeBTNID" class="show-invigilators-btn mg-icon-btn"><i class="fa fa-eye"></i></button>
+      </td>
+    </tr>
+  <% end %>
+</table>
+<br/>
+ <div class="pagination-align" style="position: relative; bottom: 10px;">
+              <%#= will_paginate @invigilator_details, :container => false %>
+           </div>
+<%else%>
+<h5>Not yet assigned </h5>
+<%end%>
+</div>
+<div id="invigilatorsShowDIVID"></div>
+
+<%= render partial: 'application/common_left_close' %>
+
+<script>
+$(document).ready(function () {
+var dateFormatStr =  getJsDateFormat();
+$( "#date" ).datepicker({  minDate: new Date(),changeMonth: true,changeYear: true,yearRange: "-100:+10", dateFormat: dateFormatStr });
+
+ focusCurrentTab("assignInvigilatorsDetailsAID","assignInvigilatorsDetailsLiID");
+
+});
+
+
+// $(document).on("click", ".show-invigilator-details-btn", function(e){
+//         var myID =$(this).attr('id');
+//         var Id=myID.split("-");
+//         var urlLink = "/exam_management/"+Id[0]+"/show_invigilators";
+//         $.ajax({
+//             url: urlLink ,
+//             cache: false,
+//             success: function(html){
+//                   $('#invigilatorsShowDIVID').dialog({
+//                     modal: true,
+//                     minHeight: 400,
+//                     maxHeight: 600,
+//                     minWidth: 500,
+//                     // maxWidth: 600,
+//                     title: "Show Invigilators Details",
+//                     open: function () {
+                        
+//                         $(this).html(html);
+//                     }
+//                 }); 
+               
+//             }
+//         });
+// });
+
+</script

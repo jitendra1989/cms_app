@@ -1,0 +1,42 @@
+
+
+
+
+<div class="box">
+<%= form_for :exam_management_data ,  :url=>{:controller=>'exam_management',:action=>'program_category_update',:id=>@exam_management_data.id}, :html=>{:id=>'edit_exam_management_report_type'} do |f| %>
+
+   
+<table class="pop-up-inner-text mg-tbl-margin mg-show-tbl-width">
+    <tr>
+      <td class="mg-td-width-one-third">
+        <label class="mg-label" for="name"><%= t ('name') %><span class="required-field">&nbsp;*</span></label><br/>
+        <%= f.text_field :name ,:class=>"mg-text-field"%>
+      </td>
+      </tr>
+      <tr>
+      <td class="mg-td-width-one-third">
+        <label class="mg-label" for="description"><%= t ('description') %></label><br/>
+        <%= f.text_area :description ,:class=>"mg-text-field"%>
+      </td>
+    </tr>
+    </table>
+    <br/> <p class="mg-p-mgtop">
+    <a onclick="$(this).closest('form').submit()" class="mg-small-form-btn"><%=t("save")%></a>
+    <a class="mg-small-form-btn cancel-form-dialog"><%=t('cancel')%></a>
+  </p>
+    </div>
+    <%end%>
+<script>
+$(document).ready(function(){
+
+$("#edit_exam_management_report_type").validate({
+      rules:{
+        "exam_management_data[name]":{required:true},
+       
+        
+        
+      },
+  });
+    
+});
+</script>

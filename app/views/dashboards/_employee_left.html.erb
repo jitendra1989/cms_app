@@ -1,0 +1,430 @@
+    <section id="userBodyContentBox" style="margin: 0 auto;">
+    <table width=100% border="0" cellspacing="0" cellpadding="0"  style="margin-bottom: 0px;">
+        <tr>
+            <td valign="top" class="userBodyContentBox1">
+                <aside class="userMenuBoxLeft" style="width: 210px;">
+                    <ul class="menuListHome">
+                     <li class="myAccountMenu">Employee</li>
+                     <%
+                        @@inchargeAccess=0
+                        @@non_lab_incharge=0
+                        @@category=1
+                        employee=MgEmployee.find_by(:mg_user_id=>session[:user_id])
+                        category=MgEmployeeCategory.find_by(:id=>employee.mg_employee_category_id)
+                        if category.category_name=="Teaching Staff"
+                            @@category=1
+                        else
+                            @@category=2
+                        end
+                        %>
+                       
+                        <li id="viewEmployeeDashboardLiID">
+
+                            <a class="Employee-dashboard" href="/dashboards/employee/" id="viewEmployeeDashboard">
+                                <div class="setMenu"><i class="fa fa-bar-chart">&nbsp;&nbsp;</i>My Dashboard<!-- <i class="fa fa-caret-left" style="color:#d5d8d9; position: absolute; right: 0px; transform: translateY(33%);"></i> -->
+                                </div>
+                            </a>
+                        </li>
+
+                        <li id="viewEmployeeAttendances_demoLiID">
+                            <a class="Employee-Attendances" href="/employees_attendances/employee_index/" id="viewEmployeeAttendances_demo">
+                                <div class="setMenu"><i class="fa fa-calendar">&nbsp;&nbsp;</i>Attendances<!-- <i class="fa fa-caret-left" style="color:#d5d8d9; position: absolute; right: 0px; transform: translateY(33%);"></i> -->
+                                </div>
+                            </a>
+                        </li>
+                        <li id="viewEmployeeLeaveLiID">
+                            <a class="employee-leave" href="/mg_employee_leave_types/from_emp/" id="viewEmployeeLeave">
+                                <div class="setMenu"><i class="fa fa-tag">&nbsp;&nbsp;</i>Apply Leave<!-- <i class="fa fa-caret-left" style="color:#d5d8d9; position: absolute; right: 0px; transform: translateY(33%);"></i> -->
+                                </div>
+                            </a>
+                        </li>
+
+                        <li id="viewPrincipleNotificationLiID">
+
+                            <a class="Principle-Profile" href="/notifications/principal_notifications/" id="viewPrincipleNotification">
+                                <div class="setMenu"><i class="fa fa-comments">&nbsp;&nbsp;</i>Send Notification</i>
+                                </div>
+                            </a>
+                        </li>
+                                                
+                        <li id="showPrincipleNotificationLiID">
+
+                            <a class="Principle-Profile" href="/notifications/show_notification/" id="showPrincipleNotification">
+                                <div class="setMenu"><i class="fa fa-weixin">&nbsp;&nbsp;</i>Show Notification</i>
+                                </div>
+                            </a>
+                        </li>
+
+                        <li id="viewEmployeeEventsLiID">
+
+                            <a class="Employee-Events" href="/dashboards/employee_events/" id="viewEmployeeEvents" >
+                                <div class="setMenu"><i class="fa fa-tasks">&nbsp;&nbsp;</i>Events<!-- <i class="fa fa-caret-left" style="color:#d5d8d9; position: absolute; right: 0px; transform: translateY(33%);"></i> -->
+                                </div>
+                            </a>
+                        </li>
+<!--                         <li id="viewEmployeeMessagesLiID">
+                            <a class="Employee-Messages" href="#" id="viewEmployeeMessages">
+                                <div class="setMenu"><i class="fa fa-envelope-o">&nbsp;&nbsp;</i>Messages<i class="fa fa-caret-left" style="color:#d5d8d9; position: absolute; right: 0px; transform: translateY(33%);"></i>
+                                </div>
+                            </a>
+                        </li> -->
+                        <!--  <li id="viewEmployeeNewsLiID" >
+                            <a class="Employee-News" href="/dashboards/employee_news/" id="viewEmployeeNews">
+                                <div class="setMenu"><i class="fa fa-newspaper-o">&nbsp;&nbsp;</i>News --><!-- <i class="fa fa-caret-left" style="color:#d5d8d9; position: absolute; right: 0px; transform: translateY(33%);"></i> -->
+                                <!-- </div>
+                            </a>
+                        </li> -->
+
+                        <li id="viewEmployeeProfileLiID">
+
+                            <a class="Employee-Profile" href="/dashboards/employee_profile/" id="viewEmployeeProfile">
+                                <div class="setMenu"><i class="fa fa-user">&nbsp;&nbsp;</i>Profile<!-- <i class="fa fa-caret-left" style="color:#d5d8d9; position: absolute; right: 0px; transform: translateY(33%);"></i> -->
+                                </div>
+                            </a>
+                        </li>
+
+                          <!-- <li id="viewEmployeeAttendancesLiID">
+                            <a class="Employee-Attendances" href="#" id="viewEmployeeAttendances_demo">
+                                <div class="setMenu"><i class="fa fa-shield">&nbsp;&nbsp;</i>Attendances<i class="fa fa-caret-left" style="color:#d5d8d9; position: absolute; right: 0px; transform: translateY(33%);"></i>
+                                </div>
+                            </a>
+                        </li> -->
+
+                         <li id="assignInvigilatorsDetailsLiID">
+                            <a class="menuItemsActivities" href="/exam_management/invigilators_details/" id="assignInvigilatorsDetailsAID">
+                                <div class="setMenu"><i class="fa fa-sitemap">&nbsp;&nbsp;</i><label class="mg-label-text-transform-none" for="examination_controller"><%=t('invigilation_duty')%>
+                               </label></div>
+                            </a>
+                        </li>   
+                        <%if @@category==1%>
+                         <li id="viewEmployeeSubjectsLiID">
+
+                            <a class="Employee-Subjects" href="/employees_attendances/subjects_for_employee/" id="viewEmployeeSubjects">
+                                <div class="setMenu"><i class="fa fa-file-text">&nbsp;&nbsp;</i>Subjects<!-- <i class="fa fa-caret-left" style="color:#d5d8d9; position: absolute; right: 0px; transform: translateY(33%);"></i> -->
+                                </div>
+                            </a>
+                        </li>
+                            <%end%>
+<!-- =================curriculum chapter or unit====================== -->
+                            <%if @@category==1%>
+
+                            <li id="viewEmployeeCuricullumLiID">
+
+                            <a class="Employee-Syllabus-Tracker-Curriculum" href="/curriculum/unit_show/" id="viewEmployeeCurriculum">
+                                <div class="setMenu"><i class="fa fa-cogs">&nbsp;&nbsp;</i>Curriculum<!-- <i class="fa fa-caret-left" style="color:#d5d8d9; position: absolute; right: 0px; transform: translateY(33%);"></i> -->
+                                </div>
+                            </a>
+                        </li>
+                        <%end%>
+
+
+<!-- =========================================================== -->
+
+
+
+
+<%empl_count=MgEmployee.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id],:mg_user_id=>session[:user_id],:is_dean=>true).count%>
+                        <%if @@category==2 && empl_count>0%>
+                        
+                        <li id="viewDeanEmployeecurriculumLiID">
+                            <a class="Employee-Dean-Syllabus-Tracker" href="/curriculum/review_curriculum/" id="viewEmployeeDeanCurriculum">
+                                <div class="setMenu"><i class="fa fa-cogs">&nbsp;&nbsp;</i><%=t("curriculum")%><!-- <i class="fa fa-caret-left" style="color:#d5d8d9; position: absolute; right: 0px; transform: translateY(33%);"></i> -->
+                                </div>
+                            </a>
+                        </li>
+
+
+
+                        <%end%>
+
+
+<!-- ================================================================ -->
+
+
+ <!-- =============================================================================================                        -->
+                            
+                            <%if @@category==1%>
+<!-- 
+                            <li id="viewEmployeesyllabusLiID">
+
+                            <a class="Employee-Syllabus-Tracker" href="/employees/syllabus_tracker_show/" id="viewEmployeeSyllabus">
+                                <div class="setMenu"><i class="fa fa-tachometer">&nbsp;&nbsp;</i>Syllabus Progress <i class="fa fa-caret-left" style="color:#d5d8d9; position: absolute; right: 0px; transform: translateY(33%);"></i> 
+                                </div>
+                            </a>
+                        </li> -->
+                        <%end%>
+
+
+                        <li id="viewEmployeeFileManagmentLiID">
+
+                            <a class="Employee-FileManagment" href="/document_managements/folder_index/" id="viewEmployeeFileManagment">
+                                <div class="setMenu"><i class="fa fa-upload">&nbsp;&nbsp;</i>Upload files<!-- <i class="fa fa-caret-left" style="color:#d5d8d9; position: absolute; right: 0px; transform: translateY(33%);"></i> -->
+                                </div>
+                            </a>
+                        </li>
+
+                         <li id="viewEmployeeQuestionsLiID">
+
+                            <a class="Employee-Questions" href="/my_questions/" id="viewQuestions">
+                                <div class="setMenu"><i class="fa fa-file">&nbsp;&nbsp;</i>My Content<!-- <i class="fa fa-caret-left" style="color:#d5d8d9; position: absolute; right: 0px; transform: translateY(33%);"></i> -->
+                                </div>
+                            </a>
+                        </li>
+
+                        <li id="viewEmployeeTimeTableLiID">
+
+                            <a class="Employee-Table" href="/dashboards/employee_time_table/" id="viewEmployeeTimeTable">
+                                <div class="setMenu"><i class="fa fa-table">&nbsp;&nbsp;</i>Time Table<!-- <i class="fa fa-caret-left" style="color:#d5d8d9; position: absolute; right: 0px; transform: translateY(33%);"></i> -->
+                                </div>
+                            </a>
+                        </li>
+
+
+
+                        <%if @@category==1%>
+                        <li id="viewEmployeeStudentAttendancesLiID">
+
+                            <a class="Employee-Student-Attendances" href="/attendances/employee_student_attendance/" id="viewEmployeeStudentAttendancesAID">
+                                <div class="setMenu"><i class="fa fa-calendar">&nbsp;&nbsp;</i>Student Attendances<!-- <i class="fa fa-caret-left" style="color:#d5d8d9; position: absolute; right: 0px; transform: translateY(33%);"></i> -->
+                                </div>
+                            </a>
+                        </li>
+
+                        <%end%>
+                            <li id="viewEmployeePayslipsEmployeeLiID">
+                            <a class="Employee-Student-Attendances" href="/payslips/payslip_for_employee/" id="viewEmployeePayslipsEmployeeAID">
+                                <div class="setMenu"><i class="fa fa-check-square-o">&nbsp;&nbsp;</i><%=t('payslip')%>
+                                </div>
+                            </a>
+                        </li>
+                          <li id="viewEmployeeAlbumLiID">
+
+                            <a class="Employee-Employee-Album" href="/albums/employee_albums/" id="viewEmployeeAlbumAID">
+                                <div class="setMenu"><i class="fa fa-picture-o">&nbsp;&nbsp;</i><%=t('albums')%>
+                                </div>
+                            </a>
+                        </li>
+                        <%#@employee=MgEmployee.find_by(:mg_user_id=>session[:user_id])
+                        @store_manager=MgInventoryStoreManager.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id],:mg_employee_id=>@employee.id).count%>
+    
+                        <%#if @store_manager>0%>
+
+                        <!-- <li id="viewItemProposalLiID">
+                            <a class="menuItemsActivities" href="/inventory/proposal/" id="viewInventoryItemProposalIndex">
+                                <div class="setMenu"><i class="fa fa-flask">&nbsp;&nbsp;</i><%#=t('inventory')%>
+                                </div>
+                            </a>
+                        </li> -->
+
+                        <%#end%>
+
+        <!-- =======================Central Assistant Incharge========================== -->
+        <%
+        @employee=MgEmployee.find_by(:mg_user_id=>session[:user_id])
+        @central_assistant_incharge_count=MgAccountCentralIncharge.where(:status=>"Assistant",:is_deleted=>0,:mg_school_id=>session[:current_user_school_id],:mg_employee_id=>@employee.id).count%>
+                        <%if @central_assistant_incharge_count>0%>
+                            <li id="viewAssistantInchargeLiID">
+                                <a class="menuItemsActivities" href="/accounts/transfer/" id="viewAssistantInchargeIndex">
+                                    <div class="setMenu"><i class="fa fa-money">&nbsp;&nbsp;</i><%=t('accounts')%>
+                                    </div>
+                                </a>
+                            </li>
+                        <%end%>
+    <!-- ============================Central Incharge=================================== -->
+    <%  @user_count=0
+        @employee=MgEmployee.find_by(:mg_user_id=>session[:user_id])
+        @central_incharge_count=MgAccountCentralIncharge.where(:status=>"Incharge",:is_deleted=>0,:mg_school_id=>session[:current_user_school_id],:mg_employee_id=>@employee.id).count%>
+                        <%if @central_incharge_count>0%>
+                        <%@user_count=1%>
+                            <li id="viewAccountsCentralInchargeLiID">
+                                <a class="menuItemsActivities" href="/accounts/central_receivable/" id="viewAccountsCentralInchargeIndex">
+                                    <div class="setMenu"><i class="fa fa-money">&nbsp;&nbsp;</i><%=t('accounts')%>
+                                    </div>
+                                </a>
+                            </li>
+                        <%end%>
+
+
+     <!-- ============================Accounts Incharge=================================== -->
+    <%
+        @employee=MgEmployee.find_by(:mg_user_id=>session[:user_id])
+        @c_incharge_count=MgAccount.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id],:mg_employee_id=>@employee.id).count%>
+                        <%if @c_incharge_count>0%>
+                        <%if @user_count==1%>
+                        <%else%>
+                        <%@user_count=1%>
+                            <li id="viewAccountsInchargeReportLiID">
+                                <a class="menuItemsActivities" href="/accounts/accounts_review/" id="viewAccountsInchargeReportIndex">
+                                    <div class="setMenu"><i class="fa fa-money">&nbsp;&nbsp;</i><%=t('accounts')%>
+                                    </div>
+                                </a>
+                            </li>
+                            <%end%>
+                        <%end%>
+    <!-- ============================================================================== -->
+ 
+
+    <!-- =======================Finance Officer============================ -->
+        <%#@employee=MgEmployee.find_by(:mg_user_id=>session[:user_id])
+        @finance_manager=MgFinanceOfficer.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id],:mg_employee_id=>@employee.id).count%>
+
+                        <%#if @finance_manager>0%>
+                            <!-- <li id="viewItemProposalLiID">
+                                <a class="menuItemsActivities" href="/inventory/proposal_review/" id="viewInventoryItemProposalIndex">
+                                    <div class="setMenu"><i class="fa fa-flask">&nbsp;&nbsp;</i><%#=t('inventory')%>
+                                    </div>
+                                </a>
+                            </li> -->
+                        <%#end%>
+    <!-- ============================================================================== -->
+                        <%if @@category==1%>
+
+                        <li id="viewCreateHomeworkLiID">
+                            <a class="menuItemsActivities" href="/homework" id="viewCreateHomework">
+                                <div class="setMenu"><i class="fa fa-book">&nbsp;&nbsp;</i><%=t('homework')%><!-- <i class="fa fa-caret-left" style="color:#d5d8d9; position: absolute; right: 0px; transform: translateY(33%);"></i> -->
+                                </div>
+                            </a>
+                        </li>
+                        <%end%>
+
+                         <%
+                        @employee_id_left=MgEmployee.find_by(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id],:mg_user_id=>session[:user_id])
+
+                        lib_inc_data=MgLibraryEmployee.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id],:designation=>"Library Incharge",:mg_employee_id=>@employee_id_left.id)%>
+                        
+                        <%if lib_inc_data.length>0%>
+                     <!-- <li class="myAccountMenu">Library</li> -->
+
+                        <li id="viewCreateHomeworkLiID">
+                            <a class="menuItemsActivities" href="/library" id="viewCreateHomework">
+                                <div class="setMenu"><i class="fa fa-book">&nbsp;&nbsp;</i><%=t('manage_library')%>
+                                </div>
+                            </a>
+                       <!--  </li>
+                         <li id="library_search1LiID">
+                            <a class="menuItemsActivities" href="/dashboards/employee_library_search/" id="library_search1AID">
+                                <div class="setMenu"><i class="fa fa-book">&nbsp;&nbsp;</i><%#=t('search_library')%><!-- <i class="fa fa-caret-left" style="color:#d5d8d9; position: absolute; right: 0px; transform: translateY(33%);"></i>
+                                </div>
+                            </a>
+                        </li> -->
+                        <%end%>
+                        
+                         <%asst_lib_data=MgLibraryEmployee.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id],:designation=>"Asst Library Incharge",:mg_employee_id=>@employee_id_left.id)%>
+                         
+                         <%if asst_lib_data.length>0%>
+<!--                      <li class="myAccountMenu">Library</li> -->
+                         
+                        <li id="issuelibraryworkLiID">
+                            <a class="menuItemsActivities" href="/dashboards/library_book_issue_index" id="issuelibraryCreateHomework">
+                                <div class="setMenu"><i class="fa fa-book">&nbsp;&nbsp;</i><%=t('issue/renew/return')%><!-- <i class="fa fa-caret-left" style="color:#d5d8d9; position: absolute; right: 0px; transform: translateY(33%);"></i> -->
+                                </div>
+                            </a>
+                        </li>
+                         
+                    <%end%>
+                    <li id="library_search1LiID">
+                            <a class="menuItemsActivities" href="/dashboards/employee_library_search/" id="library_search1AID">
+                                <div class="setMenu"><i class="fa fa-search">&nbsp;&nbsp;</i><%=t('library_search')%><!-- <i class="fa fa-caret-left" style="color:#d5d8d9; position: absolute; right: 0px; transform: translateY(33%);"></i> -->
+                                </div>
+                            </a>
+                        </li>
+					 <%
+                        employee=MgEmployee.find_by(:mg_user_id=>session[:user_id])
+                        incharge=MgLaboratoryIncharge.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id],:mg_employee_id=>employee.id,:incharge_type=>"Incharge").count
+                        if incharge>0
+                            @@inchargeAccess=1
+                            @@non_lab_incharge=2
+
+                        %>
+
+                        <!-- =======================for laboratory purchase========================== -->
+                        <!-- <li class="myAccountMenu">Laboratory</li> -->
+
+                        <li id="viewLabItemPurchaseLiID">
+                            <a class="menuItemsActivities" href="/laboratory/purchase/" id="viewLabPurchaseIndex">
+                                <div class="setMenu"><i class="fa fa-flask">&nbsp;&nbsp;</i><%=t('laboratory')%><!-- <i class="fa fa-caret-left" style="color:#d5d8d9; position: absolute; right: 0px; transform: translateY(33%);"></i> -->
+                                </div>
+                            </a>
+                        </li>
+                        
+                        <%end%>
+                        <%
+                        employee=MgEmployee.find_by(:mg_user_id=>session[:user_id])
+                        ass_Incharge=MgLaboratoryIncharge.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id],:mg_employee_id=>employee.id,:incharge_type=>"Assistant Incharge").count
+                        if ass_Incharge>0
+                           if @@inchargeAccess==0
+                            @@non_lab_incharge=2
+                        %>
+
+                        <!-- =================================for laboratory consumption=========================== -->
+                        <!-- <li class="myAccountMenu">Laboratory</li> -->
+                        <li id="viewLabItemConsumptionLiID">
+                            <a class="menuItemsActivities" href="/laboratory/consumption/" id="viewLabConsumptionIndex">
+                                <div class="setMenu"><i class="fa fa-flask">&nbsp;&nbsp;</i><%=t('laboratory')%><!-- <i class="fa fa-caret-left" style="color:#d5d8d9; position: absolute; right: 0px; transform: translateY(33%);"></i> -->
+                                </div>
+                            </a>
+                        </li>
+                        
+
+                        <%end%>
+                        <%end%>
+                        
+                        <%if @@non_lab_incharge==0 && @@category==1%>
+                        <li id="viewSearchLaboratoryLiID">
+                            <a class="menuItemsActivities" href="/laboratory/laboratory_search/" id="viewSearchLaboratory">
+                                <div class="setMenu"><i class="fa fa-search">&nbsp;&nbsp;</i><%=t('laboratory_search')%> <i class="fa fa-caret-left" style="color:#d5d8d9; position: absolute; right: 0px; transform: translateY(33%);"></i>
+                                </div>
+                            </a>
+                        </li>
+                        <%end%>
+
+                       <%if @@category==1%>
+
+                        <li id="employee_question_paperLiID">
+                            <a class="menuItemsActivities" href="/dashboards/employee_question_paper" id="employee_question_paperAID">
+                                <div class="setMenu"><i class="fa fa-book">&nbsp;&nbsp;</i><%=t('upload_question_paper')%><!-- <i class="fa fa-caret-left" style="color:#d5d8d9; position: absolute; right: 0px; transform: translateY(33%);"></i> -->
+                                </div>
+                            </a>
+                        </li>
+                        <!-- ======================================================================== -->
+
+
+                          <li id="disciplinary_actionLiID">
+                                <a class="menuItemsActivities" href="/sports_management/disciplinary_action/" id="disciplinary_actionAID">
+                                    <div class="setMenu"><i class="fa fa-balance-scale">&nbsp;&nbsp;</i><label class="mg-label-text-transform-none" for="hostelcontroller"><%=t('disciplinary_action')%>
+                                   </label></div>
+                                </a>
+                            </li>
+
+
+                        <!-- ========================================================================= -->
+                    <%end%>
+                    <%#if session[:user_type]=="employee" && @@category==1%>
+<!-- ===============================HOD Report PURPOSE================================= -->
+                        <%#empl_hod_count=MgEmployee.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id],:mg_user_id=>session[:user_id],:is_hod=>true).count%>
+                        <%#if empl_hod_count>0%>
+                        <!-- <li id="hod_question_paper_listLiID">
+                            <a class="Employee-HOD-Syllabus-Tracker-Department-Report" href="/dashboards/hod_question_paper/" id="hod_question_paper_listAID">
+                                <div class="setMenu"><i class="fa fa-cube">&nbsp;&nbsp;</i><%#=t("question_paper_list")%>< <i class="fa fa-caret-left" style="color:#d5d8d9; position: absolute; right: 0px; transform: translateY(33%);"></i> 
+                                </div>
+                            </a>
+                        </li> -->
+                        <%#end%>
+                        <%#end%>
+
+                    </ul>    
+
+                </aside>
+            </td>
+            <td  valign="top" id="manageEmployeeCategoryID" class="mg-table-td-main-2">
+
+<script>
+    // $( document ).ready(function() {
+    //     var user_type=$("#user_type").val();
+    //     if (!(user_type=="employee"))
+    //     {
+    //         collapseLeftMenu();
+    //     }
+    //     //focusheaderBox("INVENTORY");
+    // });
+</script>

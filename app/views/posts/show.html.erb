@@ -1,0 +1,107 @@
+<div class="main_header clearfix">
+<p><center><font size="4"><%= link_to "Mindcom Forum", {:action=>"index"},:id=>"Color_data55" %></font></center></p>
+<%if session[:user_form_id].present?%>
+
+<%
+    userdata=User.find(session[:user_form_id])
+%>
+<%= userdata.email%>
+<sapan>
+<%= link_to 'New Post', {:action=>"new"} ,:class=>"mg-small-form-btn123"%>
+</sapan>
+<span></span>
+<span>
+<%= link_to 'Sign Out', {:action=>"destroy_session"},:class=>"mg-small-form-btn123"%>
+</sapan>
+<%else%>
+
+<sapan>
+
+<%#= link_to 'Sign UP', new_user_registration_path ,:class=>"mg-small-form-btn123"%>
+
+<%= link_to 'Sign Up', {:controller=>"posts",:action=>"registration_sign_up"} ,:class=>"mg-small-form-btn123"%>
+<%= link_to 'Sign In', {:controller=>"posts",:action=>"registration_sign_in"} ,:class=>"mg-small-form-btn123"%>
+
+</sapan>
+<sapan>
+
+<%#= link_to 'Sign In', new_user_session_path,:class=>"mg-small-form-btn123"%><br/>
+</sapan>
+<%end%>
+<%#= link_to 'New Post', {:action=>"new"} ,:class=>"mg-small-form-btn123"%><br/>
+</div><br/>
+
+ 
+<div class="wrapper_class post1">
+ <h1> <%= @article.title %></h1>
+
+ <p>
+  <%= @article.content %>
+  </p>
+
+  <div id="comment">
+
+<h2><%=@article.comments.count%><%="Comments"%>
+</h2>
+<%if @article.comments.length>0%>
+<%@article.comments.each do |comment|%>
+<p><%=comment.comment%>  <%="("+comment.user.try(:email).to_s+")"%>
+ <%if session[:user_form_id].present?%>
+<%id="#{comment.id}-#{params[:id]}"%>
+<%if comment.user.id==session[:user_form_id]%>
+<%= link_to 'Delete', {:controller=>"comments",:action=>"delete",:id=>id},:class=>"mg-small-form-btn123" %>
+
+<%= link_to 'Edit', {:controller=>"comments",:action=>"edit",:id=>id},:class=>"mg-small-form-btn123" %>
+<%end%>
+</p>
+<%end%>
+
+<p></p>
+
+<%end%>
+<%end%>
+</p>
+ <%if session[:user_form_id].present?%>
+
+<h3>Reply to thread</h3>
+
+<%=render "comments/new"%>
+<%end%>
+  </div>
+  <%if session[:user_form_id].present?%>
+  <%
+    userdata=User.find(session[:user_form_id])
+    %>
+
+<%if @article.user_id==session[:user_form_id]%>
+<%= link_to 'Edit', {:action=>"edit",:id=>@article.id},:class=>"mg-small-form-btn-main" %>
+
+ 
+<%= link_to 'Delete', {:action=>"delete",:id=>@article.id},:class=>"mg-small-form-btn-main" %>
+
+
+<%= link_to 'Home', {:action=>"index"},:class=>"mg-small-form-btn-main" %>
+
+<%end%>
+<%end%>
+</div>
+
+<style>
+	h1{
+font-weight: 100;
+
+font-size: 0.9rem;
+color: #397CAC;
+margin-top: 0;
+	}
+p{
+
+color: #B2BAC2;
+font-size: 0.9rem;
+font-weight: 100;
+line-height: 1.2rem;
+
+}
+
+
+</style>

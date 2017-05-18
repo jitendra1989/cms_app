@@ -1,0 +1,231 @@
+ <% navigation_add t('seating_plan'), :controller=>'exam_management', :action=>'seating_plan' %>
+ <% navigation_add t('new'), :controller=>'exam_management', :action=>'new_seating_plan' %>
+ <%=render partial: 'exam_management_left'%>
+ <h4 class="mg-h4"><%=t('create_new_seating_plan')%></h4>
+ <%= form_for :seating_plan, :url=>create_seating_plan_path, method: :post, :html => {
+                            :id => 'examTypesFormID' } do |f| %>
+
+  <p>
+    <label class="mg-label mg-tt-width "><%=t('select_examination') %><span class="required-field"> *</span></label>
+    <%= f.collection_select(:mg_examination_detail_id, @examination, :id, :name,{:include_blank => 'Select'} ,:class=>"mg-select-btn", :onchange=>"select_examination_details(this.value)" )  %>
+  </p>
+  <p>
+    <label class="mg-label mg-tt-width "><%=t('select_date') %><span class="required-field"> *</span></label>
+    <%=select_tag :date_time_data ,options_for_select([]),:prompt=>t('select'), :onchange=>"datesTimes_Function(this.value);"%><!-- ,:class=>"mg-select-btn" -->
+  </p> 
+
+  <p>
+    <label class="mg-label mg-tt-width "><%=t('select_time') %><span class="required-field"> *</span></label>
+    <%=select_tag :date_time ,options_for_select([]),:prompt=>t('select'), :onchange=>"dateTimeFunction(this);"%><!-- ,:class=>"mg-select-btn" -->
+  </p>
+
+
+
+
+  <p>
+    <label class="mg-label mg-tt-width "><%=t('select_specialization') %><span class="required-field"> *</span></label>
+    <%= f.collection_select(:mg_employee_specialization_id, MgEmployeeSpecialization.where(:is_deleted=>0, :mg_school_id=>session[:current_user_school_id]), :id, :name,{:include_blank => 'Select'} ,:class=>"mg-select-btn", :onchange=>'select_examination_details_employee_specialization(this.value); $("#seating_plan_mg_institute_room_id").html("<option value=''>Select</option>"); $("#mg_wing_id").val(""); $("#mg_course_id").html(""); $("#selected_student").html(""); $("#mg_student_id").html("");
+  ') %>
+  </p>
+  <p>
+    <label class="mg-label mg-tt-width "><%=t('select_room') %><span class="required-field"> *</span></label>
+    <%= f.collection_select(:mg_institute_room_id, [], :id, :room_no,{:include_blank => 'Select'} ,:class=>"mg-select-btn", :onchange=>'$("#mg_wing_id").val(""); $("#mg_course_id").html(""); $("#selected_student").html(""); $("#mg_student_id").html(""); ') %>
+  </p>
+  <p>
+    <label class="mg-label mg-tt-width "><%=t('total_seats') %><span class="required-field"> *</span></label>
+    <%= f.number_field :total_seats  ,:value=>0,:class=>"mg-select-btn", :onchange=>'$("#seating_plan_seat_available").val(this.value- $("#mg_student_id").children("option").length);'%>
+  </p>
+  <p>
+    <label class="mg-label mg-tt-width "><%=t('seat_available') %><span class="required-field"> *</span></label>
+    <%= f.number_field :seat_available ,:value=>0,:class=>"mg-select-btn" , :readonly=>true %>
+  </p>
+  
+  <p>
+    <label class="mg-label mg-tt-width "><%=t('select_programme') %><span class="required-field"> *</span></label>
+    <%=select_tag :mg_wing_id ,options_for_select([]),:prompt=>t('select'),:class=>"mg-select-btn",:onchange=>"select_examination_details_course(this.value)"%>
+  </p>
+  
+  <table >
+    <tr>
+        <td class="mg-td-width-one-thirds" valign="top" style="width:50px;">
+          <label class="mg-label" for="selectDepartment"><%= t('select_semester') %><span class="required-field">&nbsp;*</span></label>
+          <span style="margin-right:50px; vertical-align: top;">
+            <%=select_tag :mg_course_id, options_for_select([]),:multiple => true,:size =>10, :class=>"mg-add-library-particular", :onchange=>"select_examination_details_student(this.value)"%>
+          </span>
+        </td>
+        <td style="width:10px;"></td>
+        <td class="mg-td-width-one-thirds" valign="top" style="width:50px;">
+           <label class="mg-label" for="selectDepartment"><%= t('student_list') %></label>
+        <span id="selected_students" style="vertical-align: top;">
+        <%=select_tag :selected_student,options_for_select([]),:multiple => true,:size =>10 ,:class=>"mg-add-library-particular"%>
+        </span>
+      </td>
+      <td style="width:10px;"></td>
+      <td>
+        <a  id="addingStudentID" class="mg-custom-form-btn mg-add-rem-btn"><%=t('add')%></a>
+        <br><br>
+        <a  id="addAllStudentID" class="mg-custom-form-btn mg-add-rem-btn"><%=t('add_all')%></a> 
+
+      </td>
+      <td style="width:10px;"></td>
+      <td class="mg-td-width-one-thirds" valign="top" style="width:50px;">
+         <label class="mg-label" for="selectDepartment"><%= t('selected_student_list') %></label>
+        <span id="removing_employees" style="display: inline-block;">
+     
+        <%=select_tag :mg_student_id,options_for_select([],:selected=>[]),:multiple => true,:size =>10 ,:class=>"mg-add-library-particular"%>
+        </span>
+        <p><%=t('total_slected')%>=<span id="totalStudentSelectedSPANID">0</span></p>
+      </td>
+      <td style="width:10px;"></td>
+      <td>
+          
+          <a  id="removingdataFromSeatingPlanID" class="mg-custom-form-btn mg-add-rem-btn"><%=t('remove')%></a>
+          <br><br>
+          <a  id="removAlldataFromSeatingPlanID" class="mg-custom-form-btn mg-add-rem-btn"><%=t('remove_all')%></a>
+      </td>
+    </tr>
+
+</table>
+<!-- '$("#totalStudentSelectedSPANID").val($("#mg_student_id").children("option").length)' -->
+
+  <%= f.hidden_field :mg_school_id, :value => session[:current_user_school_id]%>
+  <%= f.hidden_field :created_by, :value => session[:user_id]%> 
+  <%= f.hidden_field :updated_by, :value => session[:user_id]%> 
+  <%= f.hidden_field :is_deleted, :value => 0%> 
+
+  <p class="mg-p-mgtop">
+    <a onclick="$(this).closest('form').submit()" class="mg-small-form-btn"><%=t("save")%></a>
+    <!-- <a class="mg-small-form-btn cancel-form-dialog"><%#=t('cancel')%></a> -->
+     <%= link_to t('cancel'), :back, {:class=>"mg-small-form-btn cancel-form-dialog"} %>
+  </p>
+<% end %>
+
+<%= render  partial: 'application/common_left_close' %>
+
+<script>
+$(document).ready(function () {
+focusCurrentTab("timeTableSeatingPlanAID","timeTableSeatingPlanLiID");
+  $("#examTypesFormID").validate({
+    rules: {
+      "seating_plan[mg_examination_detail_id]": {required: true},
+      "seating_plan[mg_employee_specialization_id]": {required: true},
+      "seating_plan[mg_institute_room_id]": {required: true},
+      "seating_plan[total_seats]": {required: true, number: true, min: 0},
+      "seating_plan[seat_available]": {required: true, number: true, min: 0},
+      "mg_student_id[]":{required: true},
+      "date_time":{required: true},
+      "date_time_data":{required: true},
+    }
+  });
+});
+
+
+// $(".max_marks_text_field_cls").each(function() {
+    // $("#mg_student_id").val($("#mg_student_id").val()).rules("add", {
+    //       min: $('#mg_student_id').children('option').length
+    //   });
+// });
+function datesTimes_Function(data){
+  $("#seating_plan_mg_employee_specialization_id").val("");
+  $("#seating_plan_mg_institute_room_id").html("<option value=''>Select</option>");
+  $("#mg_wing_id").val("");
+  $("#mg_course_id").html("");
+  $("#selected_student").html("");
+  $("#mg_student_id").html("");
+  
+
+var urlLink = "/exam_management/multi_skilled_worker";
+  $.ajax({
+      url: urlLink ,
+      cache: false,
+      data:{ 
+        selecter: "examination_detail_for_seating_plan_time_data",
+        id: data
+      },
+      success: function(data){
+          console.log("data   ~>  "+data.main);
+          //$("#mg_wing_id").html(data.main.wing_list);
+          $("#date_time").html(data.main.date_list);
+
+      }
+  });
+   
+
+
+}
+function select_examination_details(mg_examination_detail_id){
+  var urlLink = "/exam_management/multi_skilled_worker";
+  $.ajax({
+      url: urlLink ,
+      cache: false,
+      data:{ 
+        selecter: "examination_detail_for_seating_plan",
+        id: mg_examination_detail_id
+      },
+      success: function(data){
+          console.log("data   ~>  "+data.main);
+          $("#mg_wing_id").html(data.main.wing_list);
+          $("#date_time_data").html(data.main.date_list);
+
+      }
+  });
+   
+
+}
+
+$(document).on("click","#addAllStudentID",function(e){
+  $("#selected_student option").prop('selected',true);
+  var demo=$("#selected_student").val();
+  var texts=$("#selected_student :selected").text();
+  var text=texts.split(" ");
+
+  var array=[];
+  $("#mg_student_id option").each(function() {
+      array.push(this.value);
+    }
+  );0
+
+  for(var i=0;i<demo.length;i++)
+  {
+    var a =false;
+      for(var j=0;j<array.length;j++){
+        if (demo[i]==array[j]){
+          a=true;
+        }
+      }
+    if (a){
+    }else{
+      var addselectedOption=$("#selected_student option:selected")
+      var str="<option value="+demo[i]+">"+text[i]+"</option>"
+        $("#mg_student_id").append(str);
+      $("#mg_student_id option").prop('selected',true);
+    }
+  }
+  $("#selected_student :selected").remove();
+  countSelectedStudent();
+ });
+
+$(document).on("click","#removAlldataFromSeatingPlanID",function(e){
+  $("#mg_student_id option").prop('selected',true);
+  var selectedOption=$("#mg_student_id option:selected").remove();
+  // $("#mg_student_id option").prop('selected',true);
+  countSelectedStudent();
+});
+
+function dateTimeFunction(that){
+  $("#seating_plan_mg_employee_specialization_id").val("");
+  $("#seating_plan_mg_institute_room_id").html("<option value=''>Select</option>");
+  $("#mg_wing_id").val("");
+  $("#mg_course_id").html("");
+  $("#selected_student").html("");
+  $("#mg_student_id").html("");
+  
+
+
+  
+
+}
+
+
+</script>
+

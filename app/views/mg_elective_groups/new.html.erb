@@ -1,0 +1,15 @@
+<%=render partial:"form"%>
+
+<script>
+$( document ).ready(function() {
+    focusCurrentTab("electiveGroupAID","electiveGroupLiID");
+    focusSubject();
+});
+$("#electiveGroupFormID").validate({
+        rules: {        
+        "mg_elective_group[name]": {required: true},
+        "mg_elective_group[max_weekly_class]": {required: true,number: true},
+        "mg_elective_group[mg_elective_type_id]": {required: true}
+      }
+ });
+</script>

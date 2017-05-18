@@ -1,0 +1,28 @@
+<label class="mg-label mg-tt-width" for="select_class"><%=t('select')%> <%=t('semester_name')%><span class="required-field"> *</span></label>
+<%=select_tag :select_batch,options_from_collection_for_select(@batch_id,"id","course_batch_name",:selected=>params[:select_batch]),:prompt=>t('select'),:onchange=>"selectStudentFunction(this.value)" ,:class=>""%>
+
+
+
+
+<script>
+$(document).ready(function(){
+  selectStudentFunction($("#select_batch").val())
+});
+
+ // function selectStudentFunction(batch_id){ 
+  //urlLink = "/exam_management/batch_wise_students";
+
+  //if(batch_id!=''){    
+    //$.ajax({
+      //url: urlLink,
+      //data: {"batch_id":batch_id},
+      //cache: false,
+      //success: function(data){
+       // $("#studentListDivID").html(data);
+     // }
+   // });
+  //}else{
+    //$("#studentListDivID").empty();
+  //}
+//}
+</script>

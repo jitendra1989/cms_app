@@ -1,0 +1,51 @@
+<% navigation_add t('exam_types'), :controller=>'exam_management' %>
+<%=render partial: 'exam_management_left'%>
+<h4 class="mg-h4"><%= t('exam_type_list') %></h4>
+
+<button class="new-add-exam-type mg-btn-bottom-margin mg-custom-form-btn"><%= t('add_exam_type')%></button>
+
+<div class="mg_pagination">
+<%if @exam_types.present?%>
+<table  class="batch-tbl mg-tbl-margin">   <!-- border="2" --> 
+  <tr class="subject-table-header">
+    <th><%= t('name') %></th>
+    <th><%= t('description') %></th>
+    <th style="width: 92px;"><%= t('actions') %></th>
+  </tr>
+ 
+  <% @exam_types.each do |s| %>
+    <tr>
+      <td><%= s.name %></td>
+      <td class="mg-desc-text-justify"><%= truncate(s.description.to_s, :length => 25, :separator => ' ') %></td>
+      <td>
+      	
+      <button title="Show" id="<%=raw s.id %>-showExamTypeBTNID" class="show-exam-type-btn mg-icon-btn"><i class="fa fa-eye"></i></button>
+
+        <button title="Edit" id="<%=raw s.id %>-editExamTypeBTNID" class="edit-exam-type-btn mg-icon-btn"><i class="fa fa-pencil-square-o"></i></button>
+
+        <button title="Delete" id="<%=raw s.id %>-deleteExamTypeBTNID" class="delete-exam-type-btn mg-icon-btn"><i class="fa fa-trash"></i></button>
+
+      </td>
+    </tr>
+  <% end %>
+</table>
+<br/>
+ <div class="pagination-align" style="position: relative; bottom: 10px;">
+              <%= will_paginate @exam_types, :container => false %>
+           </div>
+<%else%>
+<h5>No exam type is created </h5>
+<%end%>
+</div>
+
+<div id="newExamTypeDIVID"></div>
+<div id="editExamTypeDIVID"></div>
+<div id="showExamTypeDIVID"></div>
+
+<%= render  partial: 'application/common_left_close' %>
+
+<script>
+$(document).ready(function () {
+	focusCurrentTab("viewExamTypeAID","viewExamTypeLiID");
+});
+</script>

@@ -1,0 +1,23 @@
+<div class="main_header clearfix">
+<p><center><font size="4"><%= link_to "Mindcom Forum", {:action=>"index"},:id=>"Color_data55" %></font></center></p>
+<%= link_to 'New Post', {:action=>"new"} ,:class=>"mg-small-form-btn123"%><br/>
+</div><br/>
+
+<div class="wrapper_class post1">
+<%#=current_user%>
+<%= form_for :posts, :url=>{:action=>"create"} do |f| %>
+  <p>
+    <%= f.label :title %><br>
+    <%= f.text_field :title %>
+  </p>
+ 
+  <p>
+    <%= f.label :content %><br>
+    <%= f.text_area :content %>
+  </p>
+ 
+  <p>
+    <%= f.submit %>
+  </p>
+<% end %>
+</div>

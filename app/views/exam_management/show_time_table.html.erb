@@ -1,0 +1,130 @@
+<% navigation_add t('time_table'), :controller=>'exam_management' , :action=>'time_table'%>
+<% navigation_add t('show'), :controller=>'exam_management' , :action=>'show_time_table', :id=>params[:id]%>
+
+
+<%=render partial: 'exam_management_left'%>
+
+ 
+<table border="1" class="mg-showdata-bg " cellspacing="1" cellpadding="1">
+   <tr>
+     <td class="mg-td-width-half" valign="top">
+   		<label class="mg-label"> <%= t('name')%></label>
+   	 </td>
+   	 <td class="mg-td-width-half" valign="top">
+  		<%= @examination_detail.try(:name) %>
+  	 </td>
+ </tr>
+
+ <tr>
+     <td class="mg-td-width-half" valign="top">
+  		<label class="mg-label"><%=t('description')%></label>
+  	 </td>
+  	 <td class="mg-td-width-half" valign="top">
+  		<%= @examination_detail.try(:description) %>
+  	 </td>
+ </tr>
+ <tr>
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"><%=t('academic_year')%></label>
+     </td>
+     <td class="mg-td-width-half" valign="top">
+      <%= MgTimeTable.find_by(@examination_detail.try(:mg_time_table_id)).try(:name) %>
+     </td>
+ </tr>
+ <tr>
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"><%=t('exam_type')%></label>
+     </td>
+     <td class="mg-td-width-half" valign="top">
+      <%= MgExamType.find_by(@examination_detail.try(:mg_exam_type_id)).try(:name) %>
+     </td>
+ </tr>
+  <tr>
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"><%=t('examination_category')%></label>
+     </td>
+     <td class="mg-td-width-half" valign="top">
+      <%= MgExaminationCategory.find_by(@examination_detail.try(:mg_examination_category_id)).try(:name) %>
+     </td>
+ </tr>
+   <tr>
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"><%=t('program_category')%></label>
+     </td>
+     <td class="mg-td-width-half" valign="top">
+      <%= MgExaminationProgramCategory.find_by(@examination_detail.try(:mg_examination_program_category_id)).try(:name) %>
+     </td>
+ </tr>
+</table>
+<br>
+
+<p>
+   <label class="mg-label mg-tt-width "><%=t('select_programme') %></label>
+   <%=select_tag :mg_wing_id ,options_for_select(MgWing.where(:is_deleted=>0, :mg_school_id=>session[:current_user_school_id]).pluck(:wing_name, :id)),:prompt=>t('select'),:class=>"mg-select-btn", :onchange=>"selectSectionExamManagementShow(this, 'mg_wing_id');"%>
+</p>
+<p>
+   <label class="mg-label mg-tt-width "><%=t('select_semester') %></label>
+   <%=select_tag :mg_course_id ,options_for_select([]),:prompt=>t('select'),:class=>"mg-select-btn", :onchange=>"selectSectionExamManagementShowCourseWise(this.value, #{@examination_detail.id});"%>
+</p>
+
+<div id="examTimeTableShowDIVID"></div>
+
+
+
+ <p class="mg-p-mgtop">
+     <!-- <a class="mg-small-form-btn cancel-form-dialog"><%#=t('cancel')%></a> -->
+      <%= link_to t('cancel'), :back, {:class=>"mg-small-form-btn cancel-form-dialog"} %>
+
+  </p>
+<%= render  partial: 'application/common_left_close' %>
+<script type="text/javascript">
+$(document).ready(function () {
+  focusCurrentTab("timeTableAID","timeTableLiID");
+});
+
+function selectSectionExamManagementShow(that, str_select){
+
+  console.log(that.value+"   ~>  "+str_select);
+  var urlLink = "/exam_management/multi_skilled_worker";
+  var json_object={mg_wing_id: "mg_course_id", mg_course_id: "examination_mg_batch_id"};
+  $("#examTimeTableShowDIVID").html("");
+   if("mg_wing_id"==str_select || "mg_course_id"==str_select){
+          $.ajax({
+              url: urlLink ,
+              cache: false,
+              data:{ 
+                selecter: str_select,
+                id: that.value
+              },
+              success: function(data){
+                  console.log("data   ~>  "+data.main);
+                  $("#"+json_object[str_select]).html(data.main);
+              }
+          });
+   }
+
+  
+}
+
+function selectSectionExamManagementShowCourseWise(mg_course_id, mg_examination_detail_id){
+   // console.log(that.value+"   ~>  "+str_select);
+  var urlLink = "/exam_management/exam_time_table_show";
+  // var json_object={mg_wing_id: "mg_course_id", mg_course_id: "examination_mg_batch_id"};
+
+   // if("mg_wing_id"==str_select || "mg_course_id"==str_select){
+          $.ajax({
+              url: urlLink ,
+              cache: false,
+              data:{ 
+                id: mg_examination_detail_id,
+                mg_course_id: mg_course_id
+              },
+              success: function(html){
+                  // console.log("data   ~>  "+html);
+                  $("#examTimeTableShowDIVID").html(html);
+              }
+          });
+   // }
+
+}
+</script>

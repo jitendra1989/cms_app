@@ -1,0 +1,68 @@
+<%= render partial: 'curriculum/curr_left' %>
+
+
+
+<h4 class="mg-h4"><%= t('curriculum_management') %></h4>
+<div>
+<%#= button_to 'Add Curriculum', {:controller => "curriculum", :action => "employee_curriculum_new" } ,:class=>"mg-custom-form-btn"%>
+<table  class="batch-tbl mg-tbl-margin">   <!-- border="2" --> 
+  <tr class="subject-table-header">
+    <th><%=t('employee_name')%></th>
+    <th><%=t('semester')%></th>
+    <th><%=t('subject_name')%></th>
+    <th><%=t('paper')%></th>
+  	
+     <th><%=t('actions')%></th>
+  </tr>
+ 
+  <% @curriculum.each do |curr| %>
+    <tr>
+    <td> <%if curr.mg_employee_id.present?
+            employee=MgEmployee.find_by(:id=>curr.mg_employee_id)%>
+            <%=employee.try(:first_name)%> <%=" "%> <%=employee.try(:last_name)%>
+            <%end%>
+        
+      </td>
+      <td> <%if curr.mg_course_id.present?
+            semester=MgCourse.find_by(:id=>curr.mg_course_id)%>
+            <%=semester.try(:course_name)%>
+            <%end%>
+        
+      </td>
+      <td><% if curr.mg_subject_id.present?
+      subject=MgSubject.find_by(:id=>curr.mg_subject_id) 
+      %>
+      <%=subject.try(:subject_name)%>
+      <%end%>
+      </td>
+      <td>
+      <%syllabus=MgSyllabus.where(:id=>curr.mg_syllabus_id)%>
+          <%=syllabus[0].try(:name)%>
+
+      </td>
+      
+     
+
+      <td>
+      <%#= link_to "<i class=\"fa fa-eye\"></i>".html_safe, {:controller => "curriculum", :action => "review_curriculum_show",:id =>curr.id } , :method=>'post' ,:title=>"Show" ,:class=>"mg-icon-btn"%>
+        &nbsp;&nbsp;
+      <%= link_to "<i class=\"fa fa-eye\"></i>".html_safe, {:controller => "curriculum", :action => "review_curriculum_edit",:id =>curr.id } , :method=>'post' ,:title=>"Show" ,:class=>"mg-icon-btn"%>
+
+
+
+      <%#= link_to "<i class=\"fa fa-trash\"></i>".html_safe, {:controller => "curriculum", :action => "review_curriculum_delete",:id =>curr.id } , :method=>'post' ,:title=>"Delete" ,:class=>"mg-icon-btn" ,data: { confirm: 'Are you sure to delete?' }%>
+      </td>
+
+    </tr>
+  <% end %>
+</table>
+</div>
+<%= render  partial: 'application/common_left_close' %>
+
+<script>
+$(document).ready(function () {
+
+focusCurrentTab("viewEmployeeDeanCurriculum","viewDeanEmployeecurriculumLiID");
+        //focusCurriculum();
+      });
+</script>

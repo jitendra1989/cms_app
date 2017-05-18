@@ -1,0 +1,78 @@
+
+<!-- <label class="mg-label mg-label-text-transform-none" for="dateofPurchase"><%#= t ('select_subject') %><span class="required-field">&nbsp;*</span></label><br/> -->
+<%#=select_tag 'mg_subject_id',options_for_select(@subject_data),:prompt=>"select",:onchange=>"selectMarksFordataSubjects(this.value)"%>
+
+<label class="mg-label mg-label-text-transform-none" for="dateofPurchase"><%= t ('max_marks') %></label><br/>
+<p id="subject_marks_in_examination"><%=number_field_tag 'marks_data',@timetable_data.try(:max_marks),:readonly=>true%></p>
+
+<table border="1" class="mg-showdata-bg" cellspacing="1" cellpadding="1">
+<h4 class="mg-h4"><%=t('enter_marks')%></h4>
+<tr>
+    <th><%=t('student_id')%></th>
+    <th><%=t('student_name')%></th>
+    <th><%=t('marks_obtained')%><span class="required-field">&nbsp;*</span></th>
+   <!--  <th><%#=t('grade')%></th> -->
+
+</tr>
+
+
+<%@student_data.each do |student|%>
+<tr>
+
+<td class="one" valign="top"><%=student.admission_number%></td>
+<td class="one" valign="top"><%="#{student.first_name.to_s.try(:capitalize)} #{student.last_name.to_s.try(:capitalize)}"%>
+
+<%=hidden_field_tag 'student_id[]',student.id,:class=>"mg-marks-width",:readonly=>true%></td>
+<td class="three" valign="top"><%=text_field_tag "marks_obtained[#{student.id}]",nil,:class=>" max_marks_text_field_cls mg-marks-width marksObtainedData"%></td>
+<%#:onchange=>"setExaminationGradeFromMarks(this,#{student.mg_batch_id})"%>
+<!-- <td class="mg-td-width-half two" valign="top"><%#=text_field_tag 'grades[]',nil,:class=>"mg-marks-width",:readonly=>true%> -->
+
+<%#=hidden_field_tag 'grades_id[]',nil,:class=>"mg-marks-width",:readonly=>true%></td>
+</tr>
+
+<%end%>
+</table>
+<br/>
+
+<script type="text/javascript">
+
+ $(document).ready(function () {
+
+    // $.validator.addClassRules("max_marks_text_field_cls", {required: true, number: true, min: 0, max: 100});
+$.validator.addClassRules("max_marks_text_field_cls", {required: true, number: true, min: 0, max: parseInt($("#marks_data").val())});
+    }); 
+ 
+function setExaminationGradeFromMarks(marksObj,batch_id){
+    var marks = marksObj.value;
+    if(marks!=""){
+
+       var batchId=$("#examResultEntryBatchId").val(); 
+       //alert("Shr "+batchId);
+
+       var urlLink="/examination/setGradeFromMarks/";
+
+       $.ajax({
+            url: urlLink ,
+            //type:json
+            cache: false,
+            data:
+            {
+                 marks:marks,
+                 batchId:batch_id
+
+             },
+            success: function(data){  
+                
+                     console.log($(marksObj).parent().next().children()[1]);
+               
+              
+
+               $(marksObj).parent().next().children()[0].value=data.gradeLevel;
+               $(marksObj).parent().next().children()[1].value=data.gradeLevelId;
+             
+            }
+        });
+    }
+    
+}
+</script>

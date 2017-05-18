@@ -1,0 +1,173 @@
+
+<%="Select Students:"%>
+<table>
+<tr>
+
+<td class="mg-td-width-one-thirds" valign="top" style="width:50px;">
+<label class="mg-label" for="selectDepartment"><%= t('select_students') %><span class="required-field">&nbsp;*</span></label><br/>
+              <span id="selected_students" style="margin-right:50px; vertical-align: top;">
+
+    <%=select_tag :selectedStudentsIdedit, options_for_select(@student_hash),:multiple => true,:size =>10 ,:class=>"mg-add-library-particular"%>
+</span>
+
+    <!-- <a  id="Addexaminationstudentdata" class="mg-custom-form-btn mg-add-rem-btn">Add</a>  -->
+</td>
+<td style="width:10px;"></td>
+<td>
+ <a  id="Addexaminationstudentdata" class="mg-custom-form-btn mg-add-student-rem-btn">Add</a> <br/><br/>
+    <a  id="editstudentsaddingAllStudents" class="mg-custom-form-btn mg-add-student-rem-btn"><%=t('select_all')%></a>
+</td>
+<td style="width:10px;"></td>
+<td class="mg-td-width-one-thirds" valign="top" style="width:50px;">
+<br/>
+<span id="removing_employees" style="display: inline-block;">
+<!-- <td class="mg-td-width-one-third" valign="top">
+    <span id="removing_employees"> -->
+
+<%=select_tag :ExaminationSelectedStudentsedit,options_for_select(@selected_students),:multiple => true,:size =>10 ,:class=>"mg-add-library-particular"%>
+</span>
+</td>
+<td style="width:10px;"></td>
+<td>
+<a  id="Removeexaminationstudentdata" class="mg-custom-form-btn mg-add-student-rem-btn">Remove</a><br/><br/>
+<a  id="editstudentsaddingAllStudents" class="mg-custom-form-btn mg-add-student-rem-btn"><%=t('select_all')%></a>
+</td>
+</tr>
+</table><br/>
+<script>
+
+       $(document).ready(function(){
+$("#ExaminationSelectedStudentsedit option").prop('selected',true);
+
+       });
+  
+
+   
+ $(document).on("click","#Addexaminationstudentdata",function(e){
+
+ 
+
+ var demo=$("#selectedStudentsIdedit").val();
+ 
+ var texts=$("#selectedStudentsIdedit :selected").text();
+var text=texts.split(" ")
+ 
+ var array=[];
+
+$("#ExaminationSelectedStudentsedit option").each(
+
+function() {
+array.push(this.value);
+
+}
+
+);
+
+
+ for(var i=0;i<demo.length;i++)
+ {
+var a =false;
+
+for(var j=0;j<array.length;j++){
+  
+ if (demo[i]==array[j]){
+ a=true;
+  
+}
+
+}
+
+if (a){
+
+  }
+else{
+
+ var addselectedOption=$("#selectedStudentsIdedit option:selected")
+ 
+var str="<option value="+demo[i]+">"+text[i]+"</option>"
+
+  $("#ExaminationSelectedStudentsedit").append(str);
+$("#ExaminationSelectedStudentsedit option").prop('selected',true);
+
+
+}
+
+}
+
+
+ });
+
+$(document).on("click","#editstudentsaddingAllStudents",function(e){
+     $("#selectedStudentsIdedit option").prop('selected',true);
+    // var demo=$("#selectedStudentsIdedit").val();
+    // var texts=$("#selectedStudentsIdedit :selected").text();
+  
+    // var text=texts.split(" ");
+   
+    // var array=[];
+    // $("#selectedStudentsIdedit option:selected").remove();
+
+    // $("#ExaminationSelectedStudentsedit option").each(function() {
+    //         array.push(this.value);
+    //     }
+    // );0
+
+    // for(var i=0;i<demo.length;i++)
+    // {
+    //     var a =false;
+    //         for(var j=0;j<array.length;j++){
+    //             if (demo[i]==array[j]){
+    //                 a=true;
+    //             }
+    //         }
+    //     if (a){
+    //     }else{
+    //         var addselectedOption=$("#selectedStudentsIdedit option:selected")
+    //         var str="<option value="+demo[i]+">"+text[i]+"</option>"
+    //         $("#ExaminationSelectedStudentsedit").append(str);
+    //         $("#ExaminationSelectedStudentsedit option").prop('selected',true);
+    //         // $("#selectedEmployees option:selected").remove();
+    //         countSelectedEmployee();
+    //     }
+    // }
+ });
+$(document).on("click","#removingAllDataStudents",function(e){
+    // var selectedOption=$("#selected_employees option:selected").remove();
+    $("#ExaminationSelectedStudentsedit option").prop('selected',true);
+    $("#ExaminationSelectedStudentsedit option:selected").remove();
+    $("#ExaminationSelectedStudentsedit option").prop('selected',true);
+
+    countSelectedEmployee();
+
+});
+
+
+$(document).on("click","#Removeexaminationstudentdata",function(e){
+
+var selectedOption=$("#ExaminationSelectedStudentsedit option:selected").remove();
+$("#ExaminationSelectedStudentsedit option").prop('selected',true);
+
+//$("#selectedEmployees").append(selectedOption);
+
+  });
+
+
+
+
+
+
+</script>
+
+<style>
+
+.mg-add-rem-btn {
+    position: relative;
+    top: -7em;
+    margin-right: 5px;
+}
+.mg-add-student-rem-btn {
+    margin-right: 5px;
+    position: top;
+    top: -7em;
+}
+</style>

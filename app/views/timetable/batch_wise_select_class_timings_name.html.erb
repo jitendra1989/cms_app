@@ -1,0 +1,439 @@
+<%if @classTimingNameTable.present? %>
+	<div class="mg-scroll-timetbl-page" style="width: 100%;">
+	<%@count=0%>
+	<%@classTimingNameTable.each do |td| %>
+		<table class="batch-tbl mg-tbl-layout mg-tbl-margin mg-std-tbl-width mg-table-normal-whitespace mg-custom-labels" style="width: 98%; max-width: 98%;">
+		 	<tr>
+		 		<!-- <th>Weekday</th> -->
+		 		<th>Name</th>
+		 		<th>Start Time</th>
+		 		<th>End Time</th>
+		 		<th>Subject Type</th>
+		 		<th>Elective Group</th>
+		 		<th>Subject</th>
+		 		<th>Teacher</th>
+		 		<th>Room</th>
+		 	</tr>
+
+		 	<%@weekday=MgWeekday.find(td.mg_weekday_id).weekday%>
+		 	<% if @weekday=='0'%>
+				<tr><h4 class="mg-h4">Sunday</h4></tr>
+				<%elsif @weekday=='1'%>
+				<tr><h4 class="mg-h4">Monday</h4></tr>
+				<%elsif @weekday=='2'%>
+				<tr><h4 class="mg-h4">Tuesday</h4></tr>
+				<%elsif @weekday=='3'%>
+				<tr><h4 class="mg-h4">Wednesday</h4></tr>
+				<%elsif @weekday=='4'%>
+				<tr><h4 class="mg-h4">Thursday</h4></tr>
+				<%elsif @weekday=='5'%>
+				<tr><h4 class="mg-h4">Friday</h4></tr>
+				<%elsif @weekday=='6'%>
+				<tr><h4 class="mg-h4">Saturday</h4></tr>
+			<%end%>
+		  <tr>
+		  	<% @weekday_ids = td.mg_weekday_id %>
+		  	<% @mg_class_timings_ids = td.id %>	
+
+				<td><%=td.name%></td>
+				<td><%=td.start_time.strftime("%k:%M%p")%></td>
+				<td><%=td.end_time.strftime("%k:%M%p")%></td>
+				<%= hidden_field_tag "weekday_id[]", td.mg_weekday_id%> 
+				<%= hidden_field_tag "mg_class_timings_id[]", td.id%>        
+        
+				<%@time_table_entry=MgTimeTableEntry.where(:mg_class_timings_id=>td.id, :mg_weekday_id=>td.mg_weekday_id, :is_deleted=>0, :mg_batch_id=>@batch_id, :mg_timetable_id=>@mg_time_table_id)%>
+				<%#=@time_table_entry.inspect%>
+				
+				<%if @time_table_entry.present?%>					
+        	<%@subject_type_id = @time_table_entry[0].mg_subject_type_id%>
+        	
+					<%sql="select b.first_name, b.id from mg_employee_subjects a, mg_employees b where a.mg_subject_id=#{@time_table_entry[0].mg_subject_id} and a.mg_employee_id=b.id"
+		     			 @employee=MgEmployeeSubject.find_by_sql(sql)%>
+	       
+	        <td class="subject-type-cls">
+	          <%=select_tag :subject_type, options_for_select(@subject_type,@subject_type_id),:prompt=>t('select'),:onchange=>"subjectTypeFunction(this.value, this,#{@weekday_ids},#{@mg_class_timings_ids})" ,:class=>"mg-inside-tbl-width"%>
+	        </td>    
+	        <td class="elective-list-cls">
+	        	<% if @subject_type_id==2 %>
+
+        			<%@time_table_entry_elective=MgTimeTableEntry.where(:mg_subject_type_id=>@subject_type_id, :mg_class_timings_id=>td.id, :mg_weekday_id=>td.mg_weekday_id, :is_deleted=>0, :mg_batch_id=>@batch_id, :mg_timetable_id=>@mg_time_table_id)%>
+
+		        	<% if @time_table_entry_elective.present? %>	        		
+		            <% @elective_group_id = @time_table_entry_elective[0].mg_elective_group_id %>
+		          	<%@elective_group = MgElectiveGroup.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id],:created_by=>session[:user_id],:updated_by=>session[:user_id]).pluck(:name,:id) %>	
+      					<div id="electivetypeID">
+      						<%=select_tag 'elective_id_[]', options_for_select(@elective_group,@elective_group_id),:prompt=>t('select'),:onchange=>"ElectiveAllTypeFunction(this.value,this,#{@weekday_ids},#{@mg_class_timings_ids},#{@subject_type_id}), YEmpFunction(this.value,this,#{@weekday_ids},#{@mg_class_timings_ids},#{@subject_type_id}),YRoomFunction(this.value,this,#{@weekday_ids},#{@mg_class_timings_ids},#{@subject_type_id})" ,:class=>"mg-inside-tbl-width" %>
+      					</div>
+        			<% end %>
+	        	<% end %>
+	        	<% if @subject_type_id==1 %>
+	        		<div id="electivetypeID"></div>
+	        	<%end%>
+	        </td>
+
+          
+	        <td id="select_Subject" class="subject-list-cls" style="padding: 0px;">
+	        	<div id="subjectDIVID" class="subject-div-cls">
+
+	        		<% if @subject_type_id==2 %>
+	        			<table width="100%" cellspacing="0" cellpadding="0" border="0" style
+	        			  ="margin-bottom: 0px;" class="mg-employee-cls-table ">
+		        		  <% @all_subject = MgTimeTableEntry.where(:mg_elective_group_id=>@elective_group_id, :mg_subject_type_id=>@subject_type_id, :mg_class_timings_id=>td.id, :mg_weekday_id=>td.mg_weekday_id, :is_deleted=>0, :mg_batch_id=>@batch_id, :mg_timetable_id=>@mg_time_table_id)%>
+
+		        				<% @all_subject.each do |f|%> 
+		        					<%= hidden_field_tag "elective_group_id[]",@elective_group_id %>
+											<%= hidden_field_tag "elective_subject_id[]",f.mg_subject_id %>
+											<%= hidden_field_tag "elective_weekday_id[]",@weekday_ids %>
+											<%= hidden_field_tag "elective_class_timings_id[]",@mg_class_timings_ids %>  
+											<%= hidden_field_tag "elective_subject_type_id[]",@subject_type_id %>	
+			        				<% @subjects_name = MgSubject.find_by(:id=>f.mg_subject_id) %>
+			        				<tr class="mg-timetable-tr-border-nil mg-employee-cls-row" 
+			        					style="height: 55px;">
+	       								<td class="mg-timetable-td-padding-nil mg-employee-cls" 
+	       								  style="padding: 0px; border: 0px;">
+									    		<%= @subjects_name.subject_name %>
+									    	</td>
+									    </tr>
+							  	<% end %>
+							 	</table>  	        			        			
+	        		<% end %>
+
+	        		<% if @subject_type_id==1 %>
+	        			<table width="100%" cellspacing="0" cellpadding="0" border="0" style	="margin-bottom: 0px;" class="mg-employee-cls-table ">
+	        				<%@time_table_entry2=MgTimeTableEntry.where(:mg_subject_type_id=>@subject_type_id, :mg_class_timings_id=>td.id, :mg_weekday_id=>td.mg_weekday_id, :is_deleted=>0, :mg_batch_id=>@batch_id, :mg_timetable_id=>@mg_time_table_id)%>
+
+				        	<% if @time_table_entry2.present? %>	        		
+				            <% @sub_id = @time_table_entry2[0].mg_subject_id %>
+				            <%@subjects = MgSubject.where(:mg_subject_type_id=>@subject_type_id,:is_deleted=>0).pluck(:subject_name,:id)%>
+
+				            <%= hidden_field_tag "mandatory_weekday_id[]",@weekday_ids %>
+										<%= hidden_field_tag "mandatory_class_timings_id[]",@mg_class_timings_ids %>
+										<%= hidden_field_tag "mandatory_subject_type_id[]",@subject_type_id %>
+
+										<tr class="mg-timetable-tr-border-nil mg-employee-cls-row" style
+										  ="height: 55px;">
+	       							<td class="mg-timetable-td-padding-nil mg-employee-cls" style="padding: 0px; border: 0px;">
+
+					        			<%=select_tag 'mandatory_subject_id[]', options_for_select(@subjects,@sub_id),:prompt=>t('select'),:onchange=>"selectAllTeacherForSubject(this.value,this,#{@weekday_ids},#{@mg_class_timings_ids})" ,:class=>"mg-inside-tbl-width" %>
+					        		</td>
+					        	</tr>
+		        			<% end %>
+		        		</table>
+	        		<% end %>
+            </div>
+			  <div id="subJectTypeID" class="first-div-cls" ></div>
+			  <div id="ElectiveTypeDivID" class="second-div-cls"></div>
+			</td>
+					
+			<td id="Select Employee" class="employee-list-cls" style="padding: 0px;">
+
+			<div id="<%=@count%>DIVID"></div> 
+			<div id="ElectivEemployeeID" class="elective-employee-cls">
+				<% if @subject_type_id==1 %> 
+
+					<% @employee_id = MgTimeTableEntry.where(:mg_subject_id=>@sub_id, :mg_subject_type_id=>@subject_type_id, :mg_class_timings_id=>td.id, :mg_weekday_id=>td.mg_weekday_id, :is_deleted=>0, :mg_batch_id=>@batch_id, :mg_timetable_id=>@mg_time_table_id) %>
+					<% @employee_ids = @employee_id[0].mg_employee_id %>	            
+			  	<% @mg_employee_id = MgEmployeeSubject.where(:mg_subject_id=>@sub_id,:is_deleted=>0,:mg_school_id=>session[:current_user_school_id]).pluck(:mg_employee_id) %>						  	
+			  	<% @mg_employee = MgEmployee.where(:is_deleted=>0,:mg_school_id=>1).where("id IN(?)",@mg_employee_id).pluck(:first_name,:id) %>
+
+					<%=select_tag 'mandatory_subject_teacher[]', options_for_select(@mg_employee,@employee_ids),:prompt=>t('select'),:class=>"mg-inside-tbl-width"%>						
+				<%end%>
+
+				<% if @subject_type_id==2 %>							 	
+				 	<% count=-1 %>
+				 	<table width="100%" cellspacing="0" cellpadding="0" border="0"  
+				 	  style="margin-bottom: 0px;" class="mg-employee-cls-table ">
+          				<% @all_subject.each do |f|%>
+          				<%count=count+1%>
+						<% @id = f.mg_subject_id%> 
+	            		<% @elective_employee_id = MgTimeTableEntry.where(:mg_elective_group_id=>@elective_group_id,:is_deleted=>0,:mg_school_id=>session[:current_user_school_id], :mg_subject_id=>@id, :mg_subject_type_id=>@subject_type_id, :mg_class_timings_id=>td.id, :mg_weekday_id=>td.mg_weekday_id, :is_deleted=>0, :mg_batch_id=>@batch_id, :mg_timetable_id=>@mg_time_table_id) %>
+
+	            <% if @elective_employee_id.present? %>
+								<% @elective_employee_ids = @elective_employee_id[0].mg_employee_id %>
+							<% end %>
+
+							<% @mg_employee_idd = MgEmployeeSubject.where(:mg_subject_id=>@id,:is_deleted=>0,:mg_school_id=>session[:current_user_school_id]).pluck(:mg_employee_id) %>	  
+								     
+							<% @mg_employee = MgEmployee.where(:is_deleted=>0,:mg_school_id=>1).where("id IN(?)",@mg_employee_idd).pluck(:first_name,:id) %>										
+							
+						<tr class="mg-timetable-tr-border-nil mg-employee-cls-row" 
+							  style="height: 55px;">
+							<td class="mg-timetable-td-padding-nil mg-employee-cls" 
+							  style="padding: 0px; border: 0px;">
+
+							<%=select_tag 'elective_subject_teacher[]', options_for_select(@mg_employee,@elective_employee_ids),:prompt=>t('select'),:onchange=>"electiveEmployeeFunction(this.value,this,#{count})",:class=>"mg-inside-tbl-width eteacher employee-cls#{count}"%>
+						 </td>
+						</tr>										
+					 	<%end%>
+					</table>
+				<%end%>
+			</div>
+			</td>
+			<td class="room-list-cls" style="padding: 0px;">
+			<div id="roomID" class="elective-room-cls">
+			<% if @subject_type_id==1 %> 
+
+				<%@time_table_entry=MgTimeTableEntry.where(:mg_subject_type_id=>@subject_type_id, :mg_class_timings_id=>td.id, :mg_weekday_id=>td.mg_weekday_id, :is_deleted=>0, :mg_batch_id=>@batch_id, :mg_timetable_id=>@mg_time_table_id)%>
+				<%if @time_table_entry.present? %>
+				<%subject=MgSubject.find_by(:id=>@time_table_entry[0].mg_subject_id)%>
+				<%if subject.is_lab==true%>
+					<%@rooms=MgInstituteRoom.where(:id=>subject.mg_institute_room_id).pluck(:room_no,:id)%>
+					<%@roomid=MgInstituteRoom.where(:id=>subject.mg_institute_room_id).pluck(:id)%>
+					<%=select_tag 'mandatory_rooms_ids[]', options_for_select(@rooms,@roomid),:prompt=>t('select'),:class=>"mg-inside-tbl-width",:disabled=>true%>
+					<%=hidden_field_tag 'mandatory_room_id[]',@roomid%>
+				<%else%>
+					<%mg_employee_specilization_id=MgSubject.where(:id=>@time_table_entry[0].mg_subject_id).pluck(:mg_employee_specialization_id)%>
+				
+					<%@rooms=MgInstituteRoom.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id],:created_by=>session[:user_id],:updated_by=>session[:user_id]).where("mg_employee_specialization_id IN(?)",mg_employee_specilization_id).pluck(:room_no,:id)%>
+
+	    			<% @mg_room_id = @time_table_entry[0].mg_institute_room_id%>
+	  				<%=select_tag 'mandatory_room_id[]', options_for_select(@rooms,@mg_room_id),:prompt=>t('select'),:class=>"mg-inside-tbl-width"%>
+	  			<%end%>
+				<%end%>
+			<%end%>
+			<% if @subject_type_id==2 %>							 	
+				<% count=-1 %>
+				 <table width="100%" cellspacing="0" cellpadding="0" border="0"  
+				 	  style="margin-bottom: 0px;" class="mg-room-cls-table ">
+          			<% @all_subject.each do |f|%>
+						<% @id = f.mg_subject_id%> 
+						<%mg_subject=MgSubject.find_by(:id=>@id)%>
+          			<%if mg_subject.is_lab==true%>
+          				<%@rooms=MgInstituteRoom.where(:id=>mg_subject.mg_institute_room_id).pluck(:room_no,:id)%>
+						<%@roomid=MgInstituteRoom.where(:id=>mg_subject.mg_institute_room_id).pluck(:id)%>
+						<tr class="mg-timetable-tr-border-nil mg-employee-cls-row" 
+							  style="height: 55px;">
+							<td class="mg-timetable-td-padding-nil" 
+							  style="padding: 0px; border: 0px;">
+							<%=select_tag 'elective_rooms_ids[]', options_for_select(@rooms,@roomid),:prompt=>t('select'),:class=>"mg-inside-tbl-width",:disabled=>true%>
+							<%=hidden_field_tag 'elective_room_id[]',@roomid%>
+						</td>
+						</tr>
+          			<%else%>
+          				<%count=count+1%>
+						<%# @id = f.mg_subject_id%> 
+	            		<% @room_id = MgTimeTableEntry.where(:mg_elective_group_id=>@elective_group_id,:is_deleted=>0,:mg_school_id=>session[:current_user_school_id], :mg_subject_id=>@id, :mg_subject_type_id=>@subject_type_id, :mg_class_timings_id=>td.id, :mg_weekday_id=>td.mg_weekday_id, :mg_batch_id=>@batch_id, :mg_timetable_id=>@mg_time_table_id) %>
+	            		<% if @room_id.present? %>
+							<% @roomid = @room_id[0].mg_institute_room_id %>
+						<% end %>
+							<%mg_subject=MgSubject.where(:id=>@id)%>
+							<%#if mg_subject[0].is_lab==true%>
+								<%#@roomidd = MgInstituteRoom.where(:mg_employee_specialization_id=>mg_subject[0].mg_employee_specialization_id,:mg_room_type=>"practical",:is_deleted=>0,:mg_school_id=>session[:current_user_school_id]).pluck(:id) %>
+							<%#else%>
+								<%@roomidd = MgInstituteRoom.where(:mg_employee_specialization_id=>mg_subject[0].mg_employee_specialization_id,:mg_room_type=>"theory",:is_deleted=>0,:mg_school_id=>session[:current_user_school_id]).pluck(:id) %>
+							<%#end%>	  
+							 <% @mg_rooms = MgInstituteRoom.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id]).where("id IN(?)",@roomidd).pluck(:room_no,:id) %>
+								     
+						<tr class="mg-timetable-tr-border-nil mg-employee-cls-row" 
+							  style="height: 55px;">
+							<td class="mg-timetable-td-padding-nil mg-room-cls" 
+							  style="padding: 0px; border: 0px;">
+							<%=select_tag 'elective_room_id[]', options_for_select(@mg_rooms,@roomid),:prompt=>t('select'),:onchange=>"electiveRoomFunction(this.value,this,#{count})",:class=>"mg-inside-tbl-width eroom room-cls#{count}"%>
+						 </td>
+						</tr>										
+				<%end%>
+          		<%end%>
+				</table>
+				<%end%>
+				</div>
+			</td>	
+			<%@count +=1%>
+		<%else%>
+
+			<td class="subject-type-cls" >
+	          <%=select_tag :subject_type, options_for_select(@subject_type),:prompt=>t('select'),:onchange=>"subjectTypeFunction(this.value, this,#{@weekday_ids},#{@mg_class_timings_ids})" ,:class=>"mg-inside-tbl-width" %>
+	        </td>
+	        <td class="elective-list-cls"><div id="electivetypeID"></div></td>
+	        <!-- <td id="Select Room" class="room-list-cls" style="padding: 0px;">
+				<div id="roomID" class="elective-room-cls">
+				</div>
+			</td> -->
+	  
+	         
+					<td id="Select Subject" class="subject-list-cls" style="padding: 0px;">
+					  <div id="subJectTypeID" class="first-div-cls"></div>
+						<div id="ElectiveTypeDivID" class="second-div-cls"></div>
+					</td>
+					<td id="Select Employee" class="employee-list-cls mg-timetable-td-padding-nil" style="padding: 0px;">
+						<div id="<%=@count%>DIVID" class="demo-employee-cls"></div>
+						<div id="ElectivEemployeeID" class="elective-employee-cls"></div>
+					</td>
+					<td id="Select Room" class="room-list-cls" style="padding: 0px;">
+						<div id="<%=@count%>DIVID" class="demo-room-cls"></div>
+						<div id="roomID" class="elective-room-cls"></div>
+					</td>
+					<%@count +=1%>
+
+					<!-- <td>
+	          		<%#=select_tag :mg_institute_room_id, options_for_select(@rooms),:prompt=>t('select'),:class=>"mg-inside-tbl-width" %>
+						
+					</td>	 -->					
+				<%end%>
+			</tr>
+		</table>
+	<%end%>		      
+ 		 <br> 		
+<%else%>		
+  <h5>No Class Timings allocated for this batch</h5>	
+<%end%>
+<%= hidden_field_tag :mg_school_id, session[:current_user_school_id]%> 
+<%= hidden_field_tag :is_deleted, 0%> 
+</div>
+<script>
+
+  function subjectTypeFunction(subject_type_id, that,weekday_id_list,mg_class_timings_id){
+
+    var batch_id = <%=@batch_id%>;      
+    var mg_time_table_id = <%=@mg_time_table_id%>;      
+		if(subject_type_id==2)
+  	  {           
+        $(that).parent('.subject-type-cls').siblings(".employee-list-cls").children(".elective-employee-cls").children("select").val('');
+  	  	$(that).parent('.subject-type-cls').siblings(".employee-list-cls").children(".elective-employee-cls").empty()	
+		  	$(that).parent('.subject-type-cls').siblings(".subject-list-cls").children(".second-div-cls").empty()
+		  	$(that).parent('.subject-type-cls').siblings(".subject-list-cls").children(".subject-div-cls").children("select").val('');
+		  	$(that).parent('.subject-type-cls').siblings(".subject-list-cls").children(".subject-div-cls").empty()			  	
+		  	$(that).parent('.subject-type-cls').siblings(".room-list-cls").children(".elective-room-cls").empty()			  	
+		  	$(that).parent('.subject-type-cls').siblings(".elective-list-cls").children("div").children("select").removeAttr('disabled');				  
+			  
+			  $.ajax({
+			     url:'/timetable/elective_subject_type',
+			     data:{"subject_type_id": subject_type_id,"weekday_id_list":weekday_id_list,"mg_class_timings_id":mg_class_timings_id, "batch_id":batch_id,"mg_time_table_id":mg_time_table_id},
+			     type:"GET",
+			     success:function(data){
+			     	
+			     	 $(that).parent('.subject-type-cls').siblings(".elective-list-cls").children("div").empty(); 
+			     	 
+			     	 $(that).parent('.subject-type-cls').siblings(".elective-list-cls").children("div").html(data);				     	 
+			     	}
+		    	});
+		  }else{
+
+		  	$(that).parent('.subject-type-cls').siblings(".employee-list-cls").children(".elective-employee-cls").empty()		  	
+		  	$(that).parent('.subject-type-cls').siblings(".subject-list-cls").children(".second-div-cls").empty()
+		  	$(that).parent('.subject-type-cls').siblings(".subject-list-cls").children(".subject-div-cls").empty()
+		  	$(that).parent('.subject-type-cls').siblings(".room-list-cls").children(".elective-room-cls").empty()
+		  	 $(that).parent('.subject-type-cls').siblings(".elective-list-cls").children("div").children("select").val('');
+         $(that).parent('.subject-type-cls').siblings(".elective-list-cls").children("div").children("select").attr('disabled','disabled');
+	    
+		 		$.ajax({
+		     url:'/timetable/mandatory_subject_list',
+		     data:{"subject_type_id": subject_type_id,"weekday_id_list":weekday_id_list,"mg_class_timings_id":mg_class_timings_id,"mg_time_table_id":mg_time_table_id},
+		     type:"GET",
+		     success:function(data){
+		     	$(that).parent('.subject-type-cls').siblings(".subject-list-cls").children(".second-div-cls").html(data); 
+		      }
+		    });
+			}		
+  }   	
+
+  function selectAllTeacherForSubject(subject_id, that,weekday_id_list,mg_class_timings_id){ 
+
+    var batch_id = <%=@batch_id%>;
+    var mg_time_table_id = <%=@mg_time_table_id%>;     
+    $.ajax({
+      url:'/timetable/mandatory_subject',
+      data:{"subject_id":subject_id, "weekday_id_list":weekday_id_list,"mg_class_timings_id":mg_class_timings_id,"mg_time_table_id":mg_time_table_id},
+      type:"GET",
+      success:function(data){
+        $(that).parents('.subject-list-cls').siblings(".employee-list-cls").children(".elective-employee-cls").html(data);  
+        selectedRoomForSubject(subject_id,that);                             
+      }
+    });
+  }
+
+  function selectedRoomForSubject(subject_id,that){ 
+    $.ajax({
+      url:'/timetable/mandatory_subject_room',
+      data:{"mg_subject_id":subject_id},
+      type:"GET",
+      success:function(data){
+        // console.log(that);
+        $(that).parents('.subject-list-cls').siblings(".room-list-cls").children(".elective-room-cls").html(data);                                 
+      }
+    });
+  }
+
+  function ElectiveAllTypeFunction(elective_id, that,weekday_id_list,mg_class_timings_id,subject_type_id)
+  {	  	
+    $(that).parents('.elective-list-cls').siblings(".subject-list-cls").children(".subject-div-cls").empty();	  	
+    $(that).parents('.elective-list-cls').siblings(".room-list-cls").children(".elective-room-cls").empty();	  	
+		  	
+    $.ajax({
+      url:'/timetable/elective_subjects',
+      data:{"elective_id": elective_id,"weekday_id_list":weekday_id_list,"mg_class_timings_id":mg_class_timings_id, "subject_type_id": subject_type_id},
+      type:"GET",
+      success:function(data){
+        $(that).parents('.elective-list-cls').siblings(".subject-list-cls").children(".second-div-cls").html(data);  
+        console.log($(that).parents('.elective-list-cls').siblings(".subject-list-cls").children(".subject-div-cls"));               
+      }	      
+    });
+  }
+
+  function YEmpFunction(elective_group_id, that,weekday_id_list,mg_class_timings_id,subject_type_id){     
+ 
+   var batch_id = <%=@batch_id%>;
+   	
+   $.ajax({
+      url:'/timetable/elective_employee_list',
+      data:{"elective_group_id": elective_group_id,"weekday_id_list":weekday_id_list,"mg_class_timings_id":mg_class_timings_id,"batch_id":batch_id},
+      type:"GET",
+      success:function(data){      	
+        $(that).parents('.elective-list-cls').siblings(".employee-list-cls").children(".elective-employee-cls").html(data);                    
+      }
+    });
+  }
+
+ function YRoomFunction(elective_group_id, that,weekday_id_list,mg_class_timings_id,subject_type_id){     
+ 
+   var batch_id = <%=@batch_id%>;
+   	
+   $.ajax({
+      url:'/timetable/elective_room_list',
+      data:{"elective_group_id": elective_group_id,"weekday_id_list":weekday_id_list,"mg_class_timings_id":mg_class_timings_id,"batch_id":batch_id},
+      type:"GET",
+      success:function(data){      	
+        $(that).parents('.elective-list-cls').siblings(".room-list-cls").children(".elective-room-cls").html(data);                    
+      }
+    });
+  }
+
+  function electiveEmployeeFunction(eid,that,count){    
+
+    var arr=[];    
+    $(that).parents(".mg-employee-cls-table").find(".mg-employee-cls").children(".eteacher").each(function(){
+        var a=$(this).val();
+        arr.push(a);
+      });  
+  
+    for(var i=0;i<arr.length;i++)
+    {
+      if(i!=count){
+        if(arr[i]==eid){
+          alert("Faculty Already selected please select other");
+          $(that).parents(".mg-employee-cls-table").find(".mg-employee-cls").children(".employee-cls"+count).val('');
+          return false;  
+        }        
+      }
+    }  
+  }
+
+function electiveRoomFunction(rid,that,count){    
+
+    var arr=[];    
+    $(that).parents(".mg-room-cls-table").find(".mg-room-cls").children(".eroom").each(function(){
+        var a=$(this).val();
+        arr.push(a);
+      });  
+  
+    for(var i=0;i<arr.length;i++)
+    {
+      if(i!=count){
+        if(arr[i]==rid){
+          alert("Room already selected please select other");
+          $(that).parents(".mg-room-cls-table").find(".mg-room-cls").children(".room-cls"+count).val('');
+          return false;  
+        }        
+      }
+    }  
+  }
+</script>

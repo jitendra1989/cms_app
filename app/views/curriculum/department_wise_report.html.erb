@@ -1,0 +1,232 @@
+<%= render partial: 'curriculum/curr_left' %>
+<h4 class="mg-h4"><%= t('department_wise_report') %></h4>
+<%= form_for :syllabus, url: syllabus_tracker_create_path, :html => {
+                              :id => 'syllabusTrackerFormID' } do |f| %>
+
+  <!--#Syllabus.where(:is_deleted => '0')-->
+<p>
+      <label class="mg-label mg-tt-width" style="width:185px"><%= t('select_academic_year') %><span class="required-field">&nbsp;*</span></label>
+      <%#= f.label :select_subject ,:class=>"mg-label"%><!-- <span class="required-field"> *</span><br> -->
+      <%= f.collection_select(:mg_timetable_id,MgTimeTable.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id]), :id, :name,{:include_blank => t("select")},:class => "wing-details-as-per-academic-class mg-select-btn")%>
+</p>
+
+<p>
+      <label class="mg-label mg-tt-width" style="width:185px"><%= t('select_programme') %><span class="required-field">&nbsp;*</span></label>
+      <%#= f.label :select_subject ,:class=>"mg-label"%><!-- <span class="required-field"> *</span><br> -->
+      <%#= f.collection_select(:mg_wing_id,MgWing.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id]), :id, :wing_name,{:include_blank => t("select")},:class => "semester-details-as-per-pragramme-class mg-select-btn")%>
+
+      <%= f.select :mg_wing_id, [ ], {:include_blank => t('Select')} ,:class=>"semester-details-as-per-pragramme-class mg-select-btn" %>
+</p>
+
+
+<p>
+      <label class="mg-label mg-tt-width" style="width:185px"><%= t('select_semester') %><span class="required-field">&nbsp;*</span></label>
+      <%#= f.label :select_room ,:class=>"mg-label"%><!-- <span class="required-field"> *</span><br> -->
+      <%= f.select :mg_batch_id, [ ], {:include_blank => t('Select')} ,:class=>"subject-details-as-per-course-class mg-select-btn" %>
+</p>
+
+
+<p>
+      <label class="mg-label mg-tt-width" style="width:185px"><%= t('select_subject') %><span class="required-field">&nbsp;*</span></label>
+      <%#= f.label :select_room ,:class=>"mg-label"%><!-- <span class="required-field"> *</span><br> -->
+      <%= f.select :mg_subject_id, [ ], {:include_blank => t('Select')} ,:class=>"paper-details-as-per-subject-class mg-select-btn" %>
+</p>
+
+
+
+
+
+
+
+
+ <p class="mg-p-mgtop">
+    <%#= f.submit t('save') ,:class=>"mg-small-form-btn" %>
+    <!-- <a onclick="$(this).closest('form').submit()" class="mg-small-form-btn"><%#=t("save")%></a> -->
+    <%= link_to t('cancel'), :back, {:class=>"mg-small-form-btn cancel-form-dialog"} %>
+  </p>
+
+<% end %>
+</div>
+<div id="classWiseReportAppendDivID">
+<%= render  partial: 'application/common_left_close' %>
+
+ <script>
+$(document).ready(function () {
+
+focusCurrentTab("viewEmployeeHODCurriculum","viewHODEmployeecurriculumDepartmentWiseReportLiID");
+
+ 
+$("#topicEditCurriculamManagementsID").validate({
+
+rules: {
+"curriculum[mg_timetable_id]": {required: true},
+"curriculum[mg_wing_id]": {required: true},
+"curriculum[mg_course_id]": {required: true},
+"curriculum[mg_subject_id]": {required: true},
+"curriculum[mg_curriculum_grade_id]": {required: true},
+"curriculum[mg_syllabus_id]": {required: true},
+"curriculum[mg_unit_id]": {required: true},
+"curriculum[topic_name]": {required: true}
+}
+});
+});
+
+// ===============================================================================================
+
+
+// =================================================================================================================
+
+$(".wing-details-as-per-academic-class").change(function(){
+      var programmeID = $( ".wing-details-as-per-academic-class" ).val();
+      var apdStr = '<option value="">Choose Academic Year</option>';
+      $("#syllabus_mg_wing_id").empty().append(apdStr);
+      if(programmeID > 0) {
+           var urlLink = "/curriculum/wing_list/"+programmeID;
+           $.ajax({ 
+               url: urlLink,
+               cache: false,
+               success: function(data){
+                 // console.log();
+                  if(data.length > 0){
+                      var apdStr = '<option value="select">Select</option>';
+                     for(key in data){
+                        apdStr += '<option value="'+data[key].id+'">'+data[key].wing_name+'</option>'
+                      }
+                      $("#syllabus_mg_wing_id").empty().append(apdStr);
+                  }
+
+               }
+                  
+           });
+
+    }else{
+      var apdStr = '<option value="">Choose Academic Year</option>';
+      $("#syllabus_mg_wing_id").empty().append(apdStr);
+      // alert("Please select category");
+    }
+  });
+// ==================================CURRICULUM CHANGES==========================================
+$(".semester-details-as-per-pragramme-class").change(function(){
+      var programmeID = $( ".semester-details-as-per-pragramme-class" ).val();
+      var apdStr = '<option value="">Choose Programme</option>';
+      $("#syllabus_mg_batch_id").empty().append(apdStr);
+      if(programmeID > 0) {
+           var urlLink = "/curriculum/semester_batch_list/"+programmeID;
+           $.ajax({ 
+               url: urlLink,
+               cache: false,
+               success: function(data){
+                  if(data.length > 0){
+                      var apdStr = '<option value="select">Select</option>';
+                     for(key in data){
+                        apdStr += '<option value="'+data[key].id+'">'+data[key].name+'</option>'
+                      }
+                      $("#syllabus_mg_batch_id").empty().append(apdStr);
+                  }
+
+               }
+                  
+           });
+
+    }else{
+      var apdStr = '<option value="">Choose Programme</option>';
+      $("#syllabus_mg_batch_id").empty().append(apdStr);
+      // alert("Please select category");
+    }
+  });
+
+// ============================================
+
+
+$(".subject-details-as-per-course-class").change(function(){
+      var semesterID = $( ".subject-details-as-per-course-class" ).val();
+      var apdStr = '<option value="">Choose Semester</option>';
+      $("#syllabus_mg_subject_id").empty().append(apdStr);
+      if(semesterID > 0) {
+           var urlLink = "/curriculum/subject_department_wise_list/"+semesterID;
+           $.ajax({ 
+               url: urlLink,
+               cache: false,
+               success: function(data){
+                 // console.log();
+                  if(data.length > 0){
+                      var apdStr = '<option value="select">Select</option>';
+                     for(key in data){
+                        apdStr += '<option value="'+data[key].id+'">'+data[key].subject_name+'</option>'
+                      }
+                      $("#syllabus_mg_subject_id").empty().append(apdStr);
+                  }
+
+               }
+                  
+           });
+
+    }else{
+      var apdStr = '<option value="">Choose Semester</option>';
+      $("#syllabus_mg_subject_id").empty().append(apdStr);
+      // alert("Please select category");
+    }
+  });
+
+// ----------------------------------------------------------
+
+$(".paper-details-as-per-subject-class").change(function(){
+      var semesterID = $( ".paper-details-as-per-subject-class" ).val();
+      var apdStr = '<option value="">Choose Subject</option>';
+      $("#syllabus_mg_syllabus_id").empty().append(apdStr);
+      if(semesterID > 0) {
+           var urlLink = "/curriculum/syllabus_list/"+semesterID;
+           $.ajax({ 
+               url: urlLink,
+               cache: false,
+               success: function(data){
+                 // console.log();
+                  if(data.length > 0){
+                      var apdStr = '<option value="select">Select</option>';
+                     for(key in data){
+                        apdStr += '<option value="'+data[key].id+'">'+data[key].name+'</option>'
+                      }
+                      $("#syllabus_mg_syllabus_id").empty().append(apdStr);
+                  }
+
+               }
+                  
+           });
+
+    }else{
+      var apdStr = '<option value="">Choose Subject</option>';
+      $("#syllabus_mg_syllabus_id").empty().append(apdStr);
+      // alert("Please select category");
+    }
+  });
+
+
+
+
+$(".paper-details-as-per-subject-class").change(function(){
+     var academic_year=$("#syllabus_mg_timetable_id").val();
+     var prog_id=$("#syllabus_mg_wing_id").val();
+     var batch_id=$("#syllabus_mg_batch_id").val();
+     var subject_id=$("#syllabus_mg_subject_id").val();
+      
+      
+ 
+
+     var urlLink = "/curriculum/subject_wise_report_data/";
+           $.ajax({ 
+               url: urlLink,
+               cache: false,
+               data:
+            {
+                 "academic_year":academic_year , "prog_id":prog_id , "batch_id":batch_id ,"subject_id":subject_id
+             },
+               success: function(html){
+                  $("#classWiseReportAppendDivID").empty();
+                  $("#classWiseReportAppendDivID").append(html);
+               }  
+           });
+  });
+
+
+
+ </script>

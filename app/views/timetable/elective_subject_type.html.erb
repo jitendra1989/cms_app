@@ -1,0 +1,66 @@
+
+<%=select_tag 'elective_id_[]', options_for_select(@elective_group),:prompt=>t('select'),:onchange=>"ElectiveTypeFunction(this.value,this), EmpFunction(this.value,this),roomSelect(this.value,this)" ,:class=>"mg-inside-tbl-width" %>
+<% @weekday_id_list=@weekday_id_list %>
+<% @mg_class_timings_id=@mg_class_timings_id %>
+<% @subject_type_id=@subject_type_id %>
+
+
+<div id="electiveSubjectsID"></div>
+
+
+<script>
+
+  function ElectiveTypeFunction(elective_id, that)
+  {
+    
+    var weekday_id_list = <%=@weekday_id_list%>
+    var mg_class_timings_id = <%=@mg_class_timings_id%>
+    var subject_type_id = <%=@subject_type_id%>
+    $.ajax({
+      url:'/timetable/elective_subjects',
+      data:{"elective_id": elective_id,"weekday_id_list":weekday_id_list,"mg_class_timings_id":mg_class_timings_id, "subject_type_id": subject_type_id},
+      type:"GET",
+      success:function(data){        
+        $(that).parents('.elective-list-cls').siblings(".subject-list-cls").children(".second-div-cls").html(data);                 
+      },
+      error:function(){
+        alert("inside error");
+      }
+    });
+  }
+
+
+  function EmpFunction(elective_group_id, that){ 
+    var weekday_id_list = <%=@weekday_id_list%>
+    var mg_class_timings_id = <%=@mg_class_timings_id%> 
+    var batch_id = <%=@batch_id%>
+    var mg_time_table_id = <%=@mg_time_table_id%> 
+
+   $.ajax({
+      url:'/timetable/elective_employee_list',
+      data:{"elective_group_id": elective_group_id,"weekday_id_list":weekday_id_list,"mg_class_timings_id":mg_class_timings_id,"batch_id":batch_id,"mg_time_table_id":mg_time_table_id},
+      type:"GET",
+      success:function(data){
+        $(that).parents('.elective-list-cls').siblings(".employee-list-cls").children(".elective-employee-cls").html(data);     
+        console.log($(that).parents('.elective-list-cls').siblings(".employee-list-cls").children(".elective-employee-cls"));                  
+      }
+    });
+  }
+
+  function roomSelect(elective_group_id, that){ 
+    var weekday_id_list = <%=@weekday_id_list%>
+    var mg_class_timings_id = <%=@mg_class_timings_id%> 
+    var batch_id = <%=@batch_id%>
+    var mg_time_table_id = <%=@mg_time_table_id%> 
+
+   $.ajax({
+      url:'/timetable/elective_room_list',
+      data:{"elective_group_id": elective_group_id,"weekday_id_list":weekday_id_list,"mg_class_timings_id":mg_class_timings_id,"batch_id":batch_id,"mg_time_table_id":mg_time_table_id},
+      type:"GET",
+      success:function(data){
+        $(that).parents('.elective-list-cls').siblings(".room-list-cls").children(".elective-room-cls").html(data);               
+      }
+    });
+  }
+
+</script>

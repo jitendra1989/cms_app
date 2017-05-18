@@ -1,0 +1,88 @@
+<div>
+  <%= form_for :store_manager, :url=> {:action=>"create_hod_login"}, :html => {
+                              :id => 'libraryCreateID' } do |f| %>
+    <%= f.hidden_field :is_deleted, :value => 0 %>
+    <%= f.hidden_field :mg_school_id, :value => session[:current_user_school_id] %>
+    <%= f.hidden_field :created_by, :value => session[:user_id] %>
+    <%= f.hidden_field :updated_by, :value => session[:user_id] %>
+    <%= f.hidden_field :user_type, :value => "hod_login" %>
+    <% school_subdomain = MgSchool.where(:id=>session[:current_user_school_id],:is_deleted=>0) %>
+    <% @subdomain = school_subdomain[0].subdomain%> 
+    <p>
+      <label class="mg-label" style="width:190px"><%= t('select_specialization') %><span class="required-field">&nbsp;*</span></label>
+      <br/>
+      <%specialization_data=MgEmployeeSpecialization.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id]).pluck(:name,:id)%>
+     <%= select_tag :mg_employee_specialization_id,options_for_select(specialization_data),:prompt=>"Select",:class=>"mg-text-field",:onchange=>"selcetEmployeebasedOnSpecialization(this.value)" %>
+    </p>
+    <p>
+      <label class="mg-label" style="width:190px"><%= t('select_employee') %><span class="required-field">&nbsp;*</span></label>
+      <br/>
+      
+     <%= select_tag :mg_employee_id,options_for_select([]),:prompt=>"Select",:class=>"mg-text-field" %>
+    </p>
+    <p>
+        <label class="mg-label" style="width:140px"><%= t('user_name') %><span class="required-field">&nbsp;*</span></label>
+        <br/>
+       <%=@subdomain%><%= f.text_field :user_name,:class=>"mg-text-field" %>
+    </p>
+    <p>
+        <label class="mg-label" style="width:140px"><%= t('password') %><span class="required-field">&nbsp;*</span></label>
+        <br/>
+       <%= f.password_field :password,:class=>"mg-text-field" %>
+    </p>
+    <p class="mg-p-mgtop">
+      <%=f.submit "submit", :id=>"libraryCreateFormSubmitID", :style=>"display:none"%>
+      <a onclick="check_unique_username();" class="mg-small-form-btn"><%=t("save")%></a>
+      <%= link_to t('cancel'),'', {:class=>"mg-small-form-btn cancel-form-dialog"} %>
+    </p>
+  <% end %>
+</div>
+<!-- <%#= render  partial: 'application/common_left_close' %> -->
+
+
+
+<script>
+
+$("#libraryCreateID").validate({
+        rules: {        
+        "store_manager[user_name]": {required: true},
+        "store_manager[password]": {required: true},
+        "mg_employee_specialization_id": {required: true},  
+        "mg_employee_id":{required: true}
+      }
+    });
+
+  function check_unique_username(){
+    var user_name=$("#store_manager_user_name").val();
+    var urlLink = "/exam_management/unique_username";
+    $.ajax({
+      url: urlLink ,
+      cache: false,
+      data: {"user_name":user_name},
+      success: function(data){
+        if(data==1){
+          alert("User Name already Exists..");
+          $("#store_manager_user_name").val('');
+        }else{
+            $("#libraryCreateFormSubmitID").click();
+        }
+      }
+    });
+  }
+
+  function selcetEmployeebasedOnSpecialization(data){
+
+
+    var urlLink = "/exam_management/select_employee_for_specialization";
+    $.ajax({
+      url: urlLink ,
+      cache: false,
+      data: {"id":data},
+      success: function(data){
+       
+        $("#mg_employee_id").empty().html(data.main);
+      }
+    });
+
+  }
+</script>

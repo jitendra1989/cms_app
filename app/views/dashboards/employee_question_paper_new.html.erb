@@ -1,0 +1,123 @@
+<%= form_for :question_paper_data, :url=>{:controller=>"dashboards",:action=>"employee_question_paper_create",:data=>params[:data]},:html=>{:id=>"question_paper_information_data"} do |f|%> 
+ 
+<%= f.hidden_field :mg_school_id, :value=> session[:current_user_school_id]%>
+     <p>
+     <%= f.label :select_academic_year ,:class=>"mg-label"%><span class="required-field"> *</span><br>
+     <%@time_table_data=MgTimeTable.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id]).pluck(:name,:id)%>
+     <div>
+        <%= f.select :mg_time_table_id,options_for_select(@time_table_data),:prompt=>"Select",:class=>"mg-text-field"%>
+     </div>
+
+      </p>
+      <p>
+        <%= f.label :select_program ,:class=>"mg-label"%><span class="required-field"> *</span><br>
+        <%@wing_data=MgWing.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id]).pluck(:wing_name,:id)%>
+        <div>
+        <%= select_tag 'mg_wing_id',options_for_select(@wing_data),:prompt=>"Select",:class=>"mg-text-field",:onchange=>"selectClassfromWing(this.value)"%>
+        </div>
+      </p>
+
+
+       <p>
+      <%= f.label :select_Semester ,:class=>"mg-label"%><span class="required-field"> *</span><br>
+       <div id="exam_management_class">
+        <%= f.select :mg_course_id,options_for_select([]),:prompt=>"Select",:class=>"mg-text-field"%>
+        </div>
+      </p>
+
+      <%= f.label :select_subject ,:class=>"mg-label"%><span class="required-field"> *</span><br>
+        <div id="exam_management_subject">
+        <%= f.select :mg_subject_id,options_for_select([]),:prompt=>"Select",:class=>"mg-text-field"%>
+        </div>
+      </p>
+
+
+<p>
+    <%= f.label :upload_file,:class=>"mg-label"%><span class="required-field"> *</span><br>
+    <%= f.file_field :file   %>
+  </p>
+
+
+
+
+
+<p class="mg-p-mgtop">
+    <a onclick="$(this).closest('form').submit()" class="mg-small-form-btn"><%=t("save")%></a>
+    <!-- <%#= f.submit t('save') ,:class=>"mg-small-form-btn"%> -->
+    <%= link_to t('cancel'), :back, {:class=>"mg-small-form-btn cancel-form-dialog"} %>
+</p>
+<%end%>
+
+<script>
+
+
+
+$(document).ready(function () {
+$("#question_paper_information_data").validate({
+//   $(".category-validation-class").rules("add", { 
+//   required:true
+// });
+        rules: {   
+        "question_paper_data[mg_time_table_id]": {required: true}, 
+        "mg_wing_id":{required: true},
+        "mg_course_id": {required: true}, 
+        "mg_subject_id": {required: true},    
+        "question_paper_data[file]": {required: true},
+        "question_paper_data[mg_course_id]": {required: true},
+        "question_paper_data[mg_subject_id]": {required: true},
+      }
+    });
+});
+function selectsectionfromclass(data){
+var urlLink="/dashboards/exam_management_select_section"
+
+$.ajax({
+                url: urlLink ,
+                cache: false,
+                data:{"id":data},
+                success: function(html){
+                      $('#exam_management_section').empty();
+                      $('#exam_management_section').append(html);
+
+                }
+            });
+
+
+}
+  
+function selectClassfromWing(data){
+
+var urlLink="/dashboards/exam_management_select_class"
+
+$.ajax({
+                url: urlLink ,
+                cache: false,
+                data:{"id":data},
+                success: function(html){
+                      $('#exam_management_class').empty();
+                      $('#exam_management_class').append(html);
+                      $("#mg_subject_id").empty();
+                      
+
+                }
+            });
+
+}
+function selectSubjectfromclass(data){
+var urlLink="/dashboards/exam_management_select_subject"
+var data1=$("#mg_course_id").val();
+$.ajax({
+                url: urlLink ,
+                cache: false,
+                data:{"id":data1},
+                success: function(html){
+                      $('#exam_management_subject').empty();
+                      $('#exam_management_subject').append(html);
+
+                }
+            });
+
+
+}
+
+</script>

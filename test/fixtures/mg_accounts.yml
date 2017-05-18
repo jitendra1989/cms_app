@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  mg_account_name: MyString
+  mg_department_id: 1
+  mg_employee_id: 1
+  description: MyText
+
+two:
+  mg_account_name: MyString
+  mg_department_id: 1
+  mg_employee_id: 1
+  description: MyText

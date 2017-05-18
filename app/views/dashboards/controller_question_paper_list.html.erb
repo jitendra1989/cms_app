@@ -1,0 +1,117 @@
+
+<h4 class="mg-h4"><%= t('question_paper_list') %></h4>
+
+<table border="1" class="mg-showdata-bg" cellspacing="1" cellpadding="1">
+<%
+
+    
+
+    if params[:time_table]!=""
+
+
+data=MgEmployeeQuestionPaper.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id],:mg_time_table_id=>params[:time_table]).pluck(:id)
+
+elsif params[:wing]!=""
+
+data=MgEmployeeQuestionPaper.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id],:mg_wing_id=>params[:wing]).pluck(:id)
+
+
+elsif params[:subject_id]!=""
+
+
+data=MgEmployeeQuestionPaper.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id],:mg_subject_id=>params[:subject_id]).pluck(:id)
+
+end
+document_management_data=MgDocumentManagement.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id],:mg_employee_question_paper_id=>data,:document_type=>"EmployeeQuestionPaper",:is_hod=>true,:file_status=>true)
+# document_management_data=MgDocumentManagement.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id],:mg_subject_id=>subject_data,:document_type=>"EmployeeQuestionPaper",:is_hod=>nil)
+       # time_table_data=MgTimeTable.find_by(:id=>@question_paper_data.mg_time_table_id)
+
+       # wing_data=MgWing.find_by(:id=>@question_paper_data.mg_wing_id)
+       # course_data=MgCourse.find_by(:id=>@question_paper_data.mg_course_id)
+       # document_data=MgDocumentManagement.find_by(:mg_employee_question_paper_id=>@question_paper_data.id)
+       # subject_data=MgSubject.find_by(:id=>@question_paper_data.mg_subject_id)
+
+        %>
+<%#=employee_data.inspect%>
+<%if document_management_data.length>0%>
+<tr>
+<th>Employee Id</th>
+<th>Employee Name</th>
+<th>Semester</th>
+<th>Subject</th>
+<th>File Name</th>
+<th>Action</th>
+
+
+</tr>
+
+
+        <%document_management_data.each do |data|%>
+<tr>
+<%question_paper=MgEmployeeQuestionPaper.find_by(:id=>data.try(:mg_employee_question_paper_id))
+
+employee_datass=MgEmployee.find_by(:mg_user_id=>question_paper.try(:mg_user_id))
+if employee_datass.present?
+employee_data=MgEmployee.find_by(:id=>employee_datass.id)
+  else
+employee_data_hod=MgExaminationHodLogin.find_by(:mg_user_id=>question_paper.try(:mg_user_id))
+employee_data=MgEmployee.find_by(:id=>employee_data_hod.mg_employee_id)
+
+  end
+%>
+<td class="mg-td-width-half" valign="top">
+         
+         <%= employee_data.try(:employee_number)%>
+     </td>
+
+<td class="mg-td-width-half" valign="top">
+         
+         <%= "#{employee_data.try(:first_name)} #{employee_data.try(:last_name)}"%>
+</td>
+    
+     <td class="mg-td-width-half" valign="top">
+         <%course_data=MgCourse.find_by(:id=>data.mg_course_id)%>
+         <%= course_data.try(:course_name)%>
+     </td>
+
+ 
+    
+     <td class="mg-td-width-half" valign="top">
+         <%subject_data=MgSubject.find_by(:id=>data.mg_subject_id)%>
+         <%= subject_data.try(:subject_name)%>
+     </td>
+ 
+
+   
+     <td class="mg-td-width-half" valign="top">
+        <label class="mg-label"> <%= data.file_file_name %></label>
+     </td>
+
+
+     <td class="mg-td-width-half mg-align-center" valign="top">
+         
+         <%= link_to_if data.try(:file).url,'<i class="fa fa-download"></i>'.html_safe,data.try(:file).url,:class=>"mg-icon-btn mg-download-icon-font",:title=>"Download" %>
+     </td>
+ </tr>
+
+
+ 
+<%end%>
+ 
+ <%else%>
+
+ <%="No Question Papers List"%>
+ <%end%>
+</table>
+ <p class="mg-p-mgtop">
+     <!-- <a class="mg-small-form-btn cancel-form-dialog"><%=t('cancel')%></a> -->
+
+  </p>
+
+
+
+<script>
+$(document).ready(function () {
+    focusCurrentTab("hod_question_paper_listAID","hod_question_paper_listLiID");
+});
+</script>

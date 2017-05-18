@@ -1,0 +1,109 @@
+<% navigation_add t('exam_notification'), exam_notification_path %>
+<%=render partial: 'exam_management_left'%>
+<h4 class="mg-h4"><%= t('exam_notification') %></h4>
+ <%= form_for :exam_types, :url=>exam_management_send_notification_path, method: :post, :html => {
+                            :id => 'examTypesFormID' } do |f| %>
+
+<p>
+   <label class="mg-label mg-tt-width "><%=t('select_exam') %><span class="required-field"> *</span></label>
+   <%=select_tag :mg_examination_detail_id ,options_for_select( MgExaminationDetail.where(:is_deleted=>0, :mg_school_id=>session[:current_user_school_id]).pluck(:name, :id)),:prompt=>t('select'),:class=>"mg-select-btn", :onchange=>"select_examination_details_notification(this.value);"%>
+
+  </p>
+<!-- 
+  <p>
+   <label class="mg-label mg-tt-width "><%=t('start_date') %></label>
+   <%#=text_field_tag :start_date ,nil,:class=>"mg-select-btn", :readonly=>true%>
+   <label class="mg-label mg-tt-width "><%=t('start_date') %></label>
+   <%#=text_field_tag :end_date ,nil,:class=>"mg-select-btn", :readonly=>true%>
+  </p>
+
+
+  <p>
+   <label class="mg-label mg-tt-width "><%=t('select_academic_year') %></label>
+   <%#=select_tag :mg_time_table_id ,options_for_select([]),:prompt=>t('select'),:class=>"mg-select-btn"%>
+  </p>
+   <p>
+   <label class="mg-label mg-tt-width "><%=t('select_exam_type') %></label>
+   <%#=select_tag :mg_exam_type_id ,options_for_select([]),:prompt=>t('select'),:class=>"mg-select-btn"%>
+  </p>
+
+  <p>
+   <label class="mg-label mg-tt-width "><%=t('select_examination_category') %></label>
+   <%#=select_tag :mg_examination_category_id ,options_for_select([]),:prompt=>t('select'),:class=>"mg-select-btn"%>
+  </p>
+
+  <p>
+   <label class="mg-label mg-tt-width "><%=t('select_program_category') %></label>
+   <%#=select_tag :mg_examination_program_category_id ,options_for_select([]),:prompt=>t('select'),:class=>"mg-select-btn"%>
+  </p>-->
+  <p> 
+     <label class="mg-label mg-tt-width "><%=t('select_wing') %><span class="required-field"> *</span></label>
+   <%=select_tag :mg_wing_id ,options_for_select(MgWing.where(:is_deleted=>0, :mg_school_id=>session[:current_user_school_id]).pluck(:wing_name, :id)),:prompt=>t('select'),:class=>"mg-select-btn",:onchange=>"select_examination_details_course_notification(this.value)"%>
+    
+  </p> 
+  <p> 
+     <label class="mg-label mg-tt-width "><%=t('select_semester') %><span class="required-field"> *</span></label>
+   <%=select_tag :mg_batch_id ,options_for_select([]),:prompt=>t('select'),:class=>"mg-select-btn"%>
+  </p> 
+  <p> 
+    <label class="mg-label mg-tt-width "><%=t('description') %><span class="required-field"> *</span></label>
+    <%=text_area_tag :description %>
+  </p> 
+
+  <p class="mg-p-mgtop">
+    <a onclick="$(this).closest('form').submit()" class="mg-small-form-btn"><%=t("send")%></a>
+    <%= link_to t('cancel'), :back, {:class=>"mg-small-form-btn cancel-form-dialog"} %>
+  </p>
+<% end %>
+
+<%#=render :partial => "send_time_table", :object => @time_table=[1,1]%>
+<%= render  partial: 'application/common_left_close' %>
+<script>
+$(document).ready(function () {
+	focusCurrentTab("timeTableExaminationNotificationAID","timeTableExaminationNotificationLiID");
+});
+
+function select_examination_details_notification(mg_examination_detail_id){
+  var urlLink = "/exam_management/multi_skilled_worker";
+  $.ajax({
+      url: urlLink ,
+      cache: false,
+      data:{ 
+        selecter: "examination_detail_for_seating_plan",
+        id: mg_examination_detail_id
+      },
+      success: function(data){
+          console.log("data   ~>  "+data.main);
+          $("#mg_wing_id").html(data.main.wing_list);
+          // $("#date_time").html(data.main.date_list);
+
+      }
+  });
+   
+
+}
+function select_examination_details_course_notification(mg_wing_id){
+  var mg_examination_detail_id=$("#mg_examination_detail_id").val();
+  if(mg_examination_detail_id){
+     var urlLink = "/exam_management/multi_skilled_worker";
+    $.ajax({
+        url: urlLink ,
+        cache: false,
+        data:{ 
+          selecter: "mg_wing_id_for_seating_plan",
+          id: mg_examination_detail_id,
+          mg_wing_id: mg_wing_id
+        },
+        success: function(data){
+            $("#mg_batch_id").html("<option value=''>Select</option>"+data.main);
+        }
+    });
+  }else{
+    alert("Please select examination");
+  }
+ 
+   
+
+}
+
+</script>

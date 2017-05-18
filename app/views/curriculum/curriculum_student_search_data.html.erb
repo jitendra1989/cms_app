@@ -1,0 +1,183 @@
+
+<%#if (@search.present?) || (@search_notes.present?) %>
+
+<h4 class="mg-h4"><%= t('documents') %></h4>
+
+
+<%if @search.present?%>
+
+<div class="mg-scroll-employee-bar">
+<table border="1" class="mg-showdata-bg mg-homework-tbl" cellspacing="1" cellpadding="1">
+<tr>
+	
+	<th>
+		<label class="mg-label mg-td-width-half" valign="top"> <%= t('subject_name')%></label>
+	</th>
+	
+	<th>
+		<label class="mg-label mg-td-width-half" valign="top"> <%= t('paper')%></label>
+	</th>
+	<th>
+		<label class="mg-label mg-td-width-half" valign="top"> <%= t('chapter')%></label>
+	</th>
+	<th>
+		<label class="mg-label mg-td-width-half" valign="top"> <%= t('topic')%></label>
+	</th>
+	
+
+	<th>
+		<label class="mg-label mg-td-width-half" valign="top"> <%= t('details')%></label>
+	</th>
+	
+	</tr>
+	<%
+	@search.each do |search|
+	%>
+	<tr>
+		
+
+		<td class="mg-td-width-half" valign="top">
+			<%if search.mg_subject_id.present?%>
+      		<%currSubject=MgSubject.find(search.mg_subject_id)%>
+     		<%=currSubject.try(:subject_name)%><%end%>
+		</td>
+
+
+		
+
+		<td class="mg-td-width-half" valign="top">
+			<%if search.mg_syllabus_id.present?%>
+      		<%currSyll=MgSyllabus.find(search.mg_syllabus_id)%>
+     		<%=currSyll.try(:name)%><%end%>
+		</td>
+
+		<td class="mg-td-width-half" valign="top">
+			<%if search.mg_unit_id.present?%>
+      		<%currSyll=MgUnit.find(search.mg_unit_id)%>
+     		<%=currSyll.try(:unit_name)%><%end%>
+		</td>
+
+		<td class="mg-td-width-half" valign="top">
+			<%if search.mg_topic_id.present?%>
+      		<%currSyll=MgTopic.find(search.mg_topic_id)%>
+     		<%=currSyll.try(:topic_name)%><%end%>
+		</td>
+
+
+		
+
+
+
+		<td class="mg-td-width-half" valign="top">
+			
+		<%= link_to "<i class=\"fa fa-eye\"></i>".html_safe, {:controller => "curriculum", :action => "document_show",:id =>search.id } , :method=>'post' ,:title=>"Show" ,:class=>"mg-icon-btn"%>
+
+		</td>
+		
+
+		
+</tr>
+	<%end%>
+</table>
+</div>
+
+<%else%>
+<h5>No documents found</h5>
+<%end%>
+
+<br/>
+<br/>
+
+<!-- ====================================================================================================== -->
+<h4 class="mg-h4"><%= t('notes') %></h4>
+
+<%if @search_notes.present?%>
+<div class="mg-scroll-employee-bar">
+<table border="1" class="mg-showdata-bg mg-homework-tbl" cellspacing="1" cellpadding="1">
+<tr>
+	
+	<th>
+		<label class="mg-label mg-td-width-half" valign="top"> <%= t('subject_name')%></label>
+	</th>
+	
+	<th>
+		<label class="mg-label mg-td-width-half" valign="top"> <%= t('paper')%></label>
+	</th>
+	<th>
+		<label class="mg-label mg-td-width-half" valign="top"> <%= t('chapter')%></label>
+	</th>
+	<th>
+		<label class="mg-label mg-td-width-half" valign="top"> <%= t('topic')%></label>
+	</th>
+	
+
+	<th>
+		<label class="mg-label mg-td-width-half" valign="top"> <%= t('details')%></label>
+	</th>
+	
+	</tr>
+	<%
+	@search_notes.each do |search|
+	%>
+	<tr>
+		
+
+		<td class="mg-td-width-half" valign="top">
+			<%if search.mg_subject_id.present?%>
+      		<%currSubject=MgSubject.find(search.mg_subject_id)%>
+     		<%=currSubject.try(:subject_name)%><%end%>
+		</td>
+
+
+		
+
+		<td class="mg-td-width-half" valign="top">
+			<%if search.mg_syllabus_id.present?%>
+      		<%currSyll=MgSyllabus.find(search.mg_syllabus_id)%>
+     		<%=currSyll.try(:name)%><%end%>
+		</td>
+
+		<td class="mg-td-width-half" valign="top">
+			<%if search.mg_unit_id.present?%>
+      		<%currSyll=MgUnit.find(search.mg_unit_id)%>
+     		<%=currSyll.try(:unit_name)%><%end%>
+		</td>
+
+		<td class="mg-td-width-half" valign="top">
+			<%if search.mg_topic_id.present?%>
+      		<%currSyll=MgTopic.find(search.mg_topic_id)%>
+     		<%=currSyll.try(:topic_name)%><%end%>
+		</td>
+
+
+		
+
+
+		<td class="mg-td-width-half" valign="top">
+			
+			
+			<%= link_to "<i class=\"fa fa-eye\"></i>".html_safe, {:controller => "curriculum", :action => "notes_show",:id =>search.id } , :method=>'post' ,:title=>"Show" ,:class=>"mg-icon-btn"%>
+
+		</td>
+		
+
+		
+</tr>
+	<%end%>
+</table>
+</div>
+<%else%>
+<h5>No notes found	</h5>
+<%end%>
+
+
+
+
+
+
+<br/>
+<%#= link_to t('cancel'), :back, {:class=>"mg-small-form-btn cancel-form-dialog"} %>
+<%#else%>
+<!-- <br/>
+<h4>No Results found<h4> -->
+<%#end%>

@@ -1,0 +1,217 @@
+
+
+<%= render  partial: 'exam_management/exam_management_left' %>
+<% navigation_add 'Question Paper', dashboards_controller_question_paper_path %>
+
+<h4 class="mg-h4"><%= t('question_paper') %></h4>
+
+<table class="mg-btn-bottom-margin">
+    <tr>
+        <td>
+         <label for="date_of_birth"class="mg-label"><%= t('search_by') %>
+            
+        </td>
+        </tr>
+        <tr>
+        <td>
+            <%= select_tag 'search_by', options_for_select([["Academic Year"],["Programme"],["subject"]]),:prompt=>"Select",:onchange=>"selectsExaminationSearchData(this.value)" ,:class=>"mg-select-btn"%><br/>
+        </td>
+    </tr>
+
+
+<tr>
+<td>
+<div id="library_tes" class="library_test1" style="display:none;">
+
+
+ <label for="select_academic_year"class="mg-label"><%= t('select_academic_year') %>
+
+ </div>
+
+</td>
+</tr>
+<tr>
+<td>
+
+<div id="library_te" class="library_test1" style="display:none;">
+ <%@time_table_data=MgTimeTable.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id]).pluck(:name,:id)%>
+ <%=select_tag 'mg_time_table_id',options_for_select(@time_table_data),:prompt=>"Select",:class=>"mg-text-field"%><br/><br/>
+
+
+<button id="search_button_fordata" class="btn btn-default">Search</button>
+
+</div>
+</td>
+</tr>
+
+
+
+<tr>
+<td>
+<div id="library_tes" class="library_test2" style="display:none;">
+
+
+ <label for="select_academic_year"class="mg-label"><%= t('select_programme') %>
+
+ </div>
+
+</td>
+</tr>
+<tr>
+<td>
+
+<div id="library_te" class="library_test2" style="display:none;">
+  <%@wing_data=MgWing.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id]).pluck(:wing_name,:id)%>
+ <%=select_tag 'mg_wing_id',options_for_select(@wing_data),:prompt=>"Select",:class=>"mg-text-field"%><br/><br/>
+
+
+<button id="search_button_fordata" class="btn btn-default">Search</button>
+
+</div>
+</td>
+</tr>
+
+<tr>
+<td>
+<div id="library_tes" class="library_test3" style="display:none;">
+
+
+ <label for="select_academic_year"class="mg-label"><%= t('select_subject') %>
+
+ </div>
+
+</td>
+</tr>
+<tr>
+<td>
+
+<div id="library_te" class="library_test3" style="display:none;">
+
+<%#data=MgExaminationHodLogin.find_by(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id],:mg_user_id=>session[:user_id])%>
+<%#employee_data=MgEmployee.find_by(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id],:id=>data.mg_employee_id)
+   @subject_data=MgSubject.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id],:mg_employee_specialization_id=>employee_data.hod_specialization_id).pluck(:subject_name,:id)%>
+  <%@subject_data=MgSubject.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id]).pluck(:subject_name,:id)%>
+ <%=select_tag 'mg_subject_id',options_for_select(@subject_data),:prompt=>"Select",:class=>"mg-text-field"%><br/><br/>
+
+
+<button id="search_button_fordata" class="btn btn-default">Search</button>
+
+</div>
+</td>
+</tr>
+</table>
+
+<div id="employee_books_list_search">
+</div>
+<%= render  partial: 'application/common_left_close' %>
+
+
+<script>
+$(document).ready(function () {
+        focusCurrentTab("controller_question_paper_listAID","controller_question_paper_listLiID");
+        focusLibrary();
+       
+});
+
+function selectsExaminationSearchData(data){
+  
+ $("#library_particular_book_search").empty();
+
+
+if (data==""){
+ $(".library_test1").hide();
+ $(".library_test2").hide();
+ $(".library_test3").hide();
+$("#employee_books_list_search").empty();
+
+}
+else if(data=="Academic Year"){
+ 
+ $(".library_test1").show();
+$(".library_test2").hide();
+ $(".library_test3").hide();
+ $("#mg_wing_id").val("");
+ $("#mg_subject_id").val("");
+
+
+
+
+}
+else if(data=="Programme"){
+ 
+ $(".library_test2").show();
+ $(".library_test1").hide();
+ $(".library_test3").hide();
+$("#mg_time_table_id").val("");
+ $("#mg_subject_id").val("");
+ 
+}
+else if(data=="subject"){
+ 
+ $(".library_test3").show();
+$(".library_test1").hide();
+ $(".library_test2").hide();
+ $("#mg_wing_id").val("");
+ $("#mg_time_table_id").val("");
+
+ 
+
+
+}
+
+}
+$(document).on("change","#search_by",function(){
+$("#employee_books_list_search").empty();
+
+
+});
+$(document).on("change","#mg_wing_id",function(){
+$("#employee_books_list_search").empty();
+
+
+});
+$(document).on("change","#mg_time_table_id",function(){
+$("#employee_books_list_search").empty();
+
+
+});
+$(document).on("change","#mg_subject_id",function(){
+$("#employee_books_list_search").empty();
+
+
+});
+
+$(document).on("click","#search_button_fordata",function(){
+          $("#employee_books_list_search").empty();
+
+        var value=$("#search_by").val();
+        var subject=$("#mg_subject_id").val();
+        var wing=$("#mg_wing_id").val();
+        var time_table=$("#mg_time_table_id").val();
+
+        //alert(value)
+        if (value.length==0){
+
+          alert("Please Enter the data to search...........")
+
+        }
+        else{
+          $.ajax({
+            url:'/dashboards/controller_question_paper_list',
+            cache:false,
+            data:{"Value":value,"subject_id":subject,"wing":wing,"time_table":time_table},
+            success: function(data){
+              $("#employee_books_list_search").empty();
+              $("#employee_books_list_search").append(data);
+
+
+            }
+          });
+
+
+        }
+
+
+});
+
+</script>

@@ -1,0 +1,260 @@
+<%= render partial: 'dashboards/student_dashboard_left' %>
+
+<h4 class="mg-h4"><%= t('curriculum_management') %></h4>
+<!-- ============================================================================= -->
+<h4>Provide an input to search </h4>
+
+<%= form_for :curriculum, :html => {
+                            :id => 'curriculumCreateID' } do |f| %>
+<p>
+<label class="mg-label" style="width:140px"><%= t('keywords') %><span class="required-field">&nbsp;</span></label>
+<br/>
+<%#= f.collection_select(:mg_lab_id,MgLab.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id]), :id, :lab_name,{:include_blank => t("select")},:class => "call-purpose-class mg-select-btn")%>
+<%= text_field_tag :keywords,nil,:class=>"mg-text-field laboratory-item-search-class" %><span class="mg-small-form-btn clear-textfield-class" style="width: 75px;"><%=t("clear")%></span>
+
+
+</p>
+
+
+<p class="mg-p-mgtop">
+    <button type="button" class="curriculum-search-item-submit-class mg-small-form-btn" style="display:none"><%=t("save")%></button>
+    <a onclick="$(this).closest('form').submit()" class="laboratory-resource-new-submit-class" style="display:none"><%#=t("save")%></a>
+    <%#= link_to t('cancel'), :back, {:class=>"mg-small-form-btn cancel-form-dialog"} %>
+</p>
+<% end %>
+<div id="curriculumSerchedResultDivID"></div>
+<!-- =============================================================================================== -->
+
+<div class="div_table_hide_for_search">
+
+<%#if (@curriculum.present?) || (@curriculum_notes.present?) %>
+
+<h4 class="mg-h4 div_table_hide_for_search" ><%= t('documents') %></h4>
+
+
+<%if @curriculum.present?%>
+
+
+
+
+
+<div class="mg-scroll-employee-bar div_table_hide_for_search" >
+<table border="1" class="mg-showdata-bg mg-homework-tbl" cellspacing="1" cellpadding="1">
+<tr>
+  
+  <th>
+    <label class="mg-label mg-td-width-half" valign="top"> <%= t('subject_name')%></label>
+  </th>
+  
+  <th>
+    <label class="mg-label mg-td-width-half" valign="top"> <%= t('paper')%></label>
+  </th>
+  <th>
+    <label class="mg-label mg-td-width-half" valign="top"> <%= t('chapter')%></label>
+  </th>
+  <th>
+    <label class="mg-label mg-td-width-half" valign="top"> <%= t('topic')%></label>
+  </th>
+  
+
+  <th>
+    <label class="mg-label mg-td-width-half" valign="top"> <%= t('details')%></label>
+  </th>
+  
+  </tr>
+  <%
+  @curriculum.each do |search|
+  %>
+  <tr>
+    
+
+    <td class="mg-td-width-half" valign="top">
+      <%if search.mg_subject_id.present?%>
+          <%currSubject=MgSubject.find(search.mg_subject_id)%>
+        <%=currSubject.try(:subject_name)%><%end%>
+    </td>
+
+
+    
+
+    <td class="mg-td-width-half" valign="top">
+      <%if search.mg_syllabus_id.present?%>
+          <%currSyll=MgSyllabus.find(search.mg_syllabus_id)%>
+        <%=currSyll.try(:name)%><%end%>
+    </td>
+
+    <td class="mg-td-width-half" valign="top">
+      <%if search.mg_unit_id.present?%>
+          <%currSyll=MgUnit.find(search.mg_unit_id)%>
+        <%=currSyll.try(:unit_name)%><%end%>
+    </td>
+
+    <td class="mg-td-width-half" valign="top">
+      <%if search.mg_topic_id.present?%>
+          <%currSyll=MgTopic.find(search.mg_topic_id)%>
+        <%=currSyll.try(:topic_name)%><%end%>
+    </td>
+
+
+    
+
+
+
+    <td class="mg-td-width-half" valign="top">
+      
+    <%= link_to "<i class=\"fa fa-eye\"></i>".html_safe, {:controller => "curriculum", :action => "document_show",:id =>search.id } , :method=>'post' ,:title=>"Show" ,:class=>"mg-icon-btn"%>
+
+    </td>
+    
+
+    
+</tr>
+  <%end%>
+</table>
+</div>
+
+<br/>
+<%else%>
+<h5>No documents found</h5>
+<%end%>
+
+<br/>
+<br/>
+
+<!-- ====================================================================================================== -->
+
+<h4 class="mg-h4 div_table_hide_for_search" ><%= t('notes') %></h4>
+<%if @curriculum_notes.present?%>
+<div class="mg-scroll-employee-bar div_table_hide_for_search" >
+<table border="1" class="mg-showdata-bg mg-homework-tbl" cellspacing="1" cellpadding="1">
+<tr>
+  
+  <th>
+    <label class="mg-label mg-td-width-half" valign="top"> <%= t('subject_name')%></label>
+  </th>
+  
+  <th>
+    <label class="mg-label mg-td-width-half" valign="top"> <%= t('paper')%></label>
+  </th>
+  <th>
+    <label class="mg-label mg-td-width-half" valign="top"> <%= t('chapter')%></label>
+  </th>
+  <th>
+    <label class="mg-label mg-td-width-half" valign="top"> <%= t('topic')%></label>
+  </th>
+  
+
+  <th>
+    <label class="mg-label mg-td-width-half" valign="top"> <%= t('details')%></label>
+  </th>
+  
+  </tr>
+  <%
+  @curriculum_notes.each do |search|
+  %>
+  <tr>
+    
+
+    <td class="mg-td-width-half" valign="top">
+      <%if search.mg_subject_id.present?%>
+          <%currSubject=MgSubject.find(search.mg_subject_id)%>
+        <%=currSubject.try(:subject_name)%><%end%>
+    </td>
+
+
+    
+
+    <td class="mg-td-width-half" valign="top">
+      <%if search.mg_syllabus_id.present?%>
+          <%currSyll=MgSyllabus.find(search.mg_syllabus_id)%>
+        <%=currSyll.try(:name)%><%end%>
+    </td>
+
+    <td class="mg-td-width-half" valign="top">
+      <%if search.mg_unit_id.present?%>
+          <%currSyll=MgUnit.find(search.mg_unit_id)%>
+        <%=currSyll.try(:unit_name)%><%end%>
+    </td>
+
+    <td class="mg-td-width-half" valign="top">
+      <%if search.mg_topic_id.present?%>
+          <%currSyll=MgTopic.find(search.mg_topic_id)%>
+        <%=currSyll.try(:topic_name)%><%end%>
+    </td>
+
+
+    
+
+
+    <td class="mg-td-width-half" valign="top">
+      
+      
+      <%= link_to "<i class=\"fa fa-eye\"></i>".html_safe, {:controller => "curriculum", :action => "notes_show",:id =>search.id } , :method=>'post' ,:title=>"Show" ,:class=>"mg-icon-btn"%>
+
+    </td>
+    
+
+    
+</tr>
+  <%end%>
+</table>
+</div>
+<%else%>
+<h5>No documents found</h5>
+<%end%>
+
+
+<br/>
+<%#= link_to t('cancel'), :back, {:class=>"mg-small-form-btn cancel-form-dialog"} %>
+<%#else%>
+<!-- <br/>
+<h4>No Results found<h4> -->
+<%#end%>
+
+<div>
+
+
+
+<!-- ======================================================================================================== -->
+<%= render  partial: 'application/common_left_close' %>
+
+<script>
+$(document).ready(function () {
+        focusCurrentTab("viewStudentCurriculum","viewStudentCurriculumLiID");
+        //focusMasterSettings();
+
+    });
+$(".laboratory-item-search-class").keyup(function(){
+    $(".curriculum-search-item-submit-class").click();
+});
+
+
+$(".curriculum-search-item-submit-class").click(function(){
+  var keywords=$("#keywords").val();
+  
+  var urlLink = "/curriculum/curriculum_student_search_data/";
+           $.ajax({ 
+               url: urlLink,
+               cache: false,
+               data:
+            {
+                 "keywords":keywords 
+             },
+               success: function(html){
+
+
+                  $(".div_table_hide_for_search").empty();
+                  $("#curriculumSerchedResultDivID").empty();
+                  $("#curriculumSerchedResultDivID").append(html);
+               }  
+           });
+});
+
+
+
+$(".clear-textfield-class").click(function(){
+  $(".laboratory-item-search-class").val("");
+  $(".curriculum-search-item-submit-class").click();
+});
+</script>
+

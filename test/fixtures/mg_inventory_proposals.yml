@@ -1,0 +1,21 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  mg_store_id: 1
+  mg_employee_id: 1
+  requisition_name: MyString
+  description: MyText
+  is_deleted: false
+  mg_school_id: 1
+  created_by: 1
+  updated_by: 1
+
+two:
+  mg_store_id: 1
+  mg_employee_id: 1
+  requisition_name: MyString
+  description: MyText
+  is_deleted: false
+  mg_school_id: 1
+  created_by: 1
+  updated_by: 1

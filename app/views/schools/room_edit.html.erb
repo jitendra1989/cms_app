@@ -1,0 +1,57 @@
+<%= form_for :room, :url=>{:controller=>'schools',:action=>'room_update',:id=>@room.id},:html => {:id => 'schoolroomUpdateID' } do |f| %>
+<%= f.hidden_field :is_deleted, :value => 0 %>
+<%= f.hidden_field :mg_school_id, :value => session[:current_user_school_id] %>
+<%= f.hidden_field :updated_by, :value => session[:user_id] %>
+
+
+<p>
+    <label class="mg-label" style="width:140px"><%= t('room_no/name') %><span class="required-field">&nbsp;*</span></label>
+    <br/>
+   <%= f.text_field :room_no,:class=>"mg-text-field" %>
+</p>
+
+
+<p>
+      <label class="mg-label mg-tt-width" style="width:185px"><%= t('select_specialization') %><span class="required-field">&nbsp;*</span></label>
+      <%#= f.label :select_subject ,:class=>"mg-label"%><!-- <span class="required-field"> *</span><br> -->
+      <%= f.collection_select(:mg_employee_specialization_id,MgEmployeeSpecialization.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id]), :id, :name,{:include_blank => t("select")},:class => "mg-select-btn")%> 
+</p>
+
+<p>
+      <label class="mg-label mg-tt-width" style="width:185px"><%=t('select')%> <%= t('room_type') %><span class="required-field">&nbsp;*</span></label>
+      <%= f.select :mg_room_type, options_for_select([["Theory ","theory"],["Practical","practical"]],:selected=>@room.mg_room_type),{:include_blank => t("select")},:class => "mg-select-btn"%>
+</p>
+
+<p>
+    <label class="mg-label" style="width:140px"><%= t('capacity') %><span class="required-field">&nbsp;*</span></label>
+    <br/>
+   <%= f.text_field :capacity,:class=>"mg-text-field" %>
+</p>
+
+
+
+<p class="mg-p-mgtop">
+    <!-- <%#= f.submit t('save') ,:class=>"mg-small-form-btn"%> -->
+    <a onclick="$(this).closest('form').submit()" class="mg-small-form-btn"><%=t("save")%></a>
+    <%#= link_to t('cancel'), :back, {:class=>"mg-small-form-btn cancel-form-dialog"} %>
+<a class="mg-small-form-btn cancel-form-dialog"><%=t("cancel")%></a>
+
+</p>
+<% end %>
+
+<%#= render  partial: 'application/common_left_close' %>
+
+<script>
+
+
+$("#schoolroomUpdateID").validate({
+
+        rules: {        
+        "room[room_no]": {required: true},
+        "room[mg_employee_specialization_id]": {required: true},
+        "room[mg_room_type]": {required: true},
+        "room[capacity]": {required: true, number: true,min: 0}
+       //   "laboratory[description]": {required: true}
+      }
+    });
+</script>

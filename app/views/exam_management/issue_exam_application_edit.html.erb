@@ -1,0 +1,373 @@
+<%= render  partial: 'exam_management_left' %>
+<% navigation_add 'Exam Application Form', exam_management_issue_exam_application_path %>
+
+<h4 class="mg-h4"><label class="mg-label-text-transform-none" for="date_of_birth"><%=t('edit_exam_application_form')%></label></h4>
+
+
+<%=form_for :exam_application_form,:url=>{:controller=>"exam_management",:action=>"issue_exam_application_update",:id=>@exam_application_form.id},:html=>{:id=>"exam_application_form_validation_edit"} do |f|%>
+
+
+        <%= hidden_field_tag 'data_id_data',@exam_application_form.id,:class=>"mg-text-field"%>
+        <%= hidden_field_tag 'mg_batch_data_id',@exam_application_form.mg_batch_id,:class=>"mg-text-field"%>
+<table class="pop-up-inner-text mg-tbl-margin mg-show-tbl-width">
+<tr>
+      <td class="mg-td-width-one-third">
+        <label class="mg-label" for="name"><%= t ('select_exam') %><span class="required-field">&nbsp;*</span></label><br/>
+        <%examination_details=MgExaminationDetail.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id]).pluck(:name,:id)%>
+
+        <%= select_tag :mg_examination_detail_id,options_for_select(examination_details,:selected=>@exam_application_form.mg_examination_detail_id),:prompt=>"Select",:disabled=>true,:onchange=>"examinationDetailsData(this.value)"%>
+      </td>
+      </tr>
+    <tr>
+      <td class="mg-td-width-one-third">
+        <label class="mg-label" for="name"><%= t ('select_due_date') %><span class="required-field">&nbsp;*</span></label><br/>
+        <%@timeformat=MgSchool.find(session[:current_user_school_id])%>
+     
+      <% due_date=@exam_application_form.due_date.strftime(@timeformat.date_format) %>
+        <%=text_field_tag 'due_date',due_date,:disabled=>true,:class=>"mg-text-field"%>
+      </td>
+      </tr>
+      <!-- <tr>
+      <td class="mg-td-width-one-third">
+        <label class="mg-label" for="description"><%#= t ('select_academic_year') %><span class="required-field">&nbsp;*</span></label><br/>
+
+        <%#= f.select :mg_time_table_id,options_for_select(@time_table_data),:prompt=>"Select",:class=>"mg-text-field"%>
+      </td>
+    </tr> -->
+     <tr>
+      <td class="mg-td-width-one-third">
+        <label class="mg-label" for="description"><%= t ('select_programme') %><span class="required-field">&nbsp;*</span></label><br/>
+        <%=select_tag :mg_wing_id,options_for_select(@wing_data,:selected=>@exam_application_form.mg_wing_id),:prompt=>"Select",:class=>"mg-text-field",:disabled=>true,:onchange=>"selectsClasssbasedonWing(this.value)"%>
+      </td>
+    </tr>
+     <tr>
+      <td class="mg-td-width-one-third">
+        <label class="mg-label" for="description"><%= t ('select_semester') %><span class="required-field">&nbsp;*</span></label><br/>
+        <%batch_data=MgBatch.find_by(:id=>@exam_application_form.mg_batch_id)
+          course_data=MgCourse.find_by(:id=>batch_data.mg_course_id)
+        %>
+        <p id="course_data_for_examination">
+      <%= text_field_tag 'mg_batch_id',"#{course_data.course_name}-#{batch_data.name}",:disabled=>true,:class=>"mg-text-field"%>
+        </p>
+      </td>
+    </tr>
+    <!--  <tr>
+      <td class="mg-td-width-one-third">
+        <label class="mg-label" for="description"><%#= t ('student') %><span class="required-field">&nbsp;*</span></label><br/>
+        <%#student_data=MgStudent.find_by(:id=>@exam_application_form.mg_student_id)%>
+        <p id="course_data_for_examination">
+      <%#= text_field_tag 'mg_student_id',"#{student_data.first_name}-#{student_data.last_name}",:disabled=>true,:class=>"mg-text-field"%>
+        </p>
+      </td>
+    </tr> -->
+    <!-- <tr>
+        <td id="selected_students_for_examination">
+            
+
+        </td>
+
+    </tr> -->
+
+    </table>
+
+     <h4 class="mg-h4"><%= t('examination')%></h4> 
+
+ <div class="mg-w50 mg-button-align mg-margin-right-14">
+ <a id="examination_form_for_data" class="mg-label-inner-form mg-custom-form-btn" style="color: #297ACC; font-size:0.8em; position: relative;" >Add </a> <br/>
+ <div class="mg-examination-scroll-width-bar mg-tbl-margin">   
+
+<table class="mg-show-tbl-width mg-table-nowrap batch-tbl mg-adjust-padding">  
+  <th><%=t("sr_no.")%></th>
+  <th><%=t("particulars")%><span class="required-field">&nbsp;*</span></th>
+  <th><%=t("amount")%><span class="required-field">&nbsp;*</span></th>
+  <th><%=t('action')%></th>
+
+  <%student_data=ExamApplicationFormStudent.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id],:mg_exam_application_form_data_id=>params[:id])%>
+        <%student_data.each_with_index do |details,i|%>
+
+  <tr class="demo-div">
+
+    <div id="finalDueFineDivId">
+      <div class="due-fine-div" id="dueFineDivId">
+
+  
+
+        <td><span class="required-incremented-field"><%=i+1%></span></td>
+         <td class="mg-align-center cost-td-class">
+          <%= hidden_field_tag 'ids[]',details.id,:class=>"mg-text-field-particular required-field"%>
+          <%= text_field_tag 'particular[]' ,details.student_particulars,:class=>"mg-text-field-particular  required-field"%>
+        </td>
+        <td class="mg-align-center cost-td-class">
+          <%= text_field_tag 'amount[]' ,details.amount,:id=>"List_of_data",:class=>"mg-text-field-particular cost-auto-class required-field",:onchange=>"amountFunctionData(this.value)"%>
+        </td>
+        <td class="mg-align-center">
+          <a title="Remove" class="examination_remove-form-details mg-icon-btn" style="color: #297ACC; font-size:0.8em;"> <i class="fa fa-trash"></i></a>
+        </td>   
+      </div>
+    </div>
+  </tr>
+  <%end%>
+</table>
+
+<table class="mg-show-tbl-width">
+    <tr>
+<td class="mg-td-width-one-thirds" valign="top">
+<label class="mg-label" for="selectDepartment"><%= t('total_amount') %><span class="required-field">&nbsp;*</span></label>
+              <span id="selected_students" style="margin-right:50px; vertical-align: top;">
+ 
+    <%=text_field_tag :total_amount,@exam_application_form.total_amount,:class=>"mg-text-field",:readonly=>true%>
+</span>
+</td>
+</tr>
+
+
+</table>
+</div>
+</div>
+<div class="mg-w50 mg-button-align mg-margin-right-14">
+ <label class="mg-label">Select Student: </label>
+ <div class="mg-examination-scroll-width-bar mg-tbl-margin">   
+
+<table class="mg-show-tbl-width mg-table-nowrap batch-tbl mg-adjust-padding">  
+  <th><%=t("Student_name.")%></th>
+  <th><%=t("form_no")%><span class="required-field">&nbsp;*</span></th>
+   <th class="mg-align-center"><label class="mg-label"><%=t('select')%></label><br/><a  id="sscheckAllCheckBoxInFeeParticularId" class="mg-pop-link">All</a>
+    <a  id="ssunCheckAllCheckBoxInFeeParticularId" class="mg-pop-link">None</a>
+  </th>
+  
+
+  
+  <%batch_data=MgExamApplicationFormData.find_by(:id=>params[:id])%>
+  <%students_datas=MgStudent.where(:mg_batch_id=>batch_data.mg_batch_id,:is_deleted=>0,:mg_school_id=>session[:current_user_school_id])%>
+  <%students_datas_array=MgExamApplicationStudentReceipt.where(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id],:mg_exam_application_form_data_id=>params[:id]).pluck(:mg_student_id)%>
+        <%students_datas.each_with_index do |details,i|%>
+
+<%#info=MgStudent.find_by(:id=>details.mg_student_id)%>
+  <tr>
+<%studentss_datasss=MgExamApplicationStudentReceipt.find_by(:is_deleted=>0,:mg_school_id=>session[:current_user_school_id],:mg_exam_application_form_data_id=>params[:id],:mg_student_id=>details.id)%>
+<%if studentss_datasss.present?%>
+         <td class="mg-align-center">
+          <%= hidden_field_tag 'studentids[]',studentss_datasss.id,:class=>"mg-text-field-particular required-field"%>
+          <%= "#{details.first_name} #{details.last_name}"%>
+        </td>
+        <td class="mg-align-center">
+          <%= text_field_tag 'form_data[]' ,studentss_datasss.form_no,:class=>"mg-text-field-particular required-field"%>
+        </td>
+
+         <td class="mg-align-center"><%=check_box_tag 'studentidsdata[]',details.id,if students_datas_array.include?(details.id) then true else false end,:class=>"demo1213"%></td>
+        <%else%>
+        <td class="mg-align-center">
+          
+          <%= "#{details.first_name} #{details.last_name}"%>
+        </td>
+        <td class="mg-align-center">
+          <%= text_field_tag 'form_data[]' ,nil,:class=>"mg-text-field-particular required-field"%>
+        </td>
+
+         <td class="mg-align-center"><%=check_box_tag 'studentidsdata[]',details.id,if students_datas_array.include?(details.id) then true else false end,:class=>"demo1213"%></td>
+        <%end%>
+      </div>
+    </div>
+  </tr>
+  <%end%>
+</table>
+</div>
+</div><br/>
+     <p class="mg-p-mgtop">
+    <a onclick="$(this).closest('form').submit()" class="examination_inputs_fields mg-small-form-btn"><%=t("save")%></a>
+    <%= link_to t('cancel'), :back, {:class=>"mg-small-form-btn cancel-form-dialog"}%>
+    <!-- <a class="mg-small-form-btn cancel-form-dialog"><%#=t('cancel')%></a> -->
+  </p>
+         <%#=f.submit 'Submit' ,:class=>"examination_inputs_fields mg-small-form-btn",:id=>"inputs_fields"%>
+         <%#= link_to t('cancel'), :back, {:class=>"mg-small-form-btn cancel-form-dialog"}%>
+<%end%>
+<%= render  partial: 'application/common_left_close' %>
+
+<script>
+
+$(document).on("click", "#sscheckAllCheckBoxInFeeParticularId", function(e){
+
+        $(".demo1213").prop('checked', true);
+        e.preventDefault();
+        
+  });
+
+  $(document).on("click", "#ssunCheckAllCheckBoxInFeeParticularId", function(e){
+
+        $(".demo1213").prop('checked', false);
+        e.preventDefault();
+  });
+$(document).ready(function(){
+
+focusCurrentTab("issue_exam_application_formAID","issue_exam_application_formLiID");
+var urlLink = "/exam_management/select_students_edit/";
+  var batch_data=$("#mg_batch_data_id").val();
+  var data_id=$("#data_id_data").val();
+  
+
+    $.ajax({
+        url:urlLink,
+        cache:false,
+        data:{"id":batch_data,"data":data_id},
+        success: function(html){
+
+            $('#selected_students_for_examination').empty().append(html);
+
+
+
+        }
+
+
+    });
+      
+
+      
+
+  $("#exam_application_form_validation_edit").validate({
+      rules:{
+        "ExaminationSelectedStudentsedit[]":{required:true},
+        
+      },
+     });
+});
+function amountFunctionData(data){
+var value=$("#particular_").val();
+
+var a=0
+$('.cost-auto-class').each(function () {
+    if(this.value!=""){
+    a=parseInt((this.value)) + a;
+}
+});
+$("#total_amount").val(a);
+    
+}
+$(document).on("click","#examination_inputs_fields",function(e){
+
+  
+
+  
+$("#ExaminationSelectedStudentsedit option").prop('selected',true);
+ 
+});
+dateFormatStr =  getJsDateFormat();
+
+$('#exam_application_form_due_date').datepicker({ changeMonth: true,
+                changeYear: true,yearRange: "-100:+50",maxDate: "100",dateFormat: dateFormatStr});
+
+
+
+function selectsClasssbasedonWing(data){
+
+        var urlLink = "/exam_management/select_class_based_on_wing/";
+
+    $.ajax({
+        url:urlLink,
+        cache:false,
+        data:{"id":data},
+        success: function(html){
+            
+            $('#course_data_for_examination').empty().append(html);
+
+
+        }
+
+
+    });
+}
+
+// function selectStudentBasedOnExaminationClass(data){
+
+// var urlLink = "/exam_management/select_students/";
+
+//     $.ajax({
+//         url:urlLink,
+//         cache:false,
+//         data:{"id":data},
+//         success: function(html){
+
+//             $('#selected_students_for_examination').empty().append(html);
+
+
+//         }
+
+
+//     });
+
+// }
+
+function examinationDetailsData(data){
+// var urlLink = "/exam_management/select_students/";
+
+//     $.ajax({
+//         url:urlLink,
+//         cache:false,
+//         data:{"id":data},
+//         success: function(html){
+
+//             $('#selected_students_for_examination').empty().append(html);
+
+
+//         }
+
+
+//     });
+
+}
+
+$(document).on("click", "#examination_form_for_data", function(e){
+    var lastRepeatingGroup = $('.demo-div').last();
+    //alert(lastRepeatingGroup);
+    var cloned = lastRepeatingGroup.clone();
+    //console.log(cloned);
+    cloned.find('input').val('');
+    cloned.find('select').val('');
+
+
+    //console.log(cloned.find('input').val(''));
+    
+
+
+
+    cloned.insertAfter( lastRepeatingGroup );
+    //alert(temp);
+    // $('.required-incremented-field').last().text(temp);
+    // temp++;
+      $(".required-incremented-field:visible").each(function(index,element){
+          $(this).text(index+1);
+
+    });
+    
+    //add_validation_for_forms();
+    return false;
+
+}); 
+    
+
+
+$(document).on("click", ".examination_remove-form-details", function(e){
+
+
+   var total = $('.examination_remove-form-details').length
+   var last_count = $('.examination_remove-form-details').text();
+   //console.log(last_count);
+ //alert(last_count); 
+   if(total!=1)
+   {
+    $(this).parent('td').parent().remove();   
+    }
+   var a=0
+$('.cost-auto-class').each(function () {
+    if(this.value!=""){
+     
+    a=parseInt((this.value)) + a;
+}
+});
+$("#total_amount").val(a);
+    //temp==$('.remove-library-details').length;
+    //temp=temp-1;
+  $(".required-incremented-field:visible").each(function(index,element){
+          $(this).text(index+1);
+    });
+});
+</script>

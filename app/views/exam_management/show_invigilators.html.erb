@@ -1,0 +1,102 @@
+<table border="1" class="mg-showdata-bg " cellspacing="1" cellpadding="1">
+   <tr>
+     <td class="mg-td-width-half" valign="top">
+   		<label class="mg-label"> <%= t('date')%></label>
+   	 </td>
+   	 <td class="mg-td-width-half" valign="top">
+  		<%= @invigilators.try(:date).present? ? @invigilators.try(:date).strftime(@school.date_format) : ""%>
+  	 </td>
+ </tr>
+  <tr>
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"> <%= t('time')%></label>
+     </td>
+     <td class="mg-td-width-half" valign="top">
+      <%= @invigilators.try(:time).present? ? @invigilators.try(:time).strftime('%I:%M%p') : ""  %>
+     </td>
+ </tr>
+ <%if session[:user_type]!='employee'%>
+  <tr>
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"> <%= t('subject_name')%></label>
+     </td>
+     <td class="mg-td-width-half" valign="top">
+      <%= MgSubject.find_by(:id=>@invigilators.try(:mg_subject_id) ).try(:subject_name)%>
+     </td>
+ </tr>
+
+<tr>
+     <td class="mg-td-width-half mg-rm-text-trans" valign="top">
+      <label class="mg-label mg-rm-text-trans"><%=t('no_of_invigilators')%></label>
+     </td>
+     <td class="mg-td-width-half" valign="top">
+      <%= @invigilators.try(:no_of_invigilators) %>
+     </td>
+ </tr>
+ <%end%>
+ <tr>
+     <td class="mg-td-width-half" valign="top">
+  		<label class="mg-label"><%=t('description')%></label>
+  	 </td>
+  	 <td class="mg-td-width-half" valign="top">
+  		<%= @invigilators.try(:description) %>
+  	 </td>
+ </tr>
+<%#if session[:user_type]!='employee'%>
+ <!-- <tr>
+     <td class="mg-td-width-half" valign="top">
+      <label class="mg-label"><%#=t('employees')%></label>
+     </td>
+     <td class="mg-td-width-half" valign="top">
+      <%#= (@employee.map(&:inspect).join(',<br> ').to_s.gsub! '"', '').to_s.html_safe
+%>
+     </td> -->
+<%#end%>
+ <!-- </tr> -->
+</table>
+<br>
+<p>
+<!-- =========================================================================================== -->
+<%invigilators=@invigilators.id%>
+<%department=MgEmployeeDepartment.where(:is_deleted=>0, :mg_school_id=>session[:current_user_school_id]).pluck(:department_name, :id)%>
+
+<label class="mg-label"> <%= t('select_department')%></label>&nbsp;&nbsp;&nbsp;&nbsp;<%=select_tag :mg_employee_department_id, options_for_select(department),:prompt=>"All Department" ,:onchange=>"changeDepartmentFunction(this.value, #{invigilators})"%><br>
+<!-- =============================================================================================== -->
+</p>
+<table border="1" class="mg-showdata-bg" cellspacing="1" cellpadding="1">
+   <tr>
+      <td valign="top">
+      <label class="mg-label"><%=t('employees')%></label>
+     </td>
+     <td valign="top" style="width: 100%;">
+       <span id="department_wise_employee_id">
+        <%= (@employee.map(&:inspect).join(',<br> ').to_s.gsub! '"', '').to_s.html_safe%>
+        </span>
+     <%#else%>
+      <!-- <h5><%#="No Data"%></h5> -->
+     <%#end%>
+     </td>
+ </tr>
+
+</table>
+<br/>
+ <p class="mg-p-mgtop">
+     <a class="mg-small-form-btn cancel-form-dialog"><%=t('cancel')%></a>
+
+  </p>
+
+  <script>
+  function changeDepartmentFunction(department_id,invigilator_id){
+      $.ajax({
+            url: "/exam_management/department_wise_employee",
+            type: "GET",
+            data: {"mg_department_id":department_id , "mg_inviligators_id":invigilator_id},
+            //dataType: "html",
+            success: function(data) {
+             $("#department_wise_employee_id").empty();
+             $("#department_wise_employee_id").append(data);
+            }
+        });
+  }
+
+  </script>
